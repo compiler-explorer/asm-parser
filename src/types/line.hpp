@@ -13,7 +13,7 @@ struct asm_range {
 
 struct asm_label {
     std::string name;
-    std::optional<asm_range> range;
+    asm_range range;
 };
 
 struct asm_source {
