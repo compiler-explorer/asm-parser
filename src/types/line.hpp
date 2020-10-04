@@ -7,8 +7,8 @@
 namespace AsmParser {
 
 struct asm_range {
-    int32_t start_col;
-    int32_t end_col;
+    uint16_t start_col;
+    uint16_t end_col;
 };
 
 struct asm_label {

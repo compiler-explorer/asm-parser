@@ -7,14 +7,16 @@ namespace AsmParser {
 
 class ParserState { 
 public:
-    asm_line currentLine{};
     bool inComment{};
+    bool inSomethingWithALabel{};
     bool hasPrefixingWhitespace{};
     bool inAddress{};
     bool inLabel{};
     bool inOpcodes{};
+    asm_label currentLabelReference{};
     std::string previousLabel{};
     std::string text{};
+    asm_line currentLine{};
 
     void commonReset();
 };

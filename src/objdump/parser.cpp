@@ -97,8 +97,28 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 } else if (!is_hex(c)) {
                     this->state.inOpcodes = false;
                 }
-            } else if (!this->state.inComment && (c == '#')) {
-                this->state.inComment = true;
+            } else if (!this->state.inComment) {
+                if (c == '#') {
+                    this->state.inComment = true;
+                } else if (c == '<') {
+                    this->state.inSomethingWithALabel = true;
+                    this->state.currentLabelReference.range = {
+                        (uint16_t)(this->state.text.length() + 1),
+                        (uint16_t)0
+                    };
+                } else if (this->state.inSomethingWithALabel) {
+                    if (c == '>') {
+                        this->state.inSomethingWithALabel = false;
+                    } else if (c == '+') {
+                        this->state.currentLabelReference.range.value().end_col = this->state.text.length();
+                        this->state.currentLabelReference.name = this->state.text.substr(
+                            this->state.currentLabelReference.range.value().start_col
+                        );
+
+                        this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+                        this->state.currentLabelReference = {};
+                    }
+                }
             }
 
             this->state.text += c;
@@ -124,7 +144,15 @@ void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
             for (auto opcode: line.opcodes) {
                 out << "\"" << opcode << "\", ";
             }
-            out << "]\n";
+            out << "],\n";
+        }
+        if (line.labels.size() > 0) {
+            out << " \"labels\": [";
+            for (auto labelref: line.labels) {
+                auto rng = labelref.range.value();
+                out << "\"" << labelref.name << "\": {" << rng.start_col << ", " << rng.end_col << "},";
+            }
+            out << "],\n";
         }
         out << "},\n";
     }
