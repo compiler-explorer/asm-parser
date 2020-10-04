@@ -142,7 +142,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
 }
 
 void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
-    out << "{[";
+    out << "{\"asm\": [";
 
     for (auto line: this->lines) {
         out << "{\n";
