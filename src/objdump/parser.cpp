@@ -74,6 +74,11 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
             this->eol();
             continue;
         } else {
+
+            // todo: recognize /src/asm-parser:     file format elf64-x86-64
+            // todo: when encountering "Disassembly of section .text:", reset everything
+            // todo: or perhaps put section in state and ignore everything but .text
+
             if (this->state.inAddress) {
                 if (c == ':') {
                     this->address();
