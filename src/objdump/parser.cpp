@@ -9,7 +9,9 @@ AsmParser::ObjDumpParser::ObjDumpParser() {
 
 void AsmParser::ObjDumpParser::eol() {
     this->state.currentLine.text = this->state.text;
-    lines.push_back(this->state.currentLine);
+    if (!this->state.currentLine.text.empty()) {
+        lines.push_back(this->state.currentLine);
+    }
 
     this->state.commonReset();
 }

@@ -6,8 +6,6 @@
 
 namespace AsmParser {
 
-using asm_opcodes = std::vector<std::string>;
-
 struct asm_range {
     int32_t start_col;
     int32_t end_col;
@@ -30,11 +28,11 @@ struct asm_link {
 };
 
 struct asm_line {
-    std::optional<int64_t> address;
-    asm_opcodes opcodes;
     std::string text;
-    std::optional<asm_source> source;
     std::vector<asm_label> labels;
+    std::vector<std::string> opcodes;
+    std::optional<asm_source> source;
+    std::optional<int64_t> address;
 };
 
 }
