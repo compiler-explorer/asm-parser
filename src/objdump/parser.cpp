@@ -18,8 +18,20 @@ void AsmParser::ObjDumpParser::eol() {
 
 void AsmParser::ObjDumpParser::label() {
     this->state.previousLabel = this->state.text;
+
+    this->state.text = this->state.text + ":";
+
     labels.emplace(this->state.previousLabel, lines.size());
-    this->state.text.clear();
+}
+
+void AsmParser::ObjDumpParser::labelref() {
+    this->state.currentLabelReference.range.end_col = this->state.text.length();
+    this->state.currentLabelReference.name = this->state.text.substr(
+        this->state.currentLabelReference.range.start_col
+    );
+
+    this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+    this->state.currentLabelReference = {};
 }
 
 void AsmParser::ObjDumpParser::opcodes() {
@@ -86,6 +98,12 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 } else if (c == ' ') {
                     // not really a label it seems
                     this->state.inLabel = false;
+                } else if (c == '<') {
+                    // skip
+                    continue;
+                } else if (c == '>') {
+                    // skip
+                    continue;
                 }
             } else if (this->state.inOpcodes) {
                 if ((c == ' ') || (c == '\t')) {
@@ -109,14 +127,11 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 } else if (this->state.inSomethingWithALabel) {
                     if (c == '>') {
                         this->state.inSomethingWithALabel = false;
+                        if (this->state.currentLabelReference.name.length() != 0) {
+                            this->labelref();
+                        }
                     } else if (c == '+') {
-                        this->state.currentLabelReference.range.end_col = this->state.text.length();
-                        this->state.currentLabelReference.name = this->state.text.substr(
-                            this->state.currentLabelReference.range.start_col
-                        );
-
-                        this->state.currentLine.labels.push_back(this->state.currentLabelReference);
-                        this->state.currentLabelReference = {};
+                        this->labelref();
                     }
                 }
             }
@@ -147,22 +162,22 @@ void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
             out << "],\n";
         }
         if (line.labels.size() > 0) {
-            out << " \"labels\": [";
+            out << " \"labels\": {";
             for (auto labelref: line.labels) {
-                out << "\"" << labelref.name << "\": {" << labelref.range.start_col << ", " << labelref.range.end_col << "},";
+                out << "\"" << labelref.name << "\": {\"start_col\": " << labelref.range.start_col << ", \"end_col\": " << labelref.range.end_col << "},";
             }
-            out << "],\n";
+            out << "},\n";
         }
         out << "},\n";
     }
 
     out << "],";
 
-    out << "\"labels\": [\n";
+    out << "\"labels\": {\n";
     for (auto label: this->labels) {
         out << "\"" << label.first << "\": " << label.second << ",\n";
     }
-    out << "]}\n";
+    out << "}}\n";
 }
 
 void AsmParser::ObjDumpParser::outputText(std::ostream &out) {

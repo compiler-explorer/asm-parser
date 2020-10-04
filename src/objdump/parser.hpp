@@ -17,6 +17,7 @@ private:
     void address();
     void opcodes();
     void label();
+    void labelref();
 public:
     ObjDumpParser();
 
