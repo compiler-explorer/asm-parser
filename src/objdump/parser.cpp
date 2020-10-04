@@ -1,25 +1,10 @@
 #include "parser.hpp"
 #include "../types/line.hpp"
+#include "../utils/utils.hpp"
 
 #include <iostream>
 
 AsmParser::ObjDumpParser::ObjDumpParser() {
-}
-
-bool is_whitespace(const char c) {
-    return ((c == 32) || (c == 7));
-}
-
-bool is_hex(const char c) {
-    return (c >= 'a' && c <= 'f') || (c >= '0' && c <= '9');
-}
-
-int8_t hex2int(const char c) {
-    if (c >= '0' && c <= '9') {
-        return c - '0';
-    } else {
-        return 10 + (c - 'a');
-    }
 }
 
 void AsmParser::ObjDumpParser::eol() {
@@ -31,6 +16,7 @@ void AsmParser::ObjDumpParser::eol() {
 
 void AsmParser::ObjDumpParser::label() {
     this->state.previousLabel = this->state.text;
+    labels.emplace(this->state.previousLabel, lines.size());
     this->state.text.clear();
 }
 
@@ -112,7 +98,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
 }
 
 void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
-    out << "[";
+    out << "{[";
 
     for (auto line: this->lines) {
         out << "{\n";
@@ -134,7 +120,13 @@ void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
         out << "},\n";
     }
 
-    out << "]";
+    out << "],";
+
+    out << "\"labels\": [\n";
+    for (auto label: this->labels) {
+        out << "\"" << label.first << "\": " << label.second << ",\n";
+    }
+    out << "]}\n";
 }
 
 void AsmParser::ObjDumpParser::outputText(std::ostream &out) {
