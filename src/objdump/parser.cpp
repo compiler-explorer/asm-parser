@@ -69,10 +69,15 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                     this->state.inOpcodes = true;
                     continue;
                 } else if (c == ' ' || c == '\t') {
-                    this->address();
-                    this->state.inAddress = false;
-                    this->state.inLabel = true;
-                    continue;
+                    if (!this->state.text.empty()) {
+                        this->address();
+                        this->state.inAddress = false;
+                        this->state.inLabel = true;
+                        continue;
+                    } else {
+                        // skip prefixing whitespace
+                        continue;
+                    }
                 }
             } else if (this->state.inLabel) {
                 if (c == ':') {
@@ -92,6 +97,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 } else if (!is_hex(c)) {
                     this->state.inOpcodes = false;
                 }
+            } else if (!this->state.inComment && (c == '#')) {
+                this->state.inComment = true;
             }
 
             this->state.text += c;
