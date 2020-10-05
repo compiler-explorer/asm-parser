@@ -1,5 +1,5 @@
 
-src/asm-parser:     file format elf64-x86-64
+/src/asm-parser:     file format elf64-x86-64
 
 
 Disassembly of section .init:

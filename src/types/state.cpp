@@ -8,4 +8,5 @@ void AsmParser::ParserState::commonReset() {
     this->inAddress = true;
     this->inOpcodes = false;
     this->inLabel = false;
+    this->skipRestOfTheLine = false;
 }

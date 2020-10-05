@@ -13,9 +13,11 @@ public:
     bool inAddress{};
     bool inLabel{};
     bool inOpcodes{};
+    bool skipRestOfTheLine{};
     asm_label currentLabelReference{};
-    std::string previousLabel{};
-    std::string text{};
+    std::string previousLabel;
+    std::string text;
+    std::string currentFilename;
     asm_line currentLine{};
 
     void commonReset();

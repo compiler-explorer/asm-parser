@@ -1,5 +1,5 @@
 
-asm-parser:	file format Mach-O 64-bit x86-64
+/tmp/asm-parser:	file format Mach-O 64-bit x86-64
 
 
 Disassembly of section __TEXT,__text:

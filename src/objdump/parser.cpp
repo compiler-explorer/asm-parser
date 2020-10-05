@@ -50,16 +50,35 @@ void AsmParser::ObjDumpParser::opcodes() {
 }
 
 void AsmParser::ObjDumpParser::address() {
-    int64_t addr = 0;
-    int8_t bitsdone = 0;
-    for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++) {
-        if (!is_hex(*c)) break;
+    if (!this->state.text.empty()) {
+        if (this->state.text[0] == '/') {
+            // probably a filename
+            this->state.currentFilename = this->state.text;
 
-        addr += hex2int(*c) << bitsdone;
-        bitsdone += 4;
+            this->state.inAddress = false;
+            this->state.inOpcodes = false;
+            this->state.skipRestOfTheLine = true;
+        } else {
+            // usually it's an actual hex address
+            int64_t addr = 0;
+            int8_t bitsdone = 0;
+            for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++) {
+                if (!is_hex(*c)) break;
+
+                addr += hex2int(*c) << bitsdone;
+                bitsdone += 4;
+            }
+
+            this->state.currentLine.address = addr;
+
+            this->state.inAddress = false;
+            this->state.inOpcodes = true;
+        }
+    } else {
+        this->state.inAddress = false;
+        this->state.inOpcodes = false;
     }
 
-    this->state.currentLine.address = addr;
     this->state.text.clear();
 }
 
@@ -73,17 +92,14 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
         } else if (c == 10) {
             this->eol();
             continue;
-        } else {
+        } else if (!this->state.skipRestOfTheLine) {
 
-            // todo: recognize /src/asm-parser:     file format elf64-x86-64
             // todo: when encountering "Disassembly of section .text:", reset everything
             // todo: or perhaps put section in state and ignore everything but .text
 
             if (this->state.inAddress) {
                 if (c == ':') {
                     this->address();
-                    this->state.inAddress = false;
-                    this->state.inOpcodes = true;
                     continue;
                 } else if (c == ' ' || c == '\t') {
                     if (!this->state.text.empty()) {
