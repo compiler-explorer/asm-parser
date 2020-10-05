@@ -1,0 +1,189 @@
+#include "jsonwriter.hpp"
+
+AsmParser::JsonWriter::JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels) :
+    out(out), lines(lines), labels(labels), prettyPrint(false)
+{
+}
+
+void AsmParser::JsonWriter::writeKeyName(const char *key) {
+    this->out << "\"" << key << "\": ";
+}
+
+void AsmParser::JsonWriter::writeKeyName(const std::string key) {
+    this->out << "\"" << key << "\": ";
+}
+
+void AsmParser::JsonWriter::writeKv(const char *key, const std::string value, const jsonopt opts) {
+    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+
+    this->writeKeyName(key);
+
+    this->out << "\"" << value << "\"";
+
+    if (opts == jsonopt::trailingcomma) this->out << ", ";
+
+    if (this->prettyPrint) this->out << "\n";
+}
+
+void AsmParser::JsonWriter::writeKv(const char *key, const int value, const jsonopt opts) {
+    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+
+    this->writeKeyName(key);
+
+    this->out << value;
+
+    if (opts == jsonopt::trailingcomma) this->out << ", ";
+
+    if (this->prettyPrint) this->out << "\n";
+}
+
+void AsmParser::JsonWriter::writeKv(const std::string key, const int value, const jsonopt opts) {
+    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+
+    this->writeKeyName(key);
+
+    this->out << value;
+
+    if (opts == jsonopt::trailingcomma) this->out << ", ";
+
+    if (this->prettyPrint) this->out << "\n";
+}
+
+void AsmParser::JsonWriter::writeKv(const std::string key, const std::string value, const jsonopt opts) {
+    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+
+    this->writeKeyName(key);
+
+    this->out << value;
+
+    if (opts == jsonopt::trailingcomma) this->out << ", ";
+
+    if (this->prettyPrint) this->out << "\n";
+}
+
+void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line) {
+    bool wroteSomethingInRoot = false;
+
+    this->out << "{";
+
+    if (this->prettyPrint) this->out << "\n";
+        
+    if (line.address.has_value()) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKv("address", line.address.value(), jsonopt::none);
+    }
+
+    if (!line.text.empty()) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKv("line", line.text, jsonopt::none);
+    }
+
+    if (line.opcodes.size() > 0) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKeyName("opcodes");
+
+        this->out << "[";
+        bool firstOpcode = true;
+        for (auto opcode: line.opcodes) {
+            if (!firstOpcode) {
+                this->out << ", ";
+            } else {
+                firstOpcode = false;
+            }
+
+            this->out << "\"" << opcode << "\"";
+        }
+        this->out << "]";
+    }
+
+    if (!line.section.empty()) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKv("section", line.section, jsonopt::none);
+    }
+
+    if (line.labels.size() > 0) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKeyName("labels");
+        this->out << "{";
+
+        bool firstLabel = true;
+        for (auto labelref: line.labels) {
+            if (!firstLabel) {
+                this->out << ",";
+                if (this->prettyPrint) this->out << "\n";
+            } else {
+                firstLabel = false;
+            }
+
+            this->writeKeyName(labelref.name);
+            this->out << "{";
+            this->writeKv("start_col", labelref.range.start_col, jsonopt::none);
+            this->writeKv("end_col", labelref.range.end_col, jsonopt::prefixwithcomma);
+            this->out << "}";
+        }
+        this->out << "}";
+
+        if (this->prettyPrint) this->out << "\n";
+    }
+    this->out << "}";
+}
+
+void AsmParser::JsonWriter::JsonWriter::write() {
+    this->out << "{";
+    this->writeKeyName("asm");
+    this->out << "[";
+
+    bool firstLine = true;
+
+    for (auto line: this->lines) {
+        if (!firstLine) {
+            this->out << ",";
+            if (this->prettyPrint) this->out << "\n";
+        }
+        firstLine = false;
+
+        this->writeLine(line);
+    }
+
+    this->out << "],";
+
+    this->writeKeyName("labels");
+    this->out << "{";
+    if (this->prettyPrint) this->out << "\n";
+    bool firstLabel = true;
+    for (auto label: this->labels) {
+        if (firstLabel) {
+            this->writeKv(label.first, label.second, jsonopt::none);
+            firstLabel = false;
+        } else {
+            this->writeKv(label.first, label.second, jsonopt::prefixwithcomma);
+        }
+    }
+    this->out << "}}";
+    if (this->prettyPrint) this->out << "\n";
+}

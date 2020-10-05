@@ -1,7 +1,7 @@
 #include "parser.hpp"
 #include "../types/line.hpp"
 #include "../utils/utils.hpp"
-
+#include "../utils/jsonwriter.hpp"
 #include <iostream>
 
 AsmParser::ObjDumpParser::ObjDumpParser() {
@@ -192,45 +192,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
 }
 
 void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
-    out << "{\"asm\": [";
-
-    for (auto line: this->lines) {
-        out << "{\n";
-        if (line.address.has_value()) {
-            out << "  \"address\": ";
-            out << line.address.value() << ",\n";
-        }
-        if (!line.text.empty()) {
-            out << " \"line\": ";
-            out << "\"" << line.text << "\",\n";
-        }
-        if (line.opcodes.size() > 0) {
-            out << " \"opcodes\": [";
-            for (auto opcode: line.opcodes) {
-                out << "\"" << opcode << "\", ";
-            }
-            out << "],\n";
-        }
-        if (!line.section.empty()) {
-            out << " \"section\": \"" << line.section << "\",\n";
-        }
-        if (line.labels.size() > 0) {
-            out << " \"labels\": {";
-            for (auto labelref: line.labels) {
-                out << "\"" << labelref.name << "\": {\"start_col\": " << labelref.range.start_col << ", \"end_col\": " << labelref.range.end_col << "},";
-            }
-            out << "},\n";
-        }
-        out << "},\n";
-    }
-
-    out << "],";
-
-    out << "\"labels\": {\n";
-    for (auto label: this->labels) {
-        out << "\"" << label.first << "\": " << label.second << ",\n";
-    }
-    out << "}}\n";
+    JsonWriter writer(out, this->lines, this->labels);
+    writer.write();
 }
 
 void AsmParser::ObjDumpParser::outputText(std::ostream &out) {
