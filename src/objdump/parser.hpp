@@ -13,6 +13,10 @@ private:
     std::vector<asm_line> lines;
     std::unordered_map<std::string, int32_t> labels;
 
+    // todo: bad names
+    void actually_address();
+    void actually_filename();
+
     void eol();
     void address();
     void opcodes();

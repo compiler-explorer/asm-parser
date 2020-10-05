@@ -29,6 +29,7 @@ struct asm_link {
 
 struct asm_line {
     std::string text;
+    std::string section;
     std::vector<asm_label> labels;
     std::vector<std::string> opcodes;
     std::optional<asm_source> source;
