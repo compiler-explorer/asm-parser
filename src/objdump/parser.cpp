@@ -8,22 +8,26 @@
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter) {
 }
 
-int ustrlen(const std::string s) {
+size_t ustrlen(const std::string s) {
     const char *cstrptr = s.data();
 
     mblen(NULL, 0);
 
-    auto maxlen = s.length();
+    size_t maxlen = s.length();
 
-    int ulen = 0;
-    while (maxlen > 0) {
+    size_t ulen = 0;
+    while (maxlen != 0) {
         auto mbcharlen = mblen(cstrptr, maxlen);
         if (mbcharlen < 1) {
             break;
         }
         cstrptr += mbcharlen;
         ulen += 1;
-        maxlen -= mbcharlen;
+        if (maxlen > mbcharlen) {
+          maxlen -= mbcharlen;
+        } else {
+          break;
+        }
     }
 
     return ulen;
