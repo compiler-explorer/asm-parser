@@ -13,7 +13,7 @@ private:
     const Filter filter;
     ParserState state{};
     std::vector<asm_line> lines;
-    std::unordered_map<std::string, int32_t> labels;
+    std::vector<asm_labelpair> labels;
 
     // todo: bad names
     void actually_address();

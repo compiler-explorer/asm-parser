@@ -29,7 +29,14 @@ void AsmParser::ObjDumpParser::eol() {
 
         this->state.currentLine.source = this->state.currentSourceRef;
 
-        lines.push_back(this->state.currentLine);
+        if (lines.size() < 5000) {
+            lines.push_back(this->state.currentLine);
+        } else {
+            asm_line truncated = {};
+            truncated.text = "[truncated; too many lines]";
+            lines.push_back(truncated);
+            this->state.stopParsing = true;
+        }
     }
 
     this->state.commonReset();
@@ -41,7 +48,7 @@ void AsmParser::ObjDumpParser::label() {
     this->state.text = this->state.text + ":";
     this->state.currentLine.is_label = true;
 
-    labels.emplace(this->state.previousLabel, lines.size() + 1);
+    labels.push_back({this->state.previousLabel, lines.size() + 1});
 }
 
 void AsmParser::ObjDumpParser::labelref() {
@@ -115,7 +122,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
     char c;
 
     this->state.inAddress = true;
-    while(in.get(c)) {
+    while(!this->state.stopParsing && in.get(c)) {
         if (c == 13) {
             // skip cr (assuming there's going to be an lf)
         } else if (c == 10) {

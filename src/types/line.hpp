@@ -27,6 +27,8 @@ struct asm_link {
     int32_t to;
 };
 
+using asm_labelpair = std::pair<std::string, int32_t>;
+
 struct asm_line {
     std::string text;
     std::string section;

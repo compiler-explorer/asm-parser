@@ -20,7 +20,7 @@ private:
     const Filter filter;
     std::ostream &out;
     const std::vector<asm_line> lines;
-    const std::unordered_map<std::string, int32_t> labels;
+    const std::vector<asm_labelpair> labels;
 
     bool prettyPrint;
 
@@ -33,7 +33,7 @@ private:
     void writeKv(const std::string key, const int value, const jsonopt opts);
     void writeLine(const asm_line line);
 public:
-    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels, const Filter filter);
+    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::vector<asm_labelpair> labels, const Filter filter);
 
     void write();
 };

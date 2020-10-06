@@ -1,6 +1,7 @@
 #include "jsonwriter.hpp"
+#include <algorithm>
 
-AsmParser::JsonWriter::JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels, const Filter filter) :
+AsmParser::JsonWriter::JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::vector<asm_labelpair> labels, const Filter filter) :
     filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
 {
 }
@@ -205,10 +206,11 @@ void AsmParser::JsonWriter::JsonWriter::write() {
 
     this->out << "],";
 
-    this->writeKeyName("labels");
+    this->writeKeyName("labelDefinitions");
     this->out << "{";
     if (this->prettyPrint) this->out << "\n";
     bool firstLabel = true;
+
     for (auto label: this->labels) {
         if (firstLabel) {
             this->writeKv(label.first, label.second, jsonopt::none);
