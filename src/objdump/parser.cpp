@@ -23,7 +23,7 @@ size_t ustrlen(const std::string s) {
         }
         cstrptr += mbcharlen;
         ulen += 1;
-        if (maxlen > mbcharlen) {
+        if (maxlen > (size_t)mbcharlen) {
           maxlen -= mbcharlen;
         } else {
           break;
