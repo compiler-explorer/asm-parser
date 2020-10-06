@@ -15,8 +15,10 @@ public:
     bool inOpcodes{};
     bool inSectionStart{};
     bool inSectionName{};
+    bool inSourceRef{};
     bool skipRestOfTheLine{};
     asm_label currentLabelReference{};
+    asm_source currentSourceRef{};
     std::string previousLabel;
     std::string text;
     std::string currentFilename;

@@ -26,6 +26,7 @@ private:
 
     void writeKeyName(const char *key);
     void writeKeyName(const std::string key);
+    void writeKvNull(const char *key, const jsonopt opts);
     void writeKv(const char *key, const std::string value, const jsonopt opts);
     void writeKv(const char *key, const int value, const jsonopt opts);
     void writeKv(const std::string key, const std::string value, const jsonopt opts);

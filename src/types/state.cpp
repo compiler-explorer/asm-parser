@@ -10,5 +10,6 @@ void AsmParser::ParserState::commonReset() {
     this->inLabel = false;
     this->inSectionStart = false;
     this->inSectionName = false;
+    this->inSourceRef = false;
     this->skipRestOfTheLine = false;
 }

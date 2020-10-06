@@ -8,7 +8,12 @@ AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter) {
 }
 
 void AsmParser::ObjDumpParser::eol() {
-    if (!this->state.text.empty()) {
+    if (this->state.inSourceRef) {
+        auto lineNum = atoi(this->state.text.c_str());
+        if (lineNum > 0) {
+            this->state.currentSourceRef.line = lineNum;
+        }
+    } else if (!this->state.text.empty()) {
         this->state.currentLine.text = this->state.text;
         this->state.currentLine.section = this->state.currentSection;
 
@@ -21,6 +26,8 @@ void AsmParser::ObjDumpParser::eol() {
                 label.range.end_col += 2;
             }
         }
+
+        this->state.currentLine.source = this->state.currentSourceRef;
 
         lines.push_back(this->state.currentLine);
     }
@@ -117,7 +124,11 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
         } else if (!this->state.skipRestOfTheLine) {
 
             if (this->state.inAddress) {
-                if (c == ':') {
+                if (c == '/') {
+                    // source reference
+                    this->state.inAddress = false;
+                    this->state.inSourceRef = true;
+                } else if (c == ':') {
                     this->address();
                     continue;
                 } else if (is_whitespace(c)) {
@@ -176,6 +187,12 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                     } else {
                         this->state.currentSection += c;
                     }
+                    continue;
+                }
+            } else if (this->state.inSourceRef) {
+                if (c == ':') {
+                    this->state.currentSourceRef = {this->state.text, 0};
+                    this->state.text.clear();
                     continue;
                 }
             } else if (!this->state.inComment) {
