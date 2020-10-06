@@ -41,7 +41,7 @@ void AsmParser::ObjDumpParser::label() {
     this->state.text = this->state.text + ":";
     this->state.currentLine.is_label = true;
 
-    labels.emplace(this->state.previousLabel, lines.size());
+    labels.emplace(this->state.previousLabel, lines.size() + 1);
 }
 
 void AsmParser::ObjDumpParser::labelref() {
