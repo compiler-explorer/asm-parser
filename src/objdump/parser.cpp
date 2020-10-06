@@ -4,13 +4,24 @@
 #include "../utils/jsonwriter.hpp"
 #include <iostream>
 
-AsmParser::ObjDumpParser::ObjDumpParser() {
+AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter) {
 }
 
 void AsmParser::ObjDumpParser::eol() {
     if (!this->state.text.empty()) {
         this->state.currentLine.text = this->state.text;
         this->state.currentLine.section = this->state.currentSection;
+
+        if (!this->state.currentLine.is_label) {
+            this->state.currentLine.text = ' ' + this->state.currentLine.text;
+
+            for (auto &label: this->state.currentLine.labels) {
+                // cols start at 1, and we added a space, so add 2
+                label.range.start_col += 2;
+                label.range.end_col += 2;
+            }
+        }
+
         lines.push_back(this->state.currentLine);
     }
 
@@ -21,6 +32,7 @@ void AsmParser::ObjDumpParser::label() {
     this->state.previousLabel = this->state.text;
 
     this->state.text = this->state.text + ":";
+    this->state.currentLine.is_label = true;
 
     labels.emplace(this->state.previousLabel, lines.size());
 }
@@ -48,6 +60,7 @@ void AsmParser::ObjDumpParser::opcodes() {
         }
     }
     this->state.text.clear();
+    this->state.inOpcodes = false;
 }
 
 void AsmParser::ObjDumpParser::actually_address() {
@@ -107,7 +120,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 if (c == ':') {
                     this->address();
                     continue;
-                } else if (c == ' ' || c == '\t') {
+                } else if (is_whitespace(c)) {
                     if (this->state.text == "Disassembly") {
                         this->state.inAddress = false;
                         this->state.inSectionStart = true;
@@ -177,22 +190,24 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 } else if (this->state.inSomethingWithALabel) {
                     if (c == '>') {
                         this->state.inSomethingWithALabel = false;
-                        if (this->state.currentLabelReference.name.length() != 0) {
+                        if (this->state.currentLabelReference.name.empty()) {
                             this->labelref();
                         }
                     } else if (c == '+') {
+                        this->state.inSomethingWithALabel = false;
                         this->labelref();
                     }
                 }
             }
 
+            if (is_whitespace(c) && this->state.text.empty()) continue;
             this->state.text += c;
         }
     }
 }
 
 void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
-    JsonWriter writer(out, this->lines, this->labels);
+    JsonWriter writer(out, this->lines, this->labels, this->filter);
     writer.write();
 }
 

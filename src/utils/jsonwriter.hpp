@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "../types/line.hpp"
+#include "../types/filter.hpp"
 
 namespace AsmParser {
 
@@ -16,6 +17,7 @@ enum class jsonopt {
 
 class JsonWriter {
 private:
+    const Filter filter;
     std::ostream &out;
     const std::vector<asm_line> lines;
     const std::unordered_map<std::string, int32_t> labels;
@@ -30,7 +32,7 @@ private:
     void writeKv(const std::string key, const int value, const jsonopt opts);
     void writeLine(const asm_line line);
 public:
-    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels);
+    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels, const Filter filter);
 
     void write();
 };

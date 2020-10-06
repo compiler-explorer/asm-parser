@@ -1,7 +1,7 @@
 #include "jsonwriter.hpp"
 
-AsmParser::JsonWriter::JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels) :
-    out(out), lines(lines), labels(labels), prettyPrint(false)
+AsmParser::JsonWriter::JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::unordered_map<std::string, int32_t> labels, const Filter filter) :
+    filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
 {
 }
 
@@ -67,26 +67,6 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line) {
     this->out << "{";
 
     if (this->prettyPrint) this->out << "\n";
-        
-    if (line.address.has_value()) {
-        if (wroteSomethingInRoot) {
-            this->out << ", ";
-        } else {
-            wroteSomethingInRoot = true;
-        }
-
-        this->writeKv("address", line.address.value(), jsonopt::none);
-    }
-
-    if (!line.text.empty()) {
-        if (wroteSomethingInRoot) {
-            this->out << ", ";
-        } else {
-            wroteSomethingInRoot = true;
-        }
-
-        this->writeKv("line", line.text, jsonopt::none);
-    }
 
     if (line.opcodes.size() > 0) {
         if (wroteSomethingInRoot) {
@@ -111,7 +91,34 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line) {
         this->out << "]";
     }
 
-    if (!line.section.empty()) {
+    if (line.address.has_value() && !(line.is_label && this->filter.compatmode)) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKv("address", line.address.value(), jsonopt::none);
+    }
+
+    if (!line.text.empty()) {
+        if (wroteSomethingInRoot) {
+            this->out << ", ";
+        } else {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKv("text", line.text, jsonopt::none);
+    }
+
+    if (wroteSomethingInRoot) {
+        this->out << ", ";
+    }
+    this->writeKeyName("source");
+    this->out << "null";
+    wroteSomethingInRoot = true;
+
+    if (!line.section.empty() && !this->filter.compatmode) {
         if (wroteSomethingInRoot) {
             this->out << ", ";
         } else {
@@ -121,35 +128,37 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line) {
         this->writeKv("section", line.section, jsonopt::none);
     }
 
-    if (line.labels.size() > 0) {
-        if (wroteSomethingInRoot) {
-            this->out << ", ";
-        } else {
-            wroteSomethingInRoot = true;
-        }
-
-        this->writeKeyName("labels");
-        this->out << "{";
-
-        bool firstLabel = true;
-        for (auto labelref: line.labels) {
-            if (!firstLabel) {
-                this->out << ",";
-                if (this->prettyPrint) this->out << "\n";
-            } else {
-                firstLabel = false;
-            }
-
-            this->writeKeyName(labelref.name);
-            this->out << "{";
-            this->writeKv("start_col", labelref.range.start_col, jsonopt::none);
-            this->writeKv("end_col", labelref.range.end_col, jsonopt::prefixwithcomma);
-            this->out << "}";
-        }
-        this->out << "}";
-
-        if (this->prettyPrint) this->out << "\n";
+    if (wroteSomethingInRoot) {
+        this->out << ", ";
+    } else {
+        wroteSomethingInRoot = true;
     }
+
+    this->writeKeyName("labels");
+    this->out << "[";
+
+    bool firstLabel = true;
+    for (auto labelref: line.labels) {
+        if (!firstLabel) {
+            this->out << ",";
+            if (this->prettyPrint) this->out << "\n";
+        } else {
+            firstLabel = false;
+        }
+
+        this->out << "{";
+        this->writeKv("name", labelref.name, jsonopt::trailingcomma);
+        this->writeKeyName("range");
+        this->out << "{";
+        this->writeKv("startCol", labelref.range.start_col, jsonopt::none);
+        this->writeKv("endCol", labelref.range.end_col, jsonopt::prefixwithcomma);
+        this->out << "}";
+        this->out << "}";
+    }
+    this->out << "]";
+
+    if (this->prettyPrint) this->out << "\n";
+
     this->out << "}";
 }
 

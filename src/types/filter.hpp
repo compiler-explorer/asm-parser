@@ -1,3 +1,4 @@
+#pragma once
 
 namespace AsmParser {
 
@@ -8,6 +9,8 @@ struct Filter {
     bool directives{};
     bool comment_only{};
     bool whitespace{};
+
+    bool compatmode{};
 
     bool code_only{};
 };

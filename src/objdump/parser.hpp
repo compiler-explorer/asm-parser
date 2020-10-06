@@ -2,6 +2,7 @@
 
 #include "../types/line.hpp"
 #include "../types/state.hpp"
+#include "../types/filter.hpp"
 #include <istream>
 #include <unordered_map>
 
@@ -9,6 +10,7 @@ namespace AsmParser {
 
 class ObjDumpParser {
 private:
+    const Filter filter;
     ParserState state{};
     std::vector<asm_line> lines;
     std::unordered_map<std::string, int32_t> labels;
@@ -23,7 +25,7 @@ private:
     void label();
     void labelref();
 public:
-    ObjDumpParser();
+    ObjDumpParser(const Filter filter);
 
     void fromStream(std::istream &in);
 
