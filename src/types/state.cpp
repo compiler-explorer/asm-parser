@@ -2,7 +2,7 @@
 
 void AsmParser::ParserState::commonReset() {
     this->currentLine = {};
-    this->text = "";
+    this->text.clear();
     this->hasPrefixingWhitespace = false;
     this->inComment = false;
     this->inAddress = true;

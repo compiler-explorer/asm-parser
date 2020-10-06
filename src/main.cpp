@@ -5,6 +5,8 @@
 #include "types/filter.hpp"
 
 int main(int argc, char **argv) {
+    setlocale(LC_ALL, "en_US.utf8");
+
     AsmParser::Filter filter;
     filter.compatmode = true;
 

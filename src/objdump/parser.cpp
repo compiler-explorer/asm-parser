@@ -3,8 +3,30 @@
 #include "../utils/utils.hpp"
 #include "../utils/jsonwriter.hpp"
 #include <iostream>
+#include <clocale>
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter) {
+}
+
+int ustrlen(const std::string s) {
+    const char *cstrptr = s.data();
+
+    mblen(NULL, 0);
+
+    auto maxlen = s.length();
+
+    int ulen = 0;
+    while (maxlen > 0) {
+        auto mbcharlen = mblen(cstrptr, maxlen);
+        if (mbcharlen < 1) {
+            break;
+        }
+        cstrptr += mbcharlen;
+        ulen += 1;
+        maxlen -= mbcharlen;
+    }
+
+    return ulen;
 }
 
 void AsmParser::ObjDumpParser::eol() {
@@ -52,7 +74,7 @@ void AsmParser::ObjDumpParser::label() {
 }
 
 void AsmParser::ObjDumpParser::labelref() {
-    this->state.currentLabelReference.range.end_col = this->state.text.length();
+    this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
     this->state.currentLabelReference.name = this->state.text.substr(
         this->state.currentLabelReference.range.start_col
     );
@@ -183,7 +205,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                     if (this->state.inSectionName) {
                         this->state.text.clear();
 
-                        this->state.currentSection = "";
+                        this->state.currentSection.clear();
                         this->state.currentSection += c;
                         continue;
                     }
@@ -208,7 +230,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
                 } else if (c == '<') {
                     this->state.inSomethingWithALabel = true;
                     this->state.currentLabelReference.range = {
-                        (uint16_t)(this->state.text.length() + 1),
+                        (uint16_t)(ustrlen(this->state.text) + 1),
                         (uint16_t)0
                     };
                 } else if (this->state.inSomethingWithALabel) {
