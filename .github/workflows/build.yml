@@ -26,5 +26,10 @@ jobs:
       - name: Build
         run: |
           mkdir build
+          cd build
           cmake ..
           make
+
+      - name: Test
+        run: |
+          src/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
