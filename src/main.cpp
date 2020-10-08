@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     } else {
         AsmParser::ObjDumpParser parser(filter);
         parser.fromStream(std::cin);
-        parser.outputText(std::cout);
+        parser.outputJson(std::cout);
     }
 
     return 0;
