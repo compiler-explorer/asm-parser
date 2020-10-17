@@ -19,18 +19,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Download Conan package manager.
-        run: |
-             pwd
-             pip3 install wheel setuptools
-             pip3 install conan
-             export PATH=$PATH:/home/runner/.local/bin
-             echo $PATH
-             conan --version
-             sudo ln -s ~/.local/bin/conan /usr/local/bin/conan
-
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      - name: Download Conan package manager.
+        run: |
+             ./setup.sh
 
       # Runs a single command using the runners shell
       - name: Build
