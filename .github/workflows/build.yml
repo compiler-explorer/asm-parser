@@ -27,6 +27,7 @@ jobs:
              export PATH=$PATH:/home/runner/.local/bin
              echo $PATH
              conan --version
+             sudo ln -s ~/.local/bin/conan /usr/local/bin/conan
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
