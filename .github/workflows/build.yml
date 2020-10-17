@@ -36,4 +36,4 @@ jobs:
 
       - name: Test
         run: |
-          $GITHUB_WORKSPACE/build/src/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
+          $GITHUB_WORKSPACE/build/bin/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
