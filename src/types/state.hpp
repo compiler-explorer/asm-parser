@@ -18,6 +18,7 @@ public:
     bool inSourceRef{};
     bool skipRestOfTheLine{};
     bool stopParsing{};
+    bool ignoreUntilNextLabel{};
     asm_label currentLabelReference{};
     asm_source currentSourceRef{};
     std::string previousLabel;

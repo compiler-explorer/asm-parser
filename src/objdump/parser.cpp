@@ -4,6 +4,7 @@
 #include "../utils/jsonwriter.hpp"
 #include <iostream>
 #include <clocale>
+#include <ctre.hpp>
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter) {
 }
@@ -33,7 +34,20 @@ size_t ustrlen(const std::string s) {
     return ulen;
 }
 
+bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name) const {
+    if (auto match = ctre::match<"^(__.*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|frame_dummy|\\.plt.*|_dl_relocate_static_pie)$">(name)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void AsmParser::ObjDumpParser::eol() {
+    if (this->state.ignoreUntilNextLabel) {
+        this->state.commonReset();
+        return;
+    }
+
     if (this->state.inSourceRef) {
         auto lineNum = atoi(this->state.text.c_str());
         if (lineNum > 0) {
@@ -69,6 +83,9 @@ void AsmParser::ObjDumpParser::eol() {
 }
 
 void AsmParser::ObjDumpParser::label() {
+    this->state.ignoreUntilNextLabel = this->shouldIgnoreFunction(this->state.text);
+    if (this->state.ignoreUntilNextLabel) return;
+
     this->state.previousLabel = this->state.text;
 
     this->state.text = this->state.text + ":";
@@ -78,49 +95,61 @@ void AsmParser::ObjDumpParser::label() {
 }
 
 void AsmParser::ObjDumpParser::labelref() {
-    this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
-    this->state.currentLabelReference.name = this->state.text.substr(
-        this->state.currentLabelReference.range.start_col
-    );
+    if (!this->state.ignoreUntilNextLabel) {
+        this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
+        this->state.currentLabelReference.name = this->state.text.substr(
+            this->state.currentLabelReference.range.start_col
+        );
 
-    this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+        if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name)) {
+            this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+        }
+    }
+
     this->state.currentLabelReference = {};
 }
 
 void AsmParser::ObjDumpParser::opcodes() {
-    std::string opcode{};
-    for (auto c: this->state.text) {
-        if (c != ' ') {
-            opcode += c;
-        } else {
-            if (!opcode.empty()) {
-                this->state.currentLine.opcodes.push_back(opcode);
-                opcode.clear();
+    if (!this->state.ignoreUntilNextLabel) {
+        std::string opcode{};
+        for (auto c: this->state.text) {
+            if (c != ' ') {
+                opcode += c;
+            } else {
+                if (!opcode.empty()) {
+                    this->state.currentLine.opcodes.push_back(opcode);
+                    opcode.clear();
+                }
             }
         }
     }
+
     this->state.text.clear();
     this->state.inOpcodes = false;
 }
 
 void AsmParser::ObjDumpParser::actually_address() {
-    int64_t addr = 0;
-    int8_t bitsdone = 0;
-    for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++) {
-        if (!is_hex(*c)) break;
+    if (!this->state.ignoreUntilNextLabel) {
+        int64_t addr = 0;
+        int8_t bitsdone = 0;
+        for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++) {
+            if (!is_hex(*c)) break;
 
-        addr += hex2int(*c) << bitsdone;
-        bitsdone += 4;
+            addr += hex2int(*c) << bitsdone;
+            bitsdone += 4;
+        }
+
+        this->state.currentLine.address = addr;
     }
-
-    this->state.currentLine.address = addr;
 
     this->state.inAddress = false;
     this->state.inOpcodes = true;
 }
 
 void AsmParser::ObjDumpParser::actually_filename() {
-    this->state.currentFilename = this->state.text;
+    if (!this->state.ignoreUntilNextLabel) {
+        this->state.currentFilename = this->state.text;
+    }
 
     this->state.inAddress = false;
     this->state.inOpcodes = false;
@@ -256,12 +285,12 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in) {
     }
 }
 
-void AsmParser::ObjDumpParser::outputJson(std::ostream &out) {
+void AsmParser::ObjDumpParser::outputJson(std::ostream &out) const {
     JsonWriter writer(out, this->lines, this->labels, this->filter);
     writer.write();
 }
 
-void AsmParser::ObjDumpParser::outputText(std::ostream &out) {
+void AsmParser::ObjDumpParser::outputText(std::ostream &out) const {
     for (auto line: this->lines) {
         out << line.text << "\n";
     }

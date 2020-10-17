@@ -5,6 +5,7 @@
 #include "../types/filter.hpp"
 #include <istream>
 #include <unordered_map>
+#include <string_view>
 
 namespace AsmParser {
 
@@ -19,6 +20,7 @@ private:
     void actually_address();
     void actually_filename();
 
+    bool shouldIgnoreFunction(const std::string_view name) const;
     void eol();
     void address();
     void opcodes();
@@ -29,8 +31,8 @@ public:
 
     void fromStream(std::istream &in);
 
-    void outputJson(std::ostream &out);
-    void outputText(std::ostream &out);
+    void outputJson(std::ostream &out) const;
+    void outputText(std::ostream &out) const;
 };
 
 };
