@@ -32,13 +32,28 @@ void AsmParser::JsonWriter::writeKvNull(const char *key, const jsonopt opts)
     if (this->prettyPrint) this->out << "\n";
 }
 
+std::string escape(const std::string in) {
+    std::string out;
+    out.reserve(in.length());
+    for (auto c : in) {
+        if (c == '\t') {
+            out += "\\t";
+        } else if (c == '"') {
+            out += "\\\"";
+        } else {
+            out += c;
+        }
+    }
+    return out;
+}
+
 void AsmParser::JsonWriter::writeKv(const char *key, const std::string value, const jsonopt opts)
 {
     if (opts == jsonopt::prefixwithcomma) this->out << ", ";
 
     this->writeKeyName(key);
 
-    this->out << "\"" << value << "\"";
+    this->out << "\"" << escape(value) << "\"";
 
     if (opts == jsonopt::trailingcomma) this->out << ", ";
 
