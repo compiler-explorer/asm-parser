@@ -31,9 +31,9 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-8 -DCMAKE_CXX_COMPILER=/usr/bin/g++-8 -DCMAKE_BUILD_TYPE=Release ..
+          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-9 -DCMAKE_CXX_COMPILER=/usr/bin/g++-9 -DCMAKE_BUILD_TYPE=Release ..
           make
 
       - name: Test
         run: |
-          $GITHUB_WORKSPACE/build/src/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
+          $GITHUB_WORKSPACE/build/bin/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
