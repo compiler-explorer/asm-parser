@@ -36,6 +36,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.comment_only = true;
         else if (streq(argv[i], "-whitespace"))
             config.filter.whitespace = true;
+        else if (streq(argv[i], "-plt"))
+            config.filter.plt = true;
         else if (streq(argv[i], "-nocompat"))
             config.filter.compatmode = false;
         else if (streq(argv[i], "-stdin"))

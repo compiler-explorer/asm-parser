@@ -11,6 +11,7 @@ struct Filter
     bool directives{};
     bool comment_only{};
     bool whitespace{};
+    bool plt{};
 
     bool compatmode{};
 

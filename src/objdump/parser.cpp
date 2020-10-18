@@ -49,6 +49,10 @@ bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name)
     {
         return true;
     }
+    else if (this->filter.plt)
+    {
+        return (name.ends_with("@plt") || name.ends_with("@plt>"));
+    }
     else
     {
         return false;
