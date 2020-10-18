@@ -1,22 +1,25 @@
 #pragma once
 
 #include <ostream>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
-#include "../types/line.hpp"
 #include "../types/filter.hpp"
+#include "../types/line.hpp"
 
-namespace AsmParser {
+namespace AsmParser
+{
 
-enum class jsonopt {
+enum class jsonopt
+{
     none,
     trailingcomma,
     prefixwithcomma
 };
 
-class JsonWriter {
-private:
+class JsonWriter
+{
+    private:
     const Filter filter;
     std::ostream &out;
     const std::vector<asm_line> lines;
@@ -32,10 +35,14 @@ private:
     void writeKv(const std::string key, const std::string value, const jsonopt opts);
     void writeKv(const std::string key, const int value, const jsonopt opts);
     void writeLine(const asm_line line);
-public:
-    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::vector<asm_labelpair> labels, const Filter filter);
+
+    public:
+    JsonWriter(std::ostream &out,
+               const std::vector<asm_line> lines,
+               const std::vector<asm_labelpair> labels,
+               const Filter filter);
 
     void write();
 };
 
-}
+} // namespace AsmParser

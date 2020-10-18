@@ -1,16 +1,18 @@
 #pragma once
 
+#include "../types/filter.hpp"
 #include "../types/line.hpp"
 #include "../types/state.hpp"
-#include "../types/filter.hpp"
 #include <istream>
-#include <unordered_map>
 #include <string_view>
+#include <unordered_map>
 
-namespace AsmParser {
+namespace AsmParser
+{
 
-class ObjDumpParser {
-private:
+class ObjDumpParser
+{
+    private:
     const Filter filter;
     ParserState state{};
     std::vector<asm_line> lines;
@@ -26,7 +28,8 @@ private:
     void opcodes();
     void label();
     void labelref();
-public:
+
+    public:
     ObjDumpParser(const Filter filter);
 
     void fromStream(std::istream &in);
@@ -35,4 +38,4 @@ public:
     void outputText(std::ostream &out) const;
 };
 
-};
+}; // namespace AsmParser

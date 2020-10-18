@@ -1,8 +1,10 @@
 #pragma once
 
-namespace AsmParser {
+namespace AsmParser
+{
 
-struct Filter {
+struct Filter
+{
     bool binary{};
     bool unused_labels{};
     bool library_functions{};
@@ -15,4 +17,4 @@ struct Filter {
     bool code_only{};
 };
 
-}
+} // namespace AsmParser

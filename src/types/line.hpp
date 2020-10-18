@@ -1,27 +1,32 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
-namespace AsmParser {
+namespace AsmParser
+{
 
-struct asm_range {
+struct asm_range
+{
     uint16_t start_col;
     uint16_t end_col;
 };
 
-struct asm_label {
+struct asm_label
+{
     std::string name;
     asm_range range;
 };
 
-struct asm_source {
+struct asm_source
+{
     std::string file;
     int32_t line;
 };
 
-struct asm_link {
+struct asm_link
+{
     int32_t offset;
     int32_t length;
     int32_t to;
@@ -29,7 +34,8 @@ struct asm_link {
 
 using asm_labelpair = std::pair<std::string, int32_t>;
 
-struct asm_line {
+struct asm_line
+{
     std::string text;
     std::string section;
     std::vector<asm_label> labels;
@@ -39,4 +45,4 @@ struct asm_line {
     std::optional<int64_t> address;
 };
 
-}
+} // namespace AsmParser

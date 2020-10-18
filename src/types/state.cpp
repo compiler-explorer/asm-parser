@@ -1,6 +1,7 @@
 #include "state.hpp"
 
-void AsmParser::ParserState::commonReset() {
+void AsmParser::ParserState::commonReset()
+{
     this->currentLine = {};
     this->text.clear();
     this->hasPrefixingWhitespace = false;

@@ -1,16 +1,18 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include "objdump/parser.hpp"
 #include "types/filter.hpp"
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     setlocale(LC_ALL, "en_US.utf8");
 
     AsmParser::Filter filter;
     filter.compatmode = true;
 
-    if (argc > 1) {
+    if (argc > 1)
+    {
         std::string asmfile = argv[1];
 
         std::fstream fs;
@@ -19,7 +21,9 @@ int main(int argc, char **argv) {
         AsmParser::ObjDumpParser parser(filter);
         parser.fromStream(fs);
         parser.outputJson(std::cout);
-    } else {
+    }
+    else
+    {
         AsmParser::ObjDumpParser parser(filter);
         parser.fromStream(std::cin);
         parser.outputJson(std::cout);

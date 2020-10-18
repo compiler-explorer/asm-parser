@@ -1,12 +1,14 @@
 #pragma once
 
-#include <string>
 #include "line.hpp"
+#include <string>
 
-namespace AsmParser {
+namespace AsmParser
+{
 
-class ParserState { 
-public:
+class ParserState
+{
+    public:
     bool inComment{};
     bool inSomethingWithALabel{};
     bool hasPrefixingWhitespace{};
@@ -30,4 +32,4 @@ public:
     void commonReset();
 };
 
-};
+}; // namespace AsmParser
