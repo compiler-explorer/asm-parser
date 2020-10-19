@@ -2,21 +2,42 @@
 
 #include "../types/filter.hpp"
 #include "../types/line.hpp"
-#include "../types/state.hpp"
 #include "../types/parser.hpp"
-#include <istream>
+#include <iosfwd>
 #include <string_view>
 #include <unordered_map>
 
 namespace AsmParser
 {
 
+class AssemblyTextParserState
+{
+    public:
+    bool stopParsing{};
+
+    bool mayRemovePreviousLabel{true};
+    bool keepInlineCode{};
+    asm_source lastOwnSource{};
+
+    bool inNvccDef{};
+    bool inNvccCode{};
+    int inCustomAssembly{0};
+
+    asm_label currentLabelReference{};
+    asm_source currentSourceRef{};
+    std::string previousLabel;
+    std::string text;
+    std::string currentFilename;
+    std::string currentSection;
+    asm_line currentLine{};
+};
+
 class AssemblyTextParser : public IParser
 {
     private:
 
     const Filter filter;
-    ParserState state{};
+    AssemblyTextParserState state{};
     std::vector<asm_line> lines;
     std::vector<asm_labelpair> labels;
 

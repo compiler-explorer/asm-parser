@@ -2,8 +2,8 @@
 #include "regexes.hpp"
 #include "../utils/jsonwriter.hpp"
 
-#include <iostream>
 #include <cstdlib>
+#include <istream>
 
 AsmParser::AssemblyTextParser::AssemblyTextParser(const Filter filter) : filter(filter)
 {

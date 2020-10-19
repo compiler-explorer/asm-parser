@@ -4,7 +4,22 @@
 #include "../utils/utils.hpp"
 #include <clocale>
 #include <ctre.hpp>
-#include <iostream>
+#include <istream>
+
+void AsmParser::ObjDumpParserState::commonReset()
+{
+    this->currentLine = {};
+    this->text.clear();
+    this->hasPrefixingWhitespace = false;
+    this->inComment = false;
+    this->inAddress = true;
+    this->inOpcodes = false;
+    this->inLabel = false;
+    this->inSectionStart = false;
+    this->inSectionName = false;
+    this->inSourceRef = false;
+    this->skipRestOfTheLine = false;
+}
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter)
 {

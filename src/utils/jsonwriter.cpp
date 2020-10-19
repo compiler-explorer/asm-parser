@@ -1,5 +1,6 @@
 #include "jsonwriter.hpp"
 #include <algorithm>
+#include <ostream>
 
 AsmParser::JsonWriter::JsonWriter(std::ostream &out,
                                   const std::vector<asm_line> lines,
