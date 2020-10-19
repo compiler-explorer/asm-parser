@@ -21,6 +21,15 @@ class ParserState
     bool skipRestOfTheLine{};
     bool stopParsing{};
     bool ignoreUntilNextLabel{};
+
+    bool mayRemovePreviousLabel{true};
+    bool keepInlineCode{};
+    asm_source lastOwnSource{};
+
+    bool inNvccDef{};
+    bool inNvccCode{};
+    int inCustomAssembly{0};
+
     asm_label currentLabelReference{};
     asm_source currentSourceRef{};
     std::string previousLabel;

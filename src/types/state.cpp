@@ -13,4 +13,12 @@ void AsmParser::ParserState::commonReset()
     this->inSectionName = false;
     this->inSourceRef = false;
     this->skipRestOfTheLine = false;
+
+    this->mayRemovePreviousLabel = true;
+    this->keepInlineCode = false;
+    this->lastOwnSource = {};
+
+    this->inNvccDef = false;
+    this->inNvccCode = false;
+    this->inCustomAssembly = 0;
 }

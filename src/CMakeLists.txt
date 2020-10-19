@@ -4,6 +4,7 @@ add_executable(asm-parser
     types/state.cpp
     utils/utils.cpp
     utils/jsonwriter.cpp
-    objdump/parser.cpp)
+    objdump/parser.cpp
+    assembly/parser.cpp)
 
 target_link_libraries(asm-parser CONAN_PKG::ctre)
