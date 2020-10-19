@@ -15,13 +15,13 @@ class AssemblyTextParserState
     public:
     bool stopParsing{};
 
-    bool mayRemovePreviousLabel{true};
+    bool mayRemovePreviousLabel{ true };
     bool keepInlineCode{};
     asm_source lastOwnSource{};
 
     bool inNvccDef{};
     bool inNvccCode{};
-    int inCustomAssembly{0};
+    int inCustomAssembly{ 0 };
 
     asm_label currentLabelReference{};
     asm_source currentSourceRef{};
@@ -35,7 +35,6 @@ class AssemblyTextParserState
 class AssemblyTextParser : public IParser
 {
     private:
-
     const Filter filter;
     AssemblyTextParserState state{};
     std::vector<asm_line> lines;

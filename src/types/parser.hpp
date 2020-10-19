@@ -5,7 +5,8 @@
 namespace AsmParser
 {
 
-class IParser {
+class IParser
+{
     public:
     virtual void fromStream(std::istream &in) = 0;
 

@@ -37,10 +37,7 @@ class JsonWriter
     void writeLine(const asm_line line);
 
     public:
-    JsonWriter(std::ostream &out,
-               const std::vector<asm_line> lines,
-               const std::vector<asm_labelpair> labels,
-               const Filter filter);
+    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::vector<asm_labelpair> labels, const Filter filter);
 
     void write();
 };

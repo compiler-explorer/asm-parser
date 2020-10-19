@@ -1,13 +1,12 @@
 #include "parser.hpp"
-#include "regexes.hpp"
 #include "../utils/jsonwriter.hpp"
+#include "regexes.hpp"
 
 #include <cstdlib>
 #include <istream>
 
 AsmParser::AssemblyTextParser::AssemblyTextParser(const Filter filter) : filter(filter)
 {
-
 }
 
 bool str_contains(const std::string_view s, char c)
@@ -15,31 +14,38 @@ bool str_contains(const std::string_view s, char c)
     auto found = s.find(c);
 
     return (found != std::string::npos);
-} 
+}
 
 bool AsmParser::AssemblyTextParser::label_is_used(const std::string_view s) const
 {
-    return std::any_of(this->labels.begin(), this->labels.end(), [s](auto labelpair) {
-        return s == labelpair.first;
-    });
+    return std::any_of(this->labels.begin(), this->labels.end(), [s](auto labelpair) { return s == labelpair.first; });
 }
 
 std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(const std::string_view line)
 {
     auto match_label = Regexes::labelDef(line);
-    if (match_label) {
+    if (match_label)
+    {
         return match_label.get<1>().to_view();
-    } else {
+    }
+    else
+    {
         auto match_assign = Regexes::assignmentDef(line);
-        if (match_assign) {
+        if (match_assign)
+        {
             return match_assign.get<1>().to_view();
-        } else {
+        }
+        else
+        {
             auto match_cuda = Regexes::cudaBeginDef(line);
-            if (match_cuda) {
+            if (match_cuda)
+            {
                 this->state.inNvccDef = true;
                 this->state.inNvccCode = true;
                 return match_cuda.get<1>().to_view();
-            } else {
+            }
+            else
+            {
                 return std::nullopt;
             }
         }
@@ -49,22 +55,26 @@ std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(
 void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
 {
     auto match = Regexes::sourceTag(line);
-    if (match) {
-        //auto file_index = match.get<1>().to_view();
+    if (match)
+    {
+        // auto file_index = match.get<1>().to_view();
         auto sourceline_text = match.get<2>().to_view();
         std::string_view file = "<stdin>";
         // todo: auto file = files[atoi(match.get<1>())];
         auto sourceLine = std::atoi(sourceline_text.data());
-        if (!file.empty()) {
+        if (!file.empty())
+        {
             // auto match_stdin = Regexes::stdInLooking(file);
             // if (match_stdin) {
             //     this->state.currentSourceRef.file.clear();
             // } else {
-                this->state.currentSourceRef.file = file;
+            this->state.currentSourceRef.file = file;
             //}
 
             this->state.currentSourceRef.line = sourceLine;
-        } else {
+        }
+        else
+        {
             this->state.currentSourceRef = {};
         }
     }
@@ -74,17 +84,21 @@ void AsmParser::AssemblyTextParser::eol()
 {
     const std::string_view line = this->state.text;
 
-    if (this->filter.comment_only) {
+    if (this->filter.comment_only)
+    {
         // todo: this needs to be handled outside of the lines (or with state)
         // Remove any block comments that start and end on a line if we're removing comment-only lines.
-        //asmResult = asmResult.replace(blockComments, '');
+        // asmResult = asmResult.replace(blockComments, '');
     }
 
-    //if (line.trim().length() == 0) {}; //return maybeAddBlank();
+    // if (line.trim().length() == 0) {}; //return maybeAddBlank();
 
-    if (Regexes::startAppBlock(line) || Regexes::startAsmNesting(line)) {
+    if (Regexes::startAppBlock(line) || Regexes::startAsmNesting(line))
+    {
         this->state.inCustomAssembly++;
-    } else if (Regexes::endAppBlock(line) || Regexes::endAsmNesting(line)) {
+    }
+    else if (Regexes::endAppBlock(line) || Regexes::endAsmNesting(line))
+    {
         this->state.inCustomAssembly--;
     }
 
@@ -96,26 +110,35 @@ void AsmParser::AssemblyTextParser::eol()
     //     lastOwnSource = source;
     // }
 
-    if (Regexes::endBlock(line) || (this->state.inNvccCode && str_contains(line, '}'))) {
+    if (Regexes::endBlock(line) || (this->state.inNvccCode && str_contains(line, '}')))
+    {
         this->state.currentSourceRef = {};
         this->state.previousLabel.clear();
         this->state.lastOwnSource = {};
     }
 
-    if (this->filter.library_functions && !this->state.lastOwnSource.line && this->state.currentFilename.empty()) {
-        if (this->state.mayRemovePreviousLabel && this->lines.size() > 0) {
+    if (this->filter.library_functions && !this->state.lastOwnSource.line && this->state.currentFilename.empty())
+    {
+        if (this->state.mayRemovePreviousLabel && this->lines.size() > 0)
+        {
             const auto lastLine = this->lines[this->lines.size() - 1];
 
-            if (lastLine.text.empty()) {
+            if (lastLine.text.empty())
+            {
                 this->state.keepInlineCode = true;
-            } else {
+            }
+            else
+            {
                 const auto labelDef = Regexes::labelDef(lastLine.text);
 
-                if (labelDef) {
+                if (labelDef)
+                {
                     this->lines.pop_back();
                     this->state.keepInlineCode = false;
                     // todo: delete labelDefinitions[labelDef[1]];
-                } else {
+                }
+                else
+                {
                     this->state.keepInlineCode = true;
                 }
             }
@@ -123,24 +146,27 @@ void AsmParser::AssemblyTextParser::eol()
             this->state.mayRemovePreviousLabel = false;
         }
 
-        if (!this->state.keepInlineCode) {
+        if (!this->state.keepInlineCode)
+        {
             this->state.text.clear();
             return;
         };
-    } else {
+    }
+    else
+    {
         this->state.mayRemovePreviousLabel = true;
     }
 
 
-    if (this->filter.comment_only &&
-        ((Regexes::commentOnly(line) && !this->state.inNvccCode) ||
-         (Regexes::commentOnlyNvcc(line) && this->state.inNvccCode))
-    ) {
+    if (this->filter.comment_only && ((Regexes::commentOnly(line) && !this->state.inNvccCode) ||
+                                      (Regexes::commentOnlyNvcc(line) && this->state.inNvccCode)))
+    {
         this->state.text.clear();
         return;
     }
 
-    if (this->state.inCustomAssembly > 0) {
+    if (this->state.inCustomAssembly > 0)
+    {
         // todo: line = this.fixLabelIndentation(line);
     }
 
@@ -157,24 +183,31 @@ void AsmParser::AssemblyTextParser::eol()
     //     }
     // }
 
-    if (this->state.inNvccDef) {
+    if (this->state.inNvccDef)
+    {
         if (Regexes::cudaEndDef(line))
             this->state.inNvccDef = false;
-    } else if (!found_label && this->filter.directives) {
+    }
+    else if (!found_label && this->filter.directives)
+    {
         // Check for directives only if it wasn't a label; the regexp would
         // otherwise misinterpret labels as directives.
-        if (Regexes::dataDefn(line) && !this->state.previousLabel.empty()) {
+        if (Regexes::dataDefn(line) && !this->state.previousLabel.empty())
+        {
             // We're defining data that's being used somewhere.
-        } else {
+        }
+        else
+        {
             // .inst generates an opcode, so does not count as a directive
-            if (Regexes::directive(line) && !Regexes::instOpcodeRe(line)) {
+            if (Regexes::directive(line) && !Regexes::instOpcodeRe(line))
+            {
                 this->state.text.clear();
                 return;
             }
         }
     }
 
-    std::string filteredLine{line};
+    std::string filteredLine{ line };
     // todo: line = utils.expandTabs(line);
     // todo: const text = AsmRegex.filterAsmLine(line, filters);
 
@@ -192,7 +225,6 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.text.clear();
 }
-
 
 
 void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
