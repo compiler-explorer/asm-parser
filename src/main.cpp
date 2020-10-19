@@ -3,8 +3,8 @@
 #include <iostream>
 #include <string_view>
 
-#include "objdump/parser.hpp"
 #include "assembly/parser.hpp"
+#include "objdump/parser.hpp"
 #include "types/filter.hpp"
 
 struct AsmParserConfiguration
@@ -73,11 +73,14 @@ int main(int argc, const char **argv)
         std::fstream fs;
         fs.open(config.filename, std::fstream::in);
 
-        if (config.filter.binary) {
+        if (config.filter.binary)
+        {
             AsmParser::ObjDumpParser parser(config.filter);
             parser.fromStream(fs);
             parser.outputJson(std::cout);
-        } else {
+        }
+        else
+        {
             AsmParser::AssemblyTextParser parser(config.filter);
             parser.fromStream(fs);
             parser.outputJson(std::cout);
@@ -85,11 +88,14 @@ int main(int argc, const char **argv)
     }
     else
     {
-        if (config.filter.binary) {
+        if (config.filter.binary)
+        {
             AsmParser::ObjDumpParser parser(config.filter);
             parser.fromStream(std::cin);
             parser.outputJson(std::cout);
-        } else {
+        }
+        else
+        {
             AsmParser::AssemblyTextParser parser(config.filter);
             parser.fromStream(std::cin);
             parser.outputJson(std::cout);

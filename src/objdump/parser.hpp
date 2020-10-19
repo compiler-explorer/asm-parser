@@ -3,6 +3,7 @@
 #include "../types/filter.hpp"
 #include "../types/line.hpp"
 #include "../types/state.hpp"
+#include "../types/parser.hpp"
 #include <istream>
 #include <string_view>
 #include <unordered_map>
@@ -10,7 +11,7 @@
 namespace AsmParser
 {
 
-class ObjDumpParser
+class ObjDumpParser : public IParser
 {
     private:
     const Filter filter;
@@ -32,10 +33,10 @@ class ObjDumpParser
     public:
     ObjDumpParser(const Filter filter);
 
-    void fromStream(std::istream &in);
+    void fromStream(std::istream &in) override;
 
-    void outputJson(std::ostream &out) const;
-    void outputText(std::ostream &out) const;
+    void outputJson(std::ostream &out) const override;
+    void outputText(std::ostream &out) const override;
 };
 
 }; // namespace AsmParser
