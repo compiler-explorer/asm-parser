@@ -1,5 +1,8 @@
 #!/bin/sh
 
+/opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.cpp
+/opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.hpp
+
 cd build
 cmake -DCMAKE_BUILD_TYPE=DEBUG ..
 if [ $? -ne 0 ]; then
