@@ -13,11 +13,19 @@ endif ()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
+conan_add_remote(NAME bincrafters INDEX 1
+        URL https://api.bintray.com/conan/bincrafters/public-conan)
+
 conan_cmake_run(
-        CONANFILE conanfile.txt
-        BASIC_SETUP CMAKE_TARGETS
+        REQUIRES
+        CTRE/v3.2@ctre/stable
+        catch2/2.12.4
+        approvaltests.cpp/10.3.0
+        BASIC_SETUP
         BUILD missing)
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
 add_subdirectory(src)
+
+add_subdirectory(test)

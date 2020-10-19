@@ -31,7 +31,7 @@ struct Regexes
     make_matcher<R"re(^\s*\.(type.*,\s*[#%@]function|proc\s+[.A-Z_a-z][\w$.]*:.*)$)re">();
     static constexpr auto definesGlobal = make_matcher<R"re(^\s*\.(?:globa?l|GLB|export)\s*([.A-Z_a-z][\w$.]*))re">();
     static constexpr auto definesWeak = make_matcher<R"re(^\s*\.(?:weak|weakext)\s*([.A-Z_a-z][\w$.]*))re">();
-    static constexpr auto indentedLabelDef = make_matcher<R"re(^\s*([$.A-Z_a-z][\w$.]*):)re">();
+    // static constexpr auto indentedLabelDef = make_matcher<R"re(^\s*([$.A-Z_a-z][\w$.]*):)re">();
     static constexpr auto assignmentDef = make_matcher<R"re(^\s*([$.A-Z_a-z][\w$.]+)\s*=)re">();
     static constexpr auto directive = make_matcher<R"re(^\s*\..*$)re">();
     static constexpr auto startAppBlock = make_matcher<R"re(\s*#APP.*)re">();
@@ -40,19 +40,19 @@ struct Regexes
     static constexpr auto endAsmNesting = make_matcher<R"re(\s*# End ASM.*)re">();
     static constexpr auto cudaBeginDef = make_matcher<R"re(\.(entry|func)\s+(?:\([^)]*\)\s*)?([$.A-Z_a-z][\w$.]*)\($)re">();
     static constexpr auto cudaEndDef = make_matcher<R"re(^\s*\)\s*$)re">();
-    static constexpr auto asmOpcodeRe = make_matcher<R"re(^\s*([\da-f]+):\s*(([\da-f]{2} ?)+)\s*(.*))re">();
-    static constexpr auto lineRe = make_matcher<R"re(^(/[^:]+):(\d+).*)re">();
-    static constexpr auto labelRe = make_matcher<R"re(^([\da-f]+)\s+<([^>]+)>:$)re">();
-    static constexpr auto destRe = make_matcher<R"re(\s([\da-f]+)\s+<([^+>]+)(\+0x[\da-f]+)?>$)re">();
-    static constexpr auto commentRe = make_matcher<R"re([#;])re">();
+    // static constexpr auto asmOpcodeRe = make_matcher<R"re(^\s*([\da-f]+):\s*(([\da-f]{2} ?)+)\s*(.*))re">();
+    // static constexpr auto lineRe = make_matcher<R"re(^(/[^:]+):(\d+).*)re">();
+    // static constexpr auto labelRe = make_matcher<R"re(^([\da-f]+)\s+<([^>]+)>:$)re">();
+    // static constexpr auto destRe = make_matcher<R"re(\s([\da-f]+)\s+<([^+>]+)(\+0x[\da-f]+)?>$)re">();
+    // static constexpr auto commentRe = make_matcher<R"re([#;])re">();
     static constexpr auto instOpcodeRe = make_matcher<R"re((\.inst\.?\w?)\s*(.*))re">();
-    static constexpr auto blockComments = make_matcher<R"re(^[\t ]*/\*(\*(?!/)|[^*])*\*/\s*)re">();
+    // static constexpr auto blockComments = make_matcher<R"re(^[\t ]*/\*(\*(?!/)|[^*])*\*/\s*)re">();
     static constexpr auto commentOnly = make_matcher<R"re(^\s*(((#|@|//).*)|(/\*.*\*/)|(;\s*)|(;[^;].*)|(;;.*\S.*))$)re">();
     static constexpr auto commentOnlyNvcc = make_matcher<R"re(^\s*(((#|;|//).*)|(/\*.*\*/))$)re">();
     static constexpr auto sourceTag = make_matcher<R"re(^\s*\.loc\s+(\d+)\s+(\d+).*)re">();
-    static constexpr auto source6502Dbg = make_matcher<R"re(^\s*\.dbg\s+line,\s*"([^"]+)",\s*(\d+))re">();
-    static constexpr auto sourceStab = make_matcher<R"re(^\s*\.stabn\s+(\d+),0,(\d+),.*)re">();
-    static constexpr auto stdInLooking = make_matcher<R"re(<stdin>|^-$|example\.[^/]+$|<source>)re">();
+    // static constexpr auto source6502Dbg = make_matcher<R"re(^\s*\.dbg\s+line,\s*"([^"]+)",\s*(\d+))re">();
+    // static constexpr auto sourceStab = make_matcher<R"re(^\s*\.stabn\s+(\d+),0,(\d+),.*)re">();
+    // static constexpr auto stdInLooking = make_matcher<R"re(<stdin>|^-$|example\.[^/]+$|<source>)re">();
     static constexpr auto endBlock = make_matcher<R"re(\.(cfi_endproc|data|text|section))re">();
 };
 

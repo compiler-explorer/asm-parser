@@ -1,5 +1,0 @@
-[requires]
-ctre/2.8.2
-
-[generators]
-cmake

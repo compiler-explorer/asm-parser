@@ -6,4 +6,4 @@ add_executable(asm-parser
     objdump/parser.cpp
     assembly/parser.cpp)
 
-target_link_libraries(asm-parser CONAN_PKG::ctre)
+target_link_libraries(asm-parser ${CONAN_LIBS})
