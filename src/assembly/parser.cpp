@@ -18,7 +18,9 @@ bool str_contains(const std::string_view s, char c)
 
 bool AsmParser::AssemblyTextParser::label_is_used(const std::string_view s) const
 {
-    return std::any_of(this->labels.begin(), this->labels.end(), [s](auto labelpair) { return s == labelpair.first; });
+    return std::any_of(this->labels.begin(), this->labels.end(), [s](auto labelpair) {
+        return s == labelpair.first;
+    });
 }
 
 std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(const std::string_view line)

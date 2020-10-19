@@ -9,7 +9,9 @@ namespace AsmParser
 template <ctll::fixed_string RE>
 constexpr auto make_matcher()
 {
-    return [](const std::string_view text) { return ctre::match<RE>(text); };
+    return [](const std::string_view text) {
+        return ctre::match<RE>(text);
+    };
 }
 
 struct Regexes
