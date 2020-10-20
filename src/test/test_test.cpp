@@ -51,3 +51,13 @@ TEST_CASE("expandTabs", "[strings]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::expandTabs("0123456\t7A") == ("0123456 7A"));
     REQUIRE(AsmParser::AssemblyTextParserUtils::expandTabs("01234567\tA") == ("01234567        A"));
 }
+
+TEST_CASE("line filters", "[asm]")
+{
+    const auto filteredLine1 = AsmParser::AssemblyTextParserUtils::getLineWithoutComment("   mov eax, [_mylabel+8]  ");
+    REQUIRE(filteredLine1 == "   mov eax, [_mylabel+8]  ");
+
+    const auto filteredLine2 = AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(
+    "   mov eax, [_mylabel+8]  # some comment");
+    REQUIRE(filteredLine2 == " eax, [_mylabel+8]  ");
+}

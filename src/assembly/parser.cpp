@@ -1,5 +1,6 @@
 #include "parser.hpp"
 #include "../utils/jsonwriter.hpp"
+#include "../utils/utils.hpp"
 #include "regexes.hpp"
 #include <fmt/core.h>
 
@@ -142,6 +143,37 @@ std::string AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std:
     return filtered;
 }
 
+std::string AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(const std::string_view line)
+{
+    std::string filtered;
+    filtered.reserve(line.length());
+
+    bool wordstarted = false;
+    bool wordended = false;
+    for (auto c : line)
+    {
+        if (c == ';' || c == '#')
+        {
+            break;
+        }
+        else if (!wordstarted && ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')))
+        {
+            wordstarted = true;
+        }
+        else if (wordstarted && !wordended && is_whitespace(c))
+        {
+            wordended = true;
+            filtered += c;
+        }
+        else if (wordended)
+        {
+            filtered += c;
+        }
+    }
+
+    return filtered;
+}
+
 void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
 {
     const auto match = Regexes::sourceStab(line);
@@ -199,6 +231,29 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
             this->state.currentSourceRef = {};
         }
     }
+}
+
+std::vector<std::string> AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(const std::string_view line)
+{
+    const std::vector<std::string> labelsInLine;
+
+    // Strip any comments
+    const auto instruction = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
+
+    // const auto removedCol = instruction.length - params.length + 1;
+    // params.replace(
+    // this.identifierFindRe, (label, index) = > {
+    //     const startCol = removedCol + index;
+    //     labelsInLine.push({
+    //         name: label,
+    //         range: {
+    //             startCol: startCol,
+    //             endCol: startCol + label.length,
+    //         },
+    //     });
+    // });
+
+    return labelsInLine;
 }
 
 bool AsmParser::AssemblyTextParserUtils::hasOpcode(const std::string_view line, bool inNvccCode)
@@ -367,7 +422,7 @@ void AsmParser::AssemblyTextParser::eol()
     filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
     // todo: const text = AsmRegex.filterAsmLine(line, filters);
 
-    // todo: const labelsInLine = this.getUsedLabelsInLine(filteredLine);
+    const auto labelsInLine = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
     this->state.currentLine.is_label = found_label ? true : false;
     this->state.currentLine.text = filteredLine;
