@@ -2,17 +2,18 @@
 #include "ApprovalTests.hpp"
 #include <catch2/catch.hpp>
 
-int factorial(int x) {
-    if (x == 1) return 1;
-    if (x == 2) return 2;
-    if (x == 3) return 6;
-    if (x == 10) return 3628800;
-    return -1;
-}
+#include "../src/assembly/regexes.hpp"
 
-TEST_CASE( "factorials are computed", "[factorial]" ) {
-    REQUIRE( factorial(1) == 1 );
-    REQUIRE( factorial(2) == 2 );
-    REQUIRE( factorial(3) == 6 );
-    REQUIRE( factorial(10) == 3628800 );
+TEST_CASE("Test some regexes directly", "[regex]") {
+    CHECK(AsmParser::Regexes::labelDef("myfunctionlabel:"));
+    CHECK(AsmParser::Regexes::labelDef(".mydirective:"));
+    CHECK(!AsmParser::Regexes::labelDef("  mov eax, eax"));
+
+    // todo: this should work, but doesn't, why not?
+    // CHECK(AsmParser::Regexes::dataDefn(R"(  .string "Hello, world!\n")"));
+
+    CHECK(!AsmParser::Regexes::labelDef("  mov eax, eax"));
+
+    CHECK(AsmParser::Regexes::fileFind(R"(        .file 1 "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h")"));
+    CHECK(AsmParser::Regexes::sourceTag(R"(        .loc 1 351 7)"));
 }

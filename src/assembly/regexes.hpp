@@ -23,8 +23,8 @@ struct Regexes
     static constexpr auto dataDefn =
     make_matcher<R"re(^\s*\.(string|asciz|ascii|[1248]?byte|short|x?word|long|quad|value|zero))re">();
     static constexpr auto fileFind = make_matcher<R"re(^\s*\.file\s+(\d+)\s+"([^"]+)"(\s+"([^"]+)")?.*)re">();
-    static constexpr auto hasOpcodeRe = make_matcher<R"re(^\s*[A-Za-z])re">();
-    static constexpr auto instructionRe = make_matcher<R"re(^\s*[A-Za-z]+)re">();
+    // todo: stop using this static constexpr auto hasOpcodeRe = make_matcher<R"re(^\s*[A-Za-z])re">();
+    // todo: stop using this static constexpr auto instructionRe = make_matcher<R"re(^\s*[A-Za-z]+)re">();
     static constexpr auto identifierFindRe = make_matcher<R"re([$.@A-Z_a-z][\dA-z]*)re">();
     static constexpr auto hasNvccOpcodeRe = make_matcher<R"re(^\s*[@A-Za-z\|])re">();
     static constexpr auto definesFunction =
