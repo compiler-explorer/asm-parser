@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#PATH=$PATH:/opt/compiler-explorer/cmake/bin
+PATH=$PATH:/opt/compiler-explorer/cmake/bin
 
 export CXX=/opt/compiler-explorer/gcc-10.2.0/bin/g++
 export CC=/opt/compiler-explorer/gcc-10.2.0/bin/gcc

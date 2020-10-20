@@ -32,11 +32,19 @@ class AssemblyTextParserState
     asm_line currentLine{};
 };
 
+class AssemblyTextParserUtils
+{
+    public:
+    static std::pair<int, int> getSourceRefMatch(const std::string_view line);
+};
+
 class AssemblyTextParser : public IParser
 {
     private:
     const Filter filter;
     AssemblyTextParserState state{};
+
+    std::unordered_map<int, std::string> files;
     std::vector<asm_line> lines;
     std::vector<asm_labelpair> labels;
 

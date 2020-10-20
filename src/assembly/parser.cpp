@@ -54,16 +54,34 @@ std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(
     }
 }
 
-void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
+inline int svtoi(const std::string_view sv)
 {
-    auto match = Regexes::sourceTag(line);
+    return std::atoi(sv.data());
+}
+
+std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRefMatch(const std::string_view line)
+{
+    const auto match = AsmParser::Regexes::sourceTag(line);
     if (match)
     {
-        // auto file_index = match.get<1>().to_view();
-        auto sourceline_text = match.get<2>().to_view();
-        std::string_view file = "<stdin>";
-        // todo: auto file = files[atoi(match.get<1>())];
-        auto sourceLine = std::atoi(sourceline_text.data());
+        const auto file_index = svtoi(match.get<1>().to_view());
+        const auto line_index = svtoi(match.get<2>().to_view());
+
+        return { file_index, line_index };
+    }
+    else
+    {
+        return { 0, 0 };
+    }
+}
+
+void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
+{
+    const auto [file_index, line_index] = AsmParser::AssemblyTextParserUtils::getSourceRefMatch(line);
+    if (file_index != 0)
+    {
+        const auto file = files[file_index];
+
         if (!file.empty())
         {
             // auto match_stdin = Regexes::stdInLooking(file);
@@ -73,7 +91,7 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
             this->state.currentSourceRef.file = file;
             //}
 
-            this->state.currentSourceRef.line = sourceLine;
+            this->state.currentSourceRef.line = line_index;
         }
         else
         {
