@@ -163,7 +163,7 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
         {
             const auto file = files.at(file_index);
 
-            auto match_stdin = Regexes::stdInLooking(file);
+            const auto match_stdin = Regexes::stdInLooking(file);
             if (match_stdin)
             {
                 this->state.currentSourceRef.is_usercode = true;
@@ -277,18 +277,21 @@ void AsmParser::AssemblyTextParser::eol()
     const auto found_label = this->getLabelFromLine(line);
     if (found_label)
     {
-        // // It's a label definition.
-        // if (!this->label_is_used(found_label.value())) {
-        //     // It's an unused label.
-        //     if (this->filter.unused_labels) {
-        //         this->state.text.clear();
-        //         return;
-        //     }
-        // } else {
-        //     // A used label.
-        //     this->state.previousLabel = found_label.value();
-        //     // todo: labelDefinitions[match[1]] = asm.length + 1;
+        // It's a label definition.
+        // if (!this->label_is_used(found_label.value()))
+        // {
+        //     //     // It's an unused label.
+        //     //     if (this->filter.unused_labels) {
+        //     //         this->state.text.clear();
+        //     //         return;
+        //     //     }
         // }
+        // else
+        {
+            // A used label.
+            this->state.previousLabel = found_label.value();
+            this->labels.push_back({ this->state.previousLabel, lines.size() + 1 });
+        }
     }
 
     if (this->state.inNvccDef)
