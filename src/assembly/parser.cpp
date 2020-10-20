@@ -59,7 +59,7 @@ inline int svtoi(const std::string_view sv)
     return std::atoi(sv.data());
 }
 
-std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRefMatch(const std::string_view line)
+std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRef(const std::string_view line)
 {
     const auto match = AsmParser::Regexes::sourceTag(line);
     if (match)
@@ -75,9 +75,25 @@ std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRefMatch(const 
     }
 }
 
+std::pair<int, std::string_view> AsmParser::AssemblyTextParserUtils::getFileDef(const std::string_view line)
+{
+    const auto match = AsmParser::Regexes::fileFind(line);
+    if (match)
+    {
+        const auto file_index = svtoi(match.get<1>().to_view());
+        const auto file_name = match.get<2>().to_view();
+
+        return { file_index, file_name };
+    }
+    else
+    {
+        return { 0, nullptr };
+    }
+}
+
 void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
 {
-    const auto [file_index, line_index] = AsmParser::AssemblyTextParserUtils::getSourceRefMatch(line);
+    const auto [file_index, line_index] = AsmParser::AssemblyTextParserUtils::getSourceRef(line);
     if (file_index != 0)
     {
         const auto file = files[file_index];

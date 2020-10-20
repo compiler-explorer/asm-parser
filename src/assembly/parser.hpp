@@ -35,7 +35,8 @@ class AssemblyTextParserState
 class AssemblyTextParserUtils
 {
     public:
-    static std::pair<int, int> getSourceRefMatch(const std::string_view line);
+    static std::pair<int, int> getSourceRef(const std::string_view line);
+    static std::pair<int, std::string_view> getFileDef(const std::string_view line);
 };
 
 class AssemblyTextParser : public IParser

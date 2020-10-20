@@ -29,8 +29,12 @@ TEST_CASE("Test some regexes directly", "[regex]")
 
 TEST_CASE("Test text assembly utilities", "[asm]")
 {
-    const auto [file, line] = AsmParser::AssemblyTextParserUtils::getSourceRefMatch(R"(        .loc 1 351 7)");
-
+    const auto [file, line] = AsmParser::AssemblyTextParserUtils::getSourceRef(R"(        .loc 1 351 7)");
     REQUIRE(file == 1);
     REQUIRE(line == 351);
+
+    const auto [file_index, filename] = AsmParser::AssemblyTextParserUtils::getFileDef(
+    R"(        .file 2 "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h")");
+    REQUIRE(file_index == 2);
+    REQUIRE(filename == "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h");
 }
