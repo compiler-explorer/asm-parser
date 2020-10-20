@@ -159,10 +159,10 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
     const auto [file_index, line_index] = AsmParser::AssemblyTextParserUtils::getSourceRef(line);
     if (file_index != 0)
     {
-        const auto file = files[file_index];
-
-        if (!file.empty())
+        try
         {
+            const auto file = files.at(file_index);
+
             // auto match_stdin = Regexes::stdInLooking(file);
             // if (match_stdin) {
             //     this->state.currentSourceRef.file.clear();
@@ -172,7 +172,7 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
 
             this->state.currentSourceRef.line = line_index;
         }
-        else
+        catch (...)
         {
             this->state.currentSourceRef = {};
         }
