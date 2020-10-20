@@ -91,6 +91,32 @@ std::pair<int, std::string_view> AsmParser::AssemblyTextParserUtils::getFileDef(
     }
 }
 
+std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string line)
+{
+    std::string expandedLine;
+
+    const std::string spaces = "        ";
+    expandedLine.reserve(line.length());
+
+    auto extraChars = 0;
+    for (auto c : line)
+    {
+        if (c == '\t')
+        {
+            const auto total = expandedLine.length() + extraChars;
+            const auto spacesNeeded = (total + 8) & 7;
+            extraChars += spacesNeeded - 1;
+            expandedLine += spaces.substr(spacesNeeded);
+        }
+        else
+        {
+            expandedLine += c;
+        }
+    }
+
+    return expandedLine;
+}
+
 void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
 {
     const auto [file_index, line_index] = AsmParser::AssemblyTextParserUtils::getSourceRef(line);
@@ -206,7 +232,7 @@ void AsmParser::AssemblyTextParser::eol()
         // todo: line = this.fixLabelIndentation(line);
     }
 
-    auto found_label = this->getLabelFromLine(line);
+    const auto found_label = this->getLabelFromLine(line);
     // if (found_label) {
     //     // It's a label definition.
     //     if (this->label_is_used(found_label.value())) {
@@ -244,7 +270,7 @@ void AsmParser::AssemblyTextParser::eol()
     }
 
     std::string filteredLine{ line };
-    // todo: line = utils.expandTabs(line);
+    filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
     // todo: const text = AsmRegex.filterAsmLine(line, filters);
 
     // todo: const labelsInLine = this.getUsedLabelsInLine(filteredLine);

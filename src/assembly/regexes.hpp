@@ -8,7 +8,7 @@ namespace AsmParser
 
 struct Regexes
 {
-    static constexpr auto labelDef = ctre::match<R"re(^(?:.proc\s+)?([\w$.@]+):)re">;
+    static constexpr auto labelDef = ctre::search<R"re(^(?:.proc\s+)?([\w$.@]+):)re">;
     static constexpr auto labelFindNonMips = ctre::match<R"re([.A-Z_a-z][\w$.]*)re">;
     static constexpr auto labelFindMips = ctre::match<R"re([$.A-Z_a-z][\w$.]*)re">;
     static constexpr auto mipsLabelDefinition = ctre::match<R"re(^\$[\w$.]+:)re">;

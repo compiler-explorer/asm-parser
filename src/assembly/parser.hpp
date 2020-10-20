@@ -37,6 +37,7 @@ class AssemblyTextParserUtils
     public:
     static std::pair<int, int> getSourceRef(const std::string_view line);
     static std::pair<int, std::string_view> getFileDef(const std::string_view line);
+    static std::string expandTabs(const std::string line);
 };
 
 class AssemblyTextParser : public IParser
