@@ -124,6 +124,24 @@ std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string lin
     return expandedLine;
 }
 
+std::string AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std::string_view line)
+{
+    std::string filtered;
+    filtered.reserve(line.length());
+
+    for (auto c : line)
+    {
+        if (c == ';' || c == '#')
+        {
+            break;
+        }
+
+        filtered += c;
+    }
+
+    return filtered;
+}
+
 void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
 {
     const auto match = Regexes::sourceStab(line);
@@ -181,6 +199,33 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
             this->state.currentSourceRef = {};
         }
     }
+}
+
+bool AsmParser::AssemblyTextParserUtils::hasOpcode(const std::string_view line, bool inNvccCode)
+{
+    // Remove any leading label definition...
+    const auto match = Regexes::labelDef(line);
+    if (match)
+    {
+        // todo
+        // line = line.substr(match[0].length);
+    }
+
+    // Strip any comments
+    const auto lineWithoutComment = getLineWithoutComment(line);
+
+    // .inst generates an opcode, so also counts
+    if (Regexes::instOpcodeRe(lineWithoutComment))
+        return true;
+
+    // Detect assignment, that's not an opcode...
+    if (Regexes::assignmentDef(lineWithoutComment))
+        return false;
+
+    if (inNvccCode)
+        return !!Regexes::hasNvccOpcodeRe(lineWithoutComment);
+
+    return !!Regexes::hasOpcodeRe(lineWithoutComment);
 }
 
 void AsmParser::AssemblyTextParser::eol()
@@ -329,10 +374,10 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.currentLine.source = this->state.currentSourceRef;
 
-    // if (!this.hasOpcode(line, this->state.inNvccCode))
-    // {
-    //     this->state.currentLine.source = {};
-    // }
+    if (!AssemblyTextParserUtils::hasOpcode(line, this->state.inNvccCode))
+    {
+        this->state.currentLine.source = {};
+    }
 
     this->lines.push_back(this->state.currentLine);
 

@@ -15,7 +15,7 @@ struct Regexes
 
     static constexpr auto dataDefn = ctre::search<R"re(^\s*\.(string|asciz|ascii|[1248]?byte|short|x?word|long|quad|value|zero))re">;
     static constexpr auto fileFind = ctre::match<R"re(^\s*\.file\s+(\d+)\s+"([^"]+)"(\s+"([^"]+)")?.*)re">;
-    // todo: stop using this static constexpr auto hasOpcodeRe = make_matcher<R"re(^\s*[A-Za-z])re">;
+    static constexpr auto hasOpcodeRe = ctre::search<R"re(^\s*[A-Za-z])re">;
     // todo: stop using this static constexpr auto instructionRe = make_matcher<R"re(^\s*[A-Za-z]+)re">;
     static constexpr auto identifierFindRe = ctre::match<R"re([$.@A-Z_a-z][\dA-z]*)re">;
     static constexpr auto hasNvccOpcodeRe = ctre::match<R"re(^\s*[@A-Za-z\|])re">;
@@ -35,7 +35,7 @@ struct Regexes
     // static constexpr auto lineRe = make_matcher<R"re(^(/[^:]+):(\d+).*)re">;
     // static constexpr auto labelRe = make_matcher<R"re(^([\da-f]+)\s+<([^>]+)>:$)re">;
     // static constexpr auto destRe = make_matcher<R"re(\s([\da-f]+)\s+<([^+>]+)(\+0x[\da-f]+)?>$)re">;
-    // static constexpr auto commentRe = make_matcher<R"re([#;])re">;
+    static constexpr auto commentRe = ctre::search<R"re([#;])re">;
     static constexpr auto instOpcodeRe = ctre::match<R"re((\.inst\.?\w?)\s*(.*))re">;
     // static constexpr auto blockComments = make_matcher<R"re(^[\t ]*/\*(\*(?!/)|[^*])*\*/\s*)re">;
     static constexpr auto commentOnly = ctre::match<R"re(^\s*(((#|@|//).*)|(/\*.*\*/)|(;\s*)|(;[^;].*)|(;;.*\S.*))$)re">;
