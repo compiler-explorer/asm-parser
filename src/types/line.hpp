@@ -25,6 +25,12 @@ struct asm_source
     int32_t line;
 };
 
+struct asm_file_def
+{
+    int file_index;
+    std::string file_name;
+};
+
 struct asm_link
 {
     int32_t offset;

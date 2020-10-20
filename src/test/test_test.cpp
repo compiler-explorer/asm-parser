@@ -12,6 +12,7 @@ TEST_CASE("Test some regexes directly", "[regex]")
     REQUIRE(match.get<1>().to_view() == "myfunctionlabel");
 
     CHECK(AsmParser::Regexes::labelDef(".mydirective:   # with comments"));
+    CHECK(AsmParser::Regexes::directive(".mydirective:   # with comments"));
     CHECK(!AsmParser::Regexes::labelDef("  mov eax, eax   # with comments"));
 
     CHECK(AsmParser::Regexes::dataDefn(R"(  .string "Hello, world!\n   # with comments")"));
@@ -25,10 +26,17 @@ TEST_CASE("Test text assembly utilities", "[asm]")
     REQUIRE(file == 1);
     REQUIRE(line == 351);
 
-    const auto [file_index, filename] = AsmParser::AssemblyTextParserUtils::getFileDef(
+    const auto file_def = AsmParser::AssemblyTextParserUtils::getFileDef(
     R"(        .file 2 "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h")");
-    REQUIRE(file_index == 2);
-    REQUIRE(filename == "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h");
+    REQUIRE(file_def.value().file_index == 2);
+    REQUIRE(file_def.value().file_name == "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h");
+}
+
+TEST_CASE("Clang-style file directive", "[asm]")
+{
+    const auto file_def = AsmParser::AssemblyTextParserUtils::getFileDef(R"(        .file 1 "/dir/src" "filename.cpp")");
+    REQUIRE(file_def.value().file_index == 1);
+    REQUIRE(file_def.value().file_name == "/dir/src/filename.cpp");
 }
 
 TEST_CASE("expandTabs", "[strings]")

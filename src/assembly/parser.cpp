@@ -1,6 +1,7 @@
 #include "parser.hpp"
 #include "../utils/jsonwriter.hpp"
 #include "regexes.hpp"
+#include <fmt/core.h>
 
 #include <cstdlib>
 #include <istream>
@@ -75,20 +76,26 @@ std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRef(const std::
     }
 }
 
-std::pair<int, std::string_view> AsmParser::AssemblyTextParserUtils::getFileDef(const std::string_view line)
+std::optional<AsmParser::asm_file_def> AsmParser::AssemblyTextParserUtils::getFileDef(const std::string_view line)
 {
-    const auto match = AsmParser::Regexes::fileFind(line);
+    const auto match = Regexes::fileFind(line);
     if (match)
     {
         const auto file_index = svtoi(match.get<1>().to_view());
         const auto file_name = match.get<2>().to_view();
 
-        return { file_index, file_name };
+        const auto file_name_rest = match.get<4>().to_view();
+        if (!file_name_rest.empty())
+        {
+            return asm_file_def{ file_index, fmt::format("{}/{}", file_name, file_name_rest) };
+        }
+        else
+        {
+            return asm_file_def{ file_index, std::string(file_name) };
+        }
     }
-    else
-    {
-        return { 0, nullptr };
-    }
+
+    return std::nullopt;
 }
 
 std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string line)
@@ -115,6 +122,36 @@ std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string lin
     }
 
     return expandedLine;
+}
+
+void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
+{
+    const auto match = Regexes::sourceStab(line);
+    if (!match)
+        return;
+
+    // cf http://www.math.utah.edu/docs/info/stabs_11.html#SEC48
+    const auto type = svtoi(match.get<1>().to_view());
+    if (type == 68)
+    {
+        const auto line = svtoi(match.get<2>().to_view());
+        this->state.currentSourceRef = { "<stdin>", line };
+    }
+    else if (type == 100 || type == 132)
+    {
+        this->state.currentSourceRef = {};
+        this->state.previousLabel.clear();
+    }
+}
+
+void AsmParser::AssemblyTextParser::handleFiledef(const std::string_view line)
+{
+    const auto opt_file_def = AssemblyTextParserUtils::getFileDef(line);
+    if (opt_file_def)
+    {
+        const auto file_def = opt_file_def.value();
+        files[file_def.file_index] = file_def.file_name;
+    }
 }
 
 void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
@@ -164,8 +201,9 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.inCustomAssembly--;
     }
 
+    this->handleFiledef(line);
     this->handleSource(line);
-    // handleStabs(line);
+    this->handleStabs(line);
     // handle6502(line);
 
     // if (source && source.file === null) {
@@ -233,17 +271,21 @@ void AsmParser::AssemblyTextParser::eol()
     }
 
     const auto found_label = this->getLabelFromLine(line);
-    // if (found_label) {
-    //     // It's a label definition.
-    //     if (this->label_is_used(found_label.value())) {
-    //         // It's an unused label.
-    //         if (this->filter.unused_labels) return;
-    //     } else {
-    //         // A used label.
-    //         this->state.previousLabel = found_label.value();
-    //         // todo: labelDefinitions[match[1]] = asm.length + 1;
-    //     }
-    // }
+    if (found_label)
+    {
+        // // It's a label definition.
+        // if (!this->label_is_used(found_label.value())) {
+        //     // It's an unused label.
+        //     if (this->filter.unused_labels) {
+        //         this->state.text.clear();
+        //         return;
+        //     }
+        // } else {
+        //     // A used label.
+        //     this->state.previousLabel = found_label.value();
+        //     // todo: labelDefinitions[match[1]] = asm.length + 1;
+        // }
+    }
 
     if (this->state.inNvccDef)
     {
@@ -277,6 +319,8 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.currentLine.is_label = found_label ? true : false;
     this->state.currentLine.text = filteredLine;
+
+    this->state.currentLine.source = this->state.currentSourceRef;
 
     // if (!this.hasOpcode(line, this->state.inNvccCode))
     // {

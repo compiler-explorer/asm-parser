@@ -199,9 +199,13 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
         {
             this->writeKvNull("file", jsonopt::trailingcomma);
         }
-        else
+        else if (!line.source.file.empty())
         {
             this->writeKv("file", line.source.file, jsonopt::trailingcomma);
+        }
+        else
+        {
+            this->writeKvNull("file", jsonopt::trailingcomma);
         }
 
         this->writeKv("line", line.source.line, jsonopt::none);

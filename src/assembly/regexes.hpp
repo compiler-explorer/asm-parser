@@ -42,7 +42,7 @@ struct Regexes
     static constexpr auto commentOnlyNvcc = ctre::match<R"re(^\s*(((#|;|//).*)|(/\*.*\*/))$)re">;
     static constexpr auto sourceTag = ctre::match<R"re(^\s*\.loc\s+(\d+)\s+(\d+).*)re">;
     // static constexpr auto source6502Dbg = make_matcher<R"re(^\s*\.dbg\s+line,\s*"([^"]+)",\s*(\d+))re">;
-    // static constexpr auto sourceStab = make_matcher<R"re(^\s*\.stabn\s+(\d+),0,(\d+),.*)re">;
+    static constexpr auto sourceStab = ctre::search<R"re(^\s*\.stabn\s+(\d+),0,(\d+),.*)re">;
     // static constexpr auto stdInLooking = make_matcher<R"re(<stdin>|^-$|example\.[^/]+$|<source>)re">;
     static constexpr auto endBlock = ctre::match<R"re(\.(cfi_endproc|data|text|section))re">;
 };

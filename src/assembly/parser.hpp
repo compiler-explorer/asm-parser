@@ -4,6 +4,7 @@
 #include "../types/line.hpp"
 #include "../types/parser.hpp"
 #include <iosfwd>
+#include <optional>
 #include <string_view>
 #include <unordered_map>
 
@@ -36,7 +37,7 @@ class AssemblyTextParserUtils
 {
     public:
     static std::pair<int, int> getSourceRef(const std::string_view line);
-    static std::pair<int, std::string_view> getFileDef(const std::string_view line);
+    static std::optional<AsmParser::asm_file_def> getFileDef(const std::string_view line);
     static std::string expandTabs(const std::string line);
 };
 
@@ -53,7 +54,9 @@ class AssemblyTextParser : public IParser
     bool label_is_used(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
 
+    void handleStabs(const std::string_view line);
     void handleSource(const std::string_view line);
+    void handleFiledef(const std::string_view line);
 
     void eol();
 
