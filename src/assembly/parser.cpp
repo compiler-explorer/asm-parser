@@ -163,12 +163,16 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
         {
             const auto file = files.at(file_index);
 
-            // auto match_stdin = Regexes::stdInLooking(file);
-            // if (match_stdin) {
-            //     this->state.currentSourceRef.file.clear();
-            // } else {
-            this->state.currentSourceRef.file = file;
-            //}
+            auto match_stdin = Regexes::stdInLooking(file);
+            if (match_stdin)
+            {
+                this->state.currentSourceRef.is_usercode = true;
+                this->state.currentSourceRef.file = file;
+            }
+            else
+            {
+                this->state.currentSourceRef.file = file;
+            }
 
             this->state.currentSourceRef.line = line_index;
         }

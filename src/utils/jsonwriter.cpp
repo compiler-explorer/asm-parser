@@ -195,7 +195,7 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
     if (!line.is_label && (line.source.line > 0))
     {
         this->out << "{";
-        if (this->filter.compatmode)
+        if (line.source.is_usercode || this->filter.compatmode)
         {
             this->writeKvNull("file", jsonopt::trailingcomma);
         }

@@ -22,7 +22,8 @@ struct asm_label
 struct asm_source
 {
     std::string file;
-    int32_t line;
+    int32_t line{ 0 };
+    bool is_usercode{};
 };
 
 struct asm_file_def
