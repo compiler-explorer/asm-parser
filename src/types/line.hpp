@@ -9,14 +9,14 @@ namespace AsmParser
 
 struct asm_range
 {
-    uint16_t start_col;
-    uint16_t end_col;
+    uint16_t start_col{};
+    uint16_t end_col{};
 };
 
 struct asm_label
 {
     std::string name;
-    asm_range range;
+    asm_range range{};
 };
 
 struct asm_source

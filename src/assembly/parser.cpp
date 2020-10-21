@@ -233,25 +233,27 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
     }
 }
 
-std::vector<std::string> AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(const std::string_view line)
+std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(const std::string_view line)
 {
-    const std::vector<std::string> labelsInLine;
+    std::vector<AsmParser::asm_label> labelsInLine;
 
-    // Strip any comments
-    const auto instruction = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
+    const auto filteredLine = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
 
-    // const auto removedCol = instruction.length - params.length + 1;
-    // params.replace(
-    // this.identifierFindRe, (label, index) = > {
-    //     const startCol = removedCol + index;
-    //     labelsInLine.push({
-    //         name: label,
-    //         range: {
-    //             startCol: startCol,
-    //             endCol: startCol + label.length,
-    //         },
-    //     });
-    // });
+    int startidx = 0;
+    for (auto match : ctre::range<R"re(([$.@A-Z_a-z][\dA-z]*))re">(filteredLine))
+    {
+        AsmParser::asm_label label{};
+        label.name = std::string(match.get<1>().to_view());
+
+        const auto len = label.name.length();
+        const auto loc = filteredLine.find(label.name, startidx);
+        startidx += loc + len;
+
+        label.range.start_col = loc;
+        label.range.end_col = loc + len;
+
+        labelsInLine.push_back(label);
+    }
 
     return labelsInLine;
 }

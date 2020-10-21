@@ -61,3 +61,11 @@ TEST_CASE("line filters", "[asm]")
     "   mov eax, [_mylabel+8]  # some comment");
     REQUIRE(filteredLine2 == " eax, [_mylabel+8]  ");
 }
+
+TEST_CASE("potential label spotting", "[asm]")
+{
+    const auto labels =
+    AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("  mov ptr eax, <_somelabel+8>  # my comments");
+    REQUIRE(labels.size() == 3);
+    REQUIRE(labels[2].name == "_somelabel");
+}

@@ -17,7 +17,6 @@ struct Regexes
     static constexpr auto fileFind = ctre::match<R"re(^\s*\.file\s+(\d+)\s+"([^"]+)"(\s+"([^"]+)")?.*)re">;
     static constexpr auto hasOpcodeRe = ctre::search<R"re(^\s*[A-Za-z])re">;
     // todo: stop using this static constexpr auto instructionRe = make_matcher<R"re(^\s*[A-Za-z]+)re">;
-    static constexpr auto identifierFindRe = ctre::match<R"re([$.@A-Z_a-z][\dA-z]*)re">;
     static constexpr auto hasNvccOpcodeRe = ctre::match<R"re(^\s*[@A-Za-z\|])re">;
     static constexpr auto definesFunction = ctre::match<R"re(^\s*\.(type.*,\s*[#%@]function|proc\s+[.A-Z_a-z][\w$.]*:.*)$)re">;
     static constexpr auto definesGlobal = ctre::match<R"re(^\s*\.(?:globa?l|GLB|export)\s*([.A-Z_a-z][\w$.]*))re">;

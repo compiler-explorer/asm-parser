@@ -41,7 +41,7 @@ class AssemblyTextParserUtils
     static std::string expandTabs(const std::string line);
     static std::string getLineWithoutComment(const std::string_view line);
     static std::string getLineWithoutCommentAndStripFirstWord(const std::string_view line);
-    static std::vector<std::string> getUsedLabelsInLine(const std::string_view line);
+    static std::vector<AsmParser::asm_label> getUsedLabelsInLine(const std::string_view line);
     static bool hasOpcode(const std::string_view line, bool inNvccCode);
 };
 
