@@ -52,6 +52,8 @@ class AssemblyTextParser : public IParser
 
     void eol();
 
+    void determineUsage(asm_line lineWithLabel);
+    void markLabelUsage();
     void filterOutReferedLabelsThatArentDefined();
 
     public:

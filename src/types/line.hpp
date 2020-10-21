@@ -54,8 +54,10 @@ struct asm_line
     std::vector<asm_label> labels;
     std::vector<std::string> opcodes;
     bool is_label{};
+    std::string label;
     asm_source source;
     std::optional<int64_t> address;
+    bool is_used{};
 };
 
 } // namespace AsmParser

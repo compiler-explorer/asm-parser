@@ -2,7 +2,6 @@
 #include "ApprovalTests.hpp"
 #include <catch2/catch.hpp>
 
-#include "../assembly/parser.hpp"
 #include "../utils/regexwrappers.hpp"
 
 TEST_CASE("Test text assembly utilities", "[asm]")

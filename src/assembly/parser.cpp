@@ -258,10 +258,12 @@ void AsmParser::AssemblyTextParser::eol()
 
     if (!this->state.currentLine.is_label)
     {
+        this->state.currentLine.label.clear();
         this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
     }
     else
     {
+        this->state.currentLine.label = found_label.value();
         this->state.currentLine.labels.clear();
     }
 
@@ -297,6 +299,35 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
     }
 }
 
+void AsmParser::AssemblyTextParser::determineUsage(asm_line lineWithLabel)
+{
+    for (auto &line : this->lines)
+    {
+        if (!line.is_label)
+        {
+            for (auto label : line.labels)
+            {
+                if (lineWithLabel.label == label.name)
+                {
+                    lineWithLabel.is_used = true;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void AsmParser::AssemblyTextParser::markLabelUsage()
+{
+    for (auto &line : this->lines)
+    {
+        if (line.is_label && !line.is_used)
+        {
+            determineUsage(line);
+        }
+    }
+}
+
 void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
 {
     char c;
@@ -316,6 +347,7 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         this->state.text += c;
     }
 
+    this->markLabelUsage();
     this->filterOutReferedLabelsThatArentDefined();
 }
 
