@@ -424,7 +424,7 @@ void AsmParser::AssemblyTextParser::eol()
     filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
     // todo: const text = AsmRegex.filterAsmLine(line, filters);
 
-    const auto labelsInLine = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
+    this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
     this->state.currentLine.is_label = found_label ? true : false;
     this->state.currentLine.text = filteredLine;
