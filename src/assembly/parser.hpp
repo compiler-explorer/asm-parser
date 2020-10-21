@@ -33,18 +33,6 @@ class AssemblyTextParserState
     asm_line currentLine{};
 };
 
-class AssemblyTextParserUtils
-{
-    public:
-    static std::pair<int, int> getSourceRef(const std::string_view line);
-    static std::optional<AsmParser::asm_file_def> getFileDef(const std::string_view line);
-    static std::string expandTabs(const std::string line);
-    static std::string getLineWithoutComment(const std::string_view line);
-    static std::string getLineWithoutCommentAndStripFirstWord(const std::string_view line);
-    static std::vector<AsmParser::asm_label> getUsedLabelsInLine(const std::string_view line);
-    static bool hasOpcode(const std::string_view line, bool inNvccCode);
-};
-
 class AssemblyTextParser : public IParser
 {
     private:

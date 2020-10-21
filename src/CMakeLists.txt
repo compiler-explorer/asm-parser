@@ -2,6 +2,7 @@
 set(PARSER_SOURCES
     utils/utils.cpp
     utils/jsonwriter.cpp
+    utils/regexwrappers.cpp
     objdump/parser.cpp
     assembly/parser.cpp
 )

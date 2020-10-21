@@ -7,6 +7,12 @@
 namespace AsmParser
 {
 
+struct asm_stabn
+{
+    int type;
+    int line;
+};
+
 struct asm_range
 {
     uint16_t start_col{};

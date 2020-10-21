@@ -3,22 +3,7 @@
 #include <catch2/catch.hpp>
 
 #include "../assembly/parser.hpp"
-#include "../assembly/regexes.hpp"
-
-TEST_CASE("Test some regexes directly", "[regex]")
-{
-    auto match = AsmParser::Regexes::labelDef("myfunctionlabel:   # with comments");
-    CHECK(match);
-    REQUIRE(match.get<1>().to_view() == "myfunctionlabel");
-
-    CHECK(AsmParser::Regexes::labelDef(".mydirective:   # with comments"));
-    CHECK(AsmParser::Regexes::directive(".mydirective:   # with comments"));
-    CHECK(!AsmParser::Regexes::labelDef("  mov eax, eax   # with comments"));
-
-    CHECK(AsmParser::Regexes::dataDefn(R"(  .string "Hello, world!\n   # with comments")"));
-
-    CHECK(!AsmParser::Regexes::labelDef("  mov eax, eax   # with comments"));
-}
+#include "../utils/regexwrappers.hpp"
 
 TEST_CASE("Test text assembly utilities", "[asm]")
 {
