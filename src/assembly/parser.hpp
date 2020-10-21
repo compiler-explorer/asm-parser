@@ -55,7 +55,7 @@ class AssemblyTextParser : public IParser
     std::vector<asm_line> lines;
     std::vector<asm_labelpair> labels;
 
-    bool label_is_used(const std::string_view s) const;
+    bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
 
     void handleStabs(const std::string_view line);
@@ -63,6 +63,8 @@ class AssemblyTextParser : public IParser
     void handleFiledef(const std::string_view line);
 
     void eol();
+
+    void filterOutReferedLabelsThatArentDefined();
 
     public:
     AssemblyTextParser(const Filter filter);

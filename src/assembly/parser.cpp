@@ -18,7 +18,7 @@ bool str_contains(const std::string_view s, char c)
     return (found != std::string::npos);
 }
 
-bool AsmParser::AssemblyTextParser::label_is_used(const std::string_view s) const
+bool AsmParser::AssemblyTextParser::label_is_defined(const std::string_view s) const
 {
     return std::any_of(this->labels.begin(), this->labels.end(), [s](auto labelpair) {
         return s == labelpair.first;
@@ -239,8 +239,10 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
 
     const auto filteredLine = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
 
+    int diffLen = line.length() - filteredLine.length() + 1;
+
     int startidx = 0;
-    for (auto match : ctre::range<R"re(([$.@A-Z_a-z][\dA-Za-z]*))re">(filteredLine))
+    for (auto match : ctre::range<R"re(([$.@A-Z_a-z][\dA-Z_a-z]*))re">(filteredLine))
     {
         AsmParser::asm_label label{};
         label.name = std::string(match.get<1>().to_view());
@@ -249,8 +251,8 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
         const auto loc = filteredLine.find(label.name, startidx);
         startidx += (loc - startidx) + len;
 
-        label.range.start_col = loc;
-        label.range.end_col = loc + ustrlen(label.name) - 1;
+        label.range.start_col = loc + diffLen;
+        label.range.end_col = loc + diffLen + ustrlen(label.name) - 1;
 
         labelsInLine.push_back(label);
     }
@@ -448,6 +450,23 @@ void AsmParser::AssemblyTextParser::eol()
     this->state.text.clear();
 }
 
+void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
+{
+    for (auto &line : this->lines)
+    {
+        for (auto it = line.labels.begin(); it != line.labels.end();)
+        {
+            if (!this->label_is_defined(it->name))
+            {
+                it = line.labels.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+}
 
 void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
 {
@@ -467,6 +486,8 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
 
         this->state.text += c;
     }
+
+    this->filterOutReferedLabelsThatArentDefined();
 }
 
 void AsmParser::AssemblyTextParser::outputJson(std::ostream &out) const

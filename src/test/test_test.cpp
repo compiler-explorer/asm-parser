@@ -69,27 +69,33 @@ TEST_CASE("potential label spotting", "[asm]")
     REQUIRE(labels.size() == 3);
     REQUIRE(labels[2].name == "_somelabel");
 
+    const auto jbe = AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        jbe     .LBB0_3");
+    REQUIRE(jbe.size() == 1);
+    REQUIRE(jbe[0].name == ".LBB0_3");
+    REQUIRE(jbe[0].range.start_col == 17);
+    REQUIRE(jbe[0].range.end_col == 23);
+
     const auto morelabels =
     AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movsd   xmm0, qword ptr [rsi + 8*rax]");
     REQUIRE(morelabels.size() == 5);
 
     REQUIRE(morelabels[0].name == "xmm0");
-    REQUIRE(morelabels[0].range.start_col == 3);
-    REQUIRE(morelabels[0].range.end_col == 6);
+    REQUIRE(morelabels[0].range.start_col == 17);
+    REQUIRE(morelabels[0].range.end_col == 20);
 
     REQUIRE(morelabels[1].name == "qword");
-    REQUIRE(morelabels[1].range.start_col == 9);
-    REQUIRE(morelabels[1].range.end_col == 13);
+    REQUIRE(morelabels[1].range.start_col == 23);
+    REQUIRE(morelabels[1].range.end_col == 27);
 
     REQUIRE(morelabels[2].name == "ptr");
-    REQUIRE(morelabels[2].range.start_col == 15);
-    REQUIRE(morelabels[2].range.end_col == 17);
+    REQUIRE(morelabels[2].range.start_col == 29);
+    REQUIRE(morelabels[2].range.end_col == 31);
 
     REQUIRE(morelabels[3].name == "rsi");
-    REQUIRE(morelabels[3].range.start_col == 20);
-    REQUIRE(morelabels[3].range.end_col == 22);
+    REQUIRE(morelabels[3].range.start_col == 34);
+    REQUIRE(morelabels[3].range.end_col == 36);
 
     REQUIRE(morelabels[4].name == "rax");
-    REQUIRE(morelabels[4].range.start_col == 28);
-    REQUIRE(morelabels[4].range.end_col == 30);
+    REQUIRE(morelabels[4].range.start_col == 42);
+    REQUIRE(morelabels[4].range.end_col == 44);
 }
