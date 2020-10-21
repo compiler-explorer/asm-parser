@@ -240,17 +240,17 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
     const auto filteredLine = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
 
     int startidx = 0;
-    for (auto match : ctre::range<R"re(([$.@A-Z_a-z][\dA-z]*))re">(filteredLine))
+    for (auto match : ctre::range<R"re(([$.@A-Z_a-z][\dA-Za-z]*))re">(filteredLine))
     {
         AsmParser::asm_label label{};
         label.name = std::string(match.get<1>().to_view());
 
         const auto len = label.name.length();
         const auto loc = filteredLine.find(label.name, startidx);
-        startidx += loc + len;
+        startidx += (loc - startidx) + len;
 
         label.range.start_col = loc;
-        label.range.end_col = loc + len;
+        label.range.end_col = loc + ustrlen(label.name) - 1;
 
         labelsInLine.push_back(label);
     }
@@ -424,10 +424,17 @@ void AsmParser::AssemblyTextParser::eol()
     filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
     // todo: const text = AsmRegex.filterAsmLine(line, filters);
 
-    this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
-
     this->state.currentLine.is_label = found_label ? true : false;
     this->state.currentLine.text = filteredLine;
+
+    if (!this->state.currentLine.is_label)
+    {
+        this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
+    }
+    else
+    {
+        this->state.currentLine.labels.clear();
+    }
 
     this->state.currentLine.source = this->state.currentSourceRef;
 

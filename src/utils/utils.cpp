@@ -21,3 +21,34 @@ int8_t AsmParser::hex2int(const char c)
         return 10 + (c - 'a');
     }
 }
+
+size_t AsmParser::ustrlen(const std::string s)
+{
+    const char *cstrptr = s.data();
+
+    mblen(NULL, 0);
+
+    size_t maxlen = s.length();
+
+    size_t ulen = 0;
+    while (maxlen != 0)
+    {
+        auto mbcharlen = mblen(cstrptr, maxlen);
+        if (mbcharlen < 1)
+        {
+            break;
+        }
+        cstrptr += mbcharlen;
+        ulen += 1;
+        if (maxlen > (size_t)mbcharlen)
+        {
+            maxlen -= mbcharlen;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return ulen;
+}

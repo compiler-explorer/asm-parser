@@ -25,37 +25,6 @@ AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter)
 {
 }
 
-size_t ustrlen(const std::string s)
-{
-    const char *cstrptr = s.data();
-
-    mblen(NULL, 0);
-
-    size_t maxlen = s.length();
-
-    size_t ulen = 0;
-    while (maxlen != 0)
-    {
-        auto mbcharlen = mblen(cstrptr, maxlen);
-        if (mbcharlen < 1)
-        {
-            break;
-        }
-        cstrptr += mbcharlen;
-        ulen += 1;
-        if (maxlen > (size_t)mbcharlen)
-        {
-            maxlen -= mbcharlen;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return ulen;
-}
-
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name) const
 {
     if (auto match = ctre::match<"^(__.*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|"
