@@ -299,7 +299,7 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
     }
 }
 
-void AsmParser::AssemblyTextParser::determineUsage(asm_line lineWithLabel)
+void AsmParser::AssemblyTextParser::determineUsage(asm_line &lineWithLabel)
 {
     for (auto &line : this->lines)
     {
@@ -319,11 +319,36 @@ void AsmParser::AssemblyTextParser::determineUsage(asm_line lineWithLabel)
 
 void AsmParser::AssemblyTextParser::markLabelUsage()
 {
-    for (auto &line : this->lines)
+    for (auto &label : this->labels)
     {
-        if (line.is_label && !line.is_used)
+        this->determineUsage(this->lines[label.second - 1]);
+    }
+}
+
+void AsmParser::AssemblyTextParser::removeUnused()
+{
+    bool remove = false;
+    for (auto it = this->lines.begin(); it != this->lines.end();)
+    {
+        const auto line = *it;
+        if (line.is_label)
         {
-            determineUsage(line);
+            remove = !line.is_used;
+            if (remove)
+            {
+                std::remove_if(this->labels.begin(), this->labels.end(), [line](auto p) {
+                    return p.first == line.label;
+                });
+            }
+        }
+
+        if (remove && !line.source.is_usercode)
+        {
+            it = this->lines.erase(it);
+        }
+        else
+        {
+            ++it;
         }
     }
 }
@@ -347,8 +372,15 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         this->state.text += c;
     }
 
-    this->markLabelUsage();
-    this->filterOutReferedLabelsThatArentDefined();
+    if (!this->state.stopParsing)
+    {
+        if (this->filter.unused_labels)
+        {
+            this->markLabelUsage();
+            this->filterOutReferedLabelsThatArentDefined();
+            this->removeUnused();
+        }
+    }
 }
 
 void AsmParser::AssemblyTextParser::outputJson(std::ostream &out) const
