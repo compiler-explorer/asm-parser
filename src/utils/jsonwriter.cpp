@@ -43,6 +43,10 @@ std::string escape(const std::string in)
         {
             out += "\\t";
         }
+        else if (c == '\\')
+        {
+            out += "\\\\";
+        }
         else if (c == '"')
         {
             out += "\\\"";
