@@ -75,6 +75,8 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
             }
 
             this->state.currentSourceRef.line = line_index;
+
+            this->amendPreviousLinesWith(this->state.currentSourceRef);
         }
         catch (...)
         {
@@ -200,28 +202,27 @@ void AsmParser::AssemblyTextParser::eol()
         return;
     }
 
+    std::string filteredLine{ line };
+
     if (this->state.inCustomAssembly > 0)
     {
-        // todo: line = this.fixLabelIndentation(line);
+        filteredLine = AssemblyTextParserUtils::fixLabelIndentation(filteredLine);
     }
 
-    const auto found_label = this->getLabelFromLine(line);
-    if (found_label)
+    bool probablyALabel = AssemblyTextParserUtils::is_probably_label(filteredLine);
+    if (probablyALabel)
     {
-        // It's a label definition.
-        // if (!this->label_is_used(found_label.value()))
-        // {
-        //     //     // It's an unused label.
-        //     //     if (this->filter.unused_labels) {
-        //     //         this->state.text.clear();
-        //     //         return;
-        //     //     }
-        // }
-        // else
+        const auto found_label = this->getLabelFromLine(filteredLine);
+        if (found_label)
         {
-            // A used label.
-            this->state.previousLabel = found_label.value();
-            this->labels.push_back({ this->state.previousLabel, lines.size() + 1 });
+            const auto label = std::string(found_label.value());
+            this->state.currentLine.label = label;
+            this->state.previousLabel = label;
+            this->labels.push_back(asm_labelpair{ label, lines.size() + 1 });
+        }
+        else
+        {
+            probablyALabel = false;
         }
     }
 
@@ -230,7 +231,7 @@ void AsmParser::AssemblyTextParser::eol()
         if (AssemblyTextParserUtils::isCudaEndDef(line))
             this->state.inNvccDef = false;
     }
-    else if (!found_label && this->filter.directives)
+    else if (!probablyALabel && this->filter.directives)
     {
         // Check for directives only if it wasn't a label; the regexp would
         // otherwise misinterpret labels as directives.
@@ -249,11 +250,10 @@ void AsmParser::AssemblyTextParser::eol()
         }
     }
 
-    std::string filteredLine{ line };
     filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
     // todo: const text = AsmRegex.filterAsmLine(line, filters);
 
-    this->state.currentLine.is_label = found_label ? true : false;
+    this->state.currentLine.is_label = probablyALabel;
     this->state.currentLine.text = filteredLine;
 
     if (!this->state.currentLine.is_label)
@@ -263,7 +263,6 @@ void AsmParser::AssemblyTextParser::eol()
     }
     else
     {
-        this->state.currentLine.label = found_label.value();
         this->state.currentLine.labels.clear();
     }
 
@@ -279,6 +278,26 @@ void AsmParser::AssemblyTextParser::eol()
     this->lines.push_back(this->state.currentLine);
 
     this->state.text.clear();
+}
+
+void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source source)
+{
+    for (auto it = this->lines.rbegin(); it != this->lines.rend(); it++)
+    {
+        auto &line = *it;
+        if (line.is_label)
+        {
+            line.source = { source.file, source.line, source.is_usercode && !line.label.starts_with(".") };
+            if (line.label[0] != '.')
+            {
+                break;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
@@ -299,7 +318,7 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
     }
 }
 
-void AsmParser::AssemblyTextParser::determineUsage(asm_line &lineWithLabel)
+bool AsmParser::AssemblyTextParser::determineUsage(const asm_line lineWithLabel) const
 {
     for (auto &line : this->lines)
     {
@@ -309,19 +328,24 @@ void AsmParser::AssemblyTextParser::determineUsage(asm_line &lineWithLabel)
             {
                 if (lineWithLabel.label == label.name)
                 {
-                    lineWithLabel.is_used = true;
-                    return;
+                    return true;
                 }
             }
         }
     }
+
+    return false;
 }
 
 void AsmParser::AssemblyTextParser::markLabelUsage()
 {
     for (auto &label : this->labels)
     {
-        this->determineUsage(this->lines[label.second - 1]);
+        auto &line = this->lines[label.second - 1];
+        if (this->determineUsage(line))
+        {
+            line.is_used = true;
+        }
     }
 }
 
@@ -334,7 +358,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
         if (line.is_label)
         {
             remove = !line.is_used;
-            if (remove)
+            if (remove && !line.source.is_usercode)
             {
                 std::remove_if(this->labels.begin(), this->labels.end(), [line](auto p) {
                     return p.first == line.label;
@@ -383,9 +407,30 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
     }
 }
 
+std::vector<AsmParser::asm_labelpair> AsmParser::AssemblyTextParser::redetermineLabels() const
+{
+    std::vector<AsmParser::asm_labelpair> labels;
+    labels.reserve(this->lines.size());
+
+    int line_number = 1;
+    for (auto &line : this->lines)
+    {
+        if (line.is_label)
+        {
+            labels.emplace_back(asm_labelpair{ line.label, line_number });
+        }
+
+        line_number++;
+    }
+
+    return labels;
+}
+
 void AsmParser::AssemblyTextParser::outputJson(std::ostream &out) const
 {
-    JsonWriter writer(out, this->lines, this->labels, this->filter);
+    const std::vector<asm_labelpair> labels = this->redetermineLabels();
+
+    JsonWriter writer(out, this->lines, labels, this->filter);
     writer.write();
 }
 

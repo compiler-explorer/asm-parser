@@ -52,10 +52,13 @@ class AssemblyTextParser : public IParser
 
     void eol();
 
-    void determineUsage(asm_line &lineWithLabel);
+    void amendPreviousLinesWith(const asm_source source);
+    bool determineUsage(const asm_line lineWithLabel) const;
     void markLabelUsage();
     void filterOutReferedLabelsThatArentDefined();
     void removeUnused();
+
+    std::vector<asm_labelpair> redetermineLabels() const;
 
     public:
     AssemblyTextParser(const Filter filter);

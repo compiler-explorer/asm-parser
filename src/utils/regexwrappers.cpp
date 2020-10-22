@@ -72,6 +72,23 @@ std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string lin
     return expandedLine;
 }
 
+static inline void rtrim(std::string &s)
+{
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+                         [](unsigned char ch) {
+                             return !std::isspace(ch);
+                         })
+            .base(),
+            s.end());
+}
+
+static inline void ltrim(std::string &s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }));
+}
+
 std::string AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std::string_view line)
 {
     std::string filtered;
@@ -86,6 +103,24 @@ std::string AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std:
 
         filtered += c;
     }
+
+    rtrim(filtered);
+
+    return filtered;
+}
+
+bool AsmParser::AssemblyTextParserUtils::is_probably_label(const std::string line)
+{
+    std::string filtered = getLineWithoutComment(line);
+
+    return (filtered.ends_with(":"));
+}
+
+std::string AsmParser::AssemblyTextParserUtils::fixLabelIndentation(const std::string line)
+{
+    std::string filtered{ line };
+    if (is_probably_label(line))
+        ltrim(filtered);
 
     return filtered;
 }
@@ -117,6 +152,8 @@ std::string AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFir
             filtered += c;
         }
     }
+
+    rtrim(filtered);
 
     return filtered;
 }
