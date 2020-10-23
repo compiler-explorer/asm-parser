@@ -42,7 +42,7 @@ class AssemblyTextParser : public IParser
 
     std::unordered_map<int, std::string> files;
     std::vector<asm_line> lines;
-    std::vector<asm_labelpair> labels;
+    std::unordered_map<std::string, int32_t> labels_defined;
     std::unordered_set<std::string> labels_used;
 
     bool label_is_defined(const std::string_view s) const;

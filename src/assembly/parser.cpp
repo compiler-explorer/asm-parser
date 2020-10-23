@@ -17,13 +17,6 @@ bool str_contains(const std::string_view s, char c)
     return (found != std::string::npos);
 }
 
-bool AsmParser::AssemblyTextParser::label_is_defined(const std::string_view s) const
-{
-    return std::any_of(this->labels.begin(), this->labels.end(), [s](auto labelpair) {
-        return s == labelpair.first;
-    });
-}
-
 void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
 {
     const auto stabs_opt = AssemblyTextParserUtils::getSourceInfoFromStabs(line);
@@ -225,7 +218,7 @@ void AsmParser::AssemblyTextParser::eol()
             const auto label = std::string(found_label.value());
             this->state.currentLine.label = label;
             this->state.previousLabel = label;
-            this->labels.push_back(asm_labelpair{ label, lines.size() + 1 });
+            this->labels_defined[label] = lines.size() + 1;
         }
         else
         {
@@ -316,7 +309,7 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
     {
         for (auto it = line.labels.begin(); it != line.labels.end();)
         {
-            if (!this->label_is_defined(it->name))
+            if (!this->labels_defined.contains(it->name))
             {
                 it = line.labels.erase(it);
             }
@@ -335,7 +328,7 @@ bool AsmParser::AssemblyTextParser::determineUsage(const asm_line &lineWithLabel
 
 void AsmParser::AssemblyTextParser::markLabelUsage()
 {
-    for (auto &label : this->labels)
+    for (auto &label : this->labels_defined)
     {
         auto &line = this->lines[label.second - 1];
         if (this->determineUsage(line))
@@ -354,12 +347,6 @@ void AsmParser::AssemblyTextParser::removeUnused()
         if (line.is_label)
         {
             remove = !line.is_used;
-            if (remove && !line.source.is_usercode)
-            {
-                std::remove_if(this->labels.begin(), this->labels.end(), [line](auto p) {
-                    return p.first == line.label;
-                });
-            }
         }
 
         if (remove && !line.source.is_usercode)
@@ -399,9 +386,9 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         if (this->filter.unused_labels)
         {
             this->markLabelUsage();
+            this->filterOutReferedLabelsThatArentDefined();
             // todo: think of a better way of doing this, this is currently way too slow
-            // this->filterOutReferedLabelsThatArentDefined();
-            // this->removeUnused();
+            //this->removeUnused();
         }
     }
 }
