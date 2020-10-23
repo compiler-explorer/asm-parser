@@ -341,23 +341,31 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
 void AsmParser::AssemblyTextParser::removeUnused()
 {
     bool remove = false;
+    auto remove_start = this->lines.begin();
+
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
         const auto &line = *it;
         if (line.is_label)
         {
-            remove = !line.is_used;
+            if (remove && (line.is_used || line.source.is_usercode))
+            {
+                remove = false;
+                it = this->lines.erase(remove_start, it);
+                continue;
+            }
+            else if (!remove && !line.is_used && !line.source.is_usercode)
+            {
+                remove = true;
+                remove_start = it;
+            }
         }
 
-        if (remove && !line.source.is_usercode)
-        {
-            it = this->lines.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
+        ++it;
     }
+
+    if (remove)
+        this->lines.erase(remove_start, lines.end());
 }
 
 void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
