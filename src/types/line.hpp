@@ -7,6 +7,8 @@
 namespace AsmParser
 {
 
+// trivially copyable
+
 struct asm_stabn
 {
     int type;
@@ -18,6 +20,15 @@ struct asm_range
     uint16_t start_col{};
     uint16_t end_col{};
 };
+
+struct asm_link
+{
+    int32_t offset;
+    int32_t length;
+    int32_t to;
+};
+
+// non-trivial
 
 struct asm_label
 {
@@ -36,13 +47,6 @@ struct asm_file_def
 {
     int file_index;
     std::string file_name;
-};
-
-struct asm_link
-{
-    int32_t offset;
-    int32_t length;
-    int32_t to;
 };
 
 using asm_labelpair = std::pair<std::string, int32_t>;

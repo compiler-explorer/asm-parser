@@ -44,6 +44,21 @@ TEST_CASE("line filters", "[asm]")
     const auto filteredLine2 = AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(
     "   mov eax, [_mylabel+8]  # some comment");
     REQUIRE(filteredLine2 == " eax, [_mylabel+8]");
+
+
+    const auto line1 =
+    AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord("   mov eax, ptr [_mylabel+8]");
+    REQUIRE(line1 == " eax, ptr [_mylabel+8]");
+
+    const auto line2 = AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(
+    "   mov eax, ptr [_mylabel+8]     # comment");
+    REQUIRE(line2 == " eax, ptr [_mylabel+8]");
+
+    const auto line3 = AsmParser::AssemblyTextParserUtils::getLineWithoutComment("_label123:  # comment");
+    REQUIRE(line3 == "_label123:");
+
+    const auto line4 = AsmParser::AssemblyTextParserUtils::getLineWithoutComment("_label123:");
+    REQUIRE(line4 == "_label123:");
 }
 
 TEST_CASE("potential label spotting", "[asm]")

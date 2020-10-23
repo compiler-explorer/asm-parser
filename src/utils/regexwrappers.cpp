@@ -46,7 +46,7 @@ std::optional<AsmParser::asm_file_def> AsmParser::AssemblyTextParserUtils::getFi
     return std::nullopt;
 }
 
-std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string line)
+std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string_view line)
 {
     std::string expandedLine;
 
@@ -89,53 +89,53 @@ static inline void ltrim(std::string &s)
             }));
 }
 
-std::string AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std::string_view line)
+std::string_view AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std::string_view line)
 {
-    std::string filtered;
-    filtered.reserve(line.length());
+    bool spacing = false;
+    auto lastit = line.end();
 
-    for (auto c : line)
+    for (auto it = line.begin(); it != line.end(); it++)
     {
+        auto c = *it;
         if (c == ';' || c == '#')
         {
+            if (!spacing)
+                lastit = it;
             break;
         }
-
-        filtered += c;
+        else if (spacing)
+        {
+            if (!is_whitespace(c))
+            {
+                spacing = false;
+            }
+        }
+        else if (is_whitespace(c))
+        {
+            spacing = true;
+            lastit = it;
+        }
     }
 
-    rtrim(filtered);
-
-    return filtered;
+    return std::string_view{ line.begin(), lastit };
 }
 
-bool AsmParser::AssemblyTextParserUtils::is_probably_label(const std::string line)
+std::string_view AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(const std::string_view line)
 {
-    std::string filtered = getLineWithoutComment(line);
-
-    return (filtered.ends_with(":"));
-}
-
-std::string AsmParser::AssemblyTextParserUtils::fixLabelIndentation(const std::string line)
-{
-    std::string filtered{ line };
-    if (is_probably_label(line))
-        ltrim(filtered);
-
-    return filtered;
-}
-
-std::string AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(const std::string_view line)
-{
-    std::string filtered;
-    filtered.reserve(line.length());
-
     bool wordstarted = false;
     bool wordended = false;
-    for (auto c : line)
+    bool spacing = false;
+    auto lastit = line.end();
+    auto afterfirstword = line.begin();
+
+    for (auto it = line.begin(); it != line.end(); it++)
     {
+        auto c = *it;
+
         if (c == ';' || c == '#')
         {
+            if (!spacing)
+                lastit = it;
             break;
         }
         else if (!wordstarted && ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')))
@@ -145,15 +145,41 @@ std::string AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFir
         else if (wordstarted && !wordended && is_whitespace(c))
         {
             wordended = true;
-            filtered += c;
+            afterfirstword = it;
         }
         else if (wordended)
         {
-            filtered += c;
+            if (spacing)
+            {
+                if (!is_whitespace(c))
+                {
+                    lastit = line.end();
+                    spacing = false;
+                }
+            }
+            else if (is_whitespace(c))
+            {
+                spacing = true;
+                lastit = it;
+            }
         }
     }
 
-    rtrim(filtered);
+    return std::string_view{ afterfirstword, lastit };
+}
+
+bool AsmParser::AssemblyTextParserUtils::is_probably_label(const std::string_view line)
+{
+    const auto filtered = getLineWithoutComment(line);
+
+    return (filtered.ends_with(":"));
+}
+
+std::string AsmParser::AssemblyTextParserUtils::fixLabelIndentation(const std::string_view line)
+{
+    std::string filtered{ line };
+    if (is_probably_label(line))
+        ltrim(filtered);
 
     return filtered;
 }

@@ -28,16 +28,16 @@ class JsonWriter
     bool prettyPrint;
 
     void writeKeyName(const char *key);
-    void writeKeyName(const std::string key);
+    void writeKeyName(const std::string &key);
     void writeKvNull(const char *key, const jsonopt opts);
-    void writeKv(const char *key, const std::string value, const jsonopt opts);
+    void writeKv(const char *key, const std::string &value, const jsonopt opts);
     void writeKv(const char *key, const int value, const jsonopt opts);
-    void writeKv(const std::string key, const std::string value, const jsonopt opts);
-    void writeKv(const std::string key, const int value, const jsonopt opts);
-    void writeLine(const asm_line line);
+    void writeKv(const std::string &key, const std::string &value, const jsonopt opts);
+    void writeKv(const std::string &key, const int value, const jsonopt opts);
+    void writeLine(const asm_line &line);
 
     public:
-    JsonWriter(std::ostream &out, const std::vector<asm_line> lines, const std::vector<asm_labelpair> labels, const Filter filter);
+    JsonWriter(std::ostream &out, const std::vector<asm_line> &lines, const std::vector<asm_labelpair> &labels, const Filter filter);
 
     void write();
 };

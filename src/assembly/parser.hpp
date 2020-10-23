@@ -52,8 +52,8 @@ class AssemblyTextParser : public IParser
 
     void eol();
 
-    void amendPreviousLinesWith(const asm_source source);
-    bool determineUsage(const asm_line lineWithLabel) const;
+    void amendPreviousLinesWith(const asm_source &source);
+    bool determineUsage(const asm_line &lineWithLabel) const;
     void markLabelUsage();
     void filterOutReferedLabelsThatArentDefined();
     void removeUnused();
