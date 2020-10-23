@@ -267,6 +267,9 @@ void AsmParser::AssemblyTextParser::eol()
     {
         this->state.currentLine.label.clear();
         this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
+
+        for (auto &label_ref : this->state.currentLine.labels)
+            labels_used.insert(label_ref.name);
     }
     else
     {
@@ -327,21 +330,7 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
 
 bool AsmParser::AssemblyTextParser::determineUsage(const asm_line &lineWithLabel) const
 {
-    for (auto &line : this->lines)
-    {
-        if (!line.is_label)
-        {
-            for (auto &label : line.labels)
-            {
-                if (lineWithLabel.label == label.name)
-                {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
+    return this->labels_used.contains(lineWithLabel.label);
 }
 
 void AsmParser::AssemblyTextParser::markLabelUsage()
@@ -409,8 +398,8 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
     {
         if (this->filter.unused_labels)
         {
+            this->markLabelUsage();
             // todo: think of a better way of doing this, this is currently way too slow
-            // this->markLabelUsage();
             // this->filterOutReferedLabelsThatArentDefined();
             // this->removeUnused();
         }

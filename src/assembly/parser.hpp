@@ -7,6 +7,7 @@
 #include <optional>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace AsmParser
 {
@@ -42,6 +43,7 @@ class AssemblyTextParser : public IParser
     std::unordered_map<int, std::string> files;
     std::vector<asm_line> lines;
     std::vector<asm_labelpair> labels;
+    std::unordered_set<std::string> labels_used;
 
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
