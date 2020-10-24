@@ -256,27 +256,29 @@ void AsmParser::AssemblyTextParser::eol()
     this->state.currentLine.is_label = probablyALabel;
     this->state.currentLine.text = filteredLine;
 
+    const auto hasOpcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
+
     if (!this->state.currentLine.is_label)
     {
         this->state.currentLine.label.clear();
-        this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
+        if (hasOpcode)
+        {
+            this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
-        for (auto &label_ref : this->state.currentLine.labels)
-            labels_used.insert(label_ref.name);
+            for (auto &label_ref : this->state.currentLine.labels)
+                labels_used.insert(label_ref.name);
+        }
+        else
+        {
+            this->state.currentLine.labels.clear();
+        }
     }
     else
     {
         this->state.currentLine.labels.clear();
     }
 
-    if (!AssemblyTextParserUtils::hasOpcode(line, this->state.inNvccCode))
-    {
-        this->state.currentLine.source = {};
-    }
-    else
-    {
-        this->state.currentLine.source = this->state.currentSourceRef;
-    }
+    this->state.currentLine.source = this->state.currentSourceRef;
 
     this->lines.push_back(this->state.currentLine);
 
@@ -344,24 +346,33 @@ void AsmParser::AssemblyTextParser::removeUnused()
     rebuild.reserve(this->lines.size());
 
     bool remove = false;
+    bool removeOnlyThis = false;
 
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
         const auto &line = *it;
+        removeOnlyThis = false;
+
         if (line.is_label)
         {
             if (remove && (line.is_used || line.source.is_usercode))
             {
                 remove = false;
-                continue;
             }
             else if (!remove && !line.is_used && !line.source.is_usercode)
             {
-                remove = true;
+                if (line.label.starts_with("."))
+                {
+                    removeOnlyThis = true;
+                }
+                else
+                {
+                    remove = true;
+                }
             }
         }
 
-        if (!remove)
+        if (!remove && !removeOnlyThis)
         {
             rebuild.push_back(line);
         }
