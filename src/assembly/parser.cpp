@@ -340,8 +340,10 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
 
 void AsmParser::AssemblyTextParser::removeUnused()
 {
+    std::vector<asm_line> rebuild;
+    rebuild.reserve(this->lines.size());
+
     bool remove = false;
-    auto remove_start = this->lines.begin();
 
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
@@ -351,21 +353,23 @@ void AsmParser::AssemblyTextParser::removeUnused()
             if (remove && (line.is_used || line.source.is_usercode))
             {
                 remove = false;
-                it = this->lines.erase(remove_start, it);
                 continue;
             }
             else if (!remove && !line.is_used && !line.source.is_usercode)
             {
                 remove = true;
-                remove_start = it;
             }
+        }
+
+        if (!remove)
+        {
+            rebuild.push_back(line);
         }
 
         ++it;
     }
 
-    if (remove)
-        this->lines.erase(remove_start, lines.end());
+    this->lines = rebuild;
 }
 
 void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
@@ -395,8 +399,7 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         {
             this->markLabelUsage();
             this->filterOutReferedLabelsThatArentDefined();
-            // todo: think of a better way of doing this, this is currently way too slow
-            //this->removeUnused();
+            this->removeUnused();
         }
     }
 }
