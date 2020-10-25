@@ -203,7 +203,7 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
         startidx += (loc - startidx) + len;
 
         label.range.start_col = loc + diffLen;
-        label.range.end_col = loc + diffLen + ustrlen(label.name) - 1;
+        label.range.end_col = loc + diffLen + ustrlen(label.name);
 
         labelsInLine.push_back(label);
     }

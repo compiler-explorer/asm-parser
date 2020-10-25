@@ -41,6 +41,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.plt = true;
         else if (streq(argv[i], "-nocompat"))
             config.filter.compatmode = false;
+        else if (streq(argv[i], "-library_functions"))
+            config.filter.library_functions = true;
         else if (streq(argv[i], "-stdin"))
         {
             config.useStdin = true;
