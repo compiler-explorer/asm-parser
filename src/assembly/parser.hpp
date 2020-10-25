@@ -57,7 +57,7 @@ class AssemblyTextParser : public IParser
     void amendPreviousLinesWith(const asm_source &source);
     bool determineUsage(const asm_line &lineWithLabel) const;
     void markLabelUsage();
-    void filterOutReferedLabelsThatArentDefined();
+    void filterOutReferedLabelsThatArentDefined(asm_line &line);
     void removeUnused();
 
     std::vector<asm_labelpair> redetermineLabels() const;

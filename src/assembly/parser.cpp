@@ -307,20 +307,17 @@ void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &sou
     }
 }
 
-void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined()
+void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined(asm_line &line)
 {
-    for (auto &line : this->lines)
+    for (auto it = line.labels.begin(); it != line.labels.end();)
     {
-        for (auto it = line.labels.begin(); it != line.labels.end();)
+        if (!this->labels_defined.contains(it->name))
         {
-            if (!this->labels_defined.contains(it->name))
-            {
-                it = line.labels.erase(it);
-            }
-            else
-            {
-                ++it;
-            }
+            it = line.labels.erase(it);
+        }
+        else
+        {
+            ++it;
         }
     }
 }
@@ -352,7 +349,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
 
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
-        const auto &line = *it;
+        auto &line = *it;
         removeOnlyThis = false;
 
         if (line.is_label)
@@ -376,6 +373,8 @@ void AsmParser::AssemblyTextParser::removeUnused()
 
         if (!remove && !removeOnlyThis)
         {
+            this->filterOutReferedLabelsThatArentDefined(line);
+
             rebuild.push_back(line);
         }
 
@@ -411,7 +410,6 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         if (this->filter.unused_labels)
         {
             this->markLabelUsage();
-            this->filterOutReferedLabelsThatArentDefined();
             this->removeUnused();
         }
     }
