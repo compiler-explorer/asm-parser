@@ -60,7 +60,7 @@ std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string_vie
         {
             const auto total = expandedLine.length() + extraChars;
             const auto spacesNeeded = (total + 8) & 7;
-            extraChars += spacesNeeded - 1;
+            extraChars += spacesNeeded;
             expandedLine += spaces.substr(spacesNeeded);
         }
         else

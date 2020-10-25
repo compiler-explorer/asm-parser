@@ -37,6 +37,8 @@ TEST_CASE("expandTabs", "[strings]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::expandTabs("012345\t67A") == ("012345  67A"));
     REQUIRE(AsmParser::AssemblyTextParserUtils::expandTabs("0123456\t7A") == ("0123456 7A"));
     REQUIRE(AsmParser::AssemblyTextParserUtils::expandTabs("01234567\tA") == ("01234567        A"));
+
+    REQUIRE(AsmParser::AssemblyTextParserUtils::expandTabs("\tpush\trbp") == ("        push    rbp"));
 }
 
 TEST_CASE("line filters", "[asm]")

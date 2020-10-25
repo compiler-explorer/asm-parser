@@ -140,11 +140,6 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.inCustomAssembly--;
     }
 
-    this->handleFiledef(line);
-    this->handleSource(line);
-    this->handleStabs(line);
-    // handle6502(line);
-
     // if (source && source.file === null) {
     //     lastOwnSource = source;
     // }
@@ -154,6 +149,13 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.currentSourceRef = {};
         this->state.previousLabel.clear();
         this->state.lastOwnSource = {};
+    }
+    else
+    {
+        this->handleFiledef(line);
+        this->handleSource(line);
+        this->handleStabs(line);
+        // handle6502(line);
     }
 
     if (this->filter.library_functions && !this->state.lastOwnSource.line && this->state.currentFilename.empty())
