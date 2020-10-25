@@ -14,6 +14,9 @@ TEST_CASE("Test text assembly utilities", "[asm]")
     R"(        .file 2 "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h")");
     REQUIRE(file_def.value().file_index == 2);
     REQUIRE(file_def.value().file_name == "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h");
+
+    const auto endproc = AsmParser::AssemblyTextParserUtils::endBlock("\t.cfi_endproc");
+    CHECK(endproc);
 }
 
 TEST_CASE("Clang-style file directive", "[asm]")
