@@ -41,6 +41,7 @@ struct asm_source
     std::string file;
     int32_t line{ 0 };
     bool is_usercode{};
+    bool inside_proc{};
 };
 
 struct asm_file_def

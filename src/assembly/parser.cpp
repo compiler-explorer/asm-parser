@@ -68,6 +68,7 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
             }
 
             this->state.currentSourceRef.line = line_index;
+            this->state.currentSourceRef.inside_proc = true;
 
             this->amendPreviousLinesWith(this->state.currentSourceRef);
         }
@@ -297,7 +298,7 @@ void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &sou
         auto &line = *it;
         if (line.is_label)
         {
-            line.source = { source.file, source.line, source.is_usercode && !line.label.starts_with(".") };
+            line.source = { source.file, source.line, source.is_usercode && !line.label.starts_with("."), source.inside_proc };
             if (line.label[0] != '.')
             {
                 break;
@@ -363,7 +364,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
             }
             else if (!remove && !line.is_used && !line.source.is_usercode)
             {
-                if (line.label.starts_with("."))
+                if (line.source.inside_proc && line.label.starts_with("."))
                 {
                     removeOnlyThis = true;
                 }
