@@ -253,7 +253,10 @@ void AsmParser::AssemblyTextParser::eol()
     }
 
     filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
-    // todo: const text = AsmRegex.filterAsmLine(line, filters);
+    if (this->filter.whitespace)
+    {
+        filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
+    }
 
     this->state.currentLine.is_label = probablyALabel;
     this->state.currentLine.text = filteredLine;

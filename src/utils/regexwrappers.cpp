@@ -380,3 +380,104 @@ bool AsmParser::AssemblyTextParserUtils::isInstOpcode(const std::string_view lin
 
     return false;
 }
+
+std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace(const std::string_view line, bool atStart)
+{
+    std::string squashed;
+    squashed.reserve(line.length());
+
+    enum class HorSpaceState
+    {
+        Start,
+        Second,
+        Stop,
+        JustOne
+    } state;
+
+    if (atStart)
+    {
+        state = HorSpaceState::Start;
+    }
+    else
+    {
+        state = HorSpaceState::JustOne;
+    }
+
+    bool justspaces = true;
+
+    for (auto c : line)
+    {
+        if (state == HorSpaceState::Stop)
+        {
+            if (is_whitespace(c))
+            {
+                // ignore
+            }
+            else
+            {
+                state = HorSpaceState::JustOne;
+                squashed += c;
+                justspaces = false;
+            }
+        }
+        else if (state == HorSpaceState::JustOne)
+        {
+            if (is_whitespace(c))
+            {
+                state = HorSpaceState::Stop;
+                squashed += ' ';
+            }
+            else
+            {
+                squashed += c;
+                justspaces = false;
+            }
+        }
+        else if (state == HorSpaceState::Start)
+        {
+            if (is_whitespace(c))
+            {
+                state = HorSpaceState::Second;
+                squashed += ' ';
+            }
+            else
+            {
+                state = HorSpaceState::Stop;
+                squashed += c;
+                justspaces = false;
+            }
+        }
+        else if (state == HorSpaceState::Second)
+        {
+            if (is_whitespace(c))
+            {
+                squashed += ' ';
+            }
+            else
+            {
+                squashed += c;
+                justspaces = false;
+            }
+            state = HorSpaceState::Stop;
+        }
+    }
+
+    if (atStart && justspaces)
+    {
+        squashed.clear();
+    }
+
+    return squashed;
+}
+
+std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(const std::string_view line, bool atStart)
+{
+    const auto quotes = Regexes::findQuotes(line);
+    if (quotes)
+    {
+        return fmt::format("{}{}{}", squashHorizontalWhitespaceWithQuotes(quotes.get<1>().to_view(), atStart),
+                           quotes.get<2>().to_view(), squashHorizontalWhitespaceWithQuotes(quotes.get<3>().to_view(), false));
+    }
+
+    return squashHorizontalWhitespace(line);
+}

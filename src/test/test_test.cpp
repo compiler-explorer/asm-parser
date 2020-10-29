@@ -103,3 +103,24 @@ TEST_CASE("potential label spotting", "[asm]")
     REQUIRE(morelabels[4].range.start_col == 42);
     REQUIRE(morelabels[4].range.end_col == 45);
 }
+
+TEST_CASE("squashes horizontal whitespace", "[strings]")
+{
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("") == "");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace(" ") == "");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("    ") == "");
+
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace(" abc") == " abc");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("   abc") == "  abc");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("       abc") == "  abc");
+
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("abc abc") == "abc abc");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("abc   abc") == "abc abc");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("abc     abc") == "abc abc");
+
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace(" abc  abc") == " abc abc");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("  abc abc") == "  abc abc");
+
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("  abc     abc") == "  abc abc");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("    abc   abc") == "  abc abc");
+}

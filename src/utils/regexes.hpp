@@ -44,6 +44,8 @@ struct Regexes
     static constexpr auto sourceStab = ctre::search<R"re(^\h*\.stabn\h+(\d+),0,(\d+),.*)re">;
     static constexpr auto stdInLooking = ctre::search<R"re(<stdin>|^-$|example\.[^/]+$|<source>)re">;
     static constexpr auto endBlock = ctre::search<R"re(\.(cfi_endproc|data|text|section))re">;
+
+    static constexpr auto findQuotes = ctre::search<R"re((.*?)("(?:[^"\\]|\\.)*")(.*))re">;
 };
 
 
