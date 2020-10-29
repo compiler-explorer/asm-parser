@@ -124,3 +124,10 @@ TEST_CASE("squashes horizontal whitespace", "[strings]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("  abc     abc") == "  abc abc");
     REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace("    abc   abc") == "  abc abc");
 }
+
+TEST_CASE("squashes horizontal whitespace with quotes", "[strings]")
+{
+    REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(R"(  .string   "   abc  etc"   # hello   "  wor  ld")",
+                                                                                     true) ==
+            R"(  .string "   abc  etc"  # hello "  wor  ld")");
+}
