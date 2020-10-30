@@ -19,6 +19,7 @@ struct Regexes
     // todo: stop using this static constexpr auto instructionRe = make_matcher<R"re(^\h*[A-Za-z]+)re">;
     static constexpr auto hasNvccOpcodeRe = ctre::match<R"re(^\h*[@A-Za-z\|])re">;
     static constexpr auto definesFunction = ctre::match<R"re(^\h*\.(type.*,\h*[#%@]function|proc\h+[.A-Z_a-z][\w$.]*:.*)$)re">;
+    static constexpr auto definesFunctionOrObject = ctre::search<R"re(\.type\h*([a-z_A-Z0-9]*),\h*@?(function|object|proc))re">;
     static constexpr auto definesGlobal = ctre::match<R"re(^\h*\.(?:globa?l|GLB|export)\h*([.A-Z_a-z][\w$.]*))re">;
     static constexpr auto definesWeak = ctre::match<R"re(^\h*\.(?:weak|weakext)\h*([.A-Z_a-z][\w$.]*))re">;
     // static constexpr auto indentedLabelDef = make_matcher<R"re(^\h*([$.A-Z_a-z][\w$.]*):)re">;

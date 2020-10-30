@@ -332,6 +332,15 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getCudaLabel
     return std::nullopt;
 }
 
+std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getFunctionTypeDefinedLabel(const std::string_view line)
+{
+    auto match = Regexes::definesFunctionOrObject(line);
+    if (match)
+        return match.get<1>().to_view();
+
+    return std::nullopt;
+}
+
 bool AsmParser::AssemblyTextParserUtils::isJustComments(const std::string_view line)
 {
     if (Regexes::commentOnly(line))
