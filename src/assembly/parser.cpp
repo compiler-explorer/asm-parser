@@ -110,6 +110,17 @@ std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(
     }
 }
 
+void AsmParser::AssemblyTextParser::markLabelOnLineAsUsed(const std::string_view label, const std::string_view line)
+{
+    asm_label label_ref;
+
+    label_ref.name = label;
+    label_ref.range.start_col = line.find(label) + 1;
+    label_ref.range.end_col = label_ref.range.start_col + ustrlen(label_ref.name);
+
+    labels_used.insert(label_ref.name);
+}
+
 void AsmParser::AssemblyTextParser::eol()
 {
     // if (this->lines.size() == 5000)
@@ -250,13 +261,15 @@ void AsmParser::AssemblyTextParser::eol()
                 const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(filteredLine);
                 if (weakDef)
                 {
-                    const auto weakDefLabel = weakDef.value();
-
-                    asm_label label_ref;
-                    label_ref.name = weakDefLabel;
-                    label_ref.range.start_col = filteredLine.find(weakDefLabel) + 1;
-                    label_ref.range.end_col = label_ref.range.start_col + ustrlen(label_ref.name);
-                    labels_used.insert(label_ref.name);
+                    markLabelOnLineAsUsed(weakDef.value(), filteredLine);
+                }
+                else
+                {
+                    const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(filteredLine);
+                    if (globalDef)
+                    {
+                        markLabelOnLineAsUsed(globalDef.value(), filteredLine);
+                    }
                 }
 
                 this->state.text.clear();

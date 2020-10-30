@@ -350,6 +350,15 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getWeakDefin
     return std::nullopt;
 }
 
+std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getGlobalDefinedLabel(const std::string_view line)
+{
+    auto match = Regexes::definesGlobal(line);
+    if (match)
+        return match.get<1>().to_view();
+
+    return std::nullopt;
+}
+
 bool AsmParser::AssemblyTextParserUtils::isJustComments(const std::string_view line)
 {
     if (Regexes::commentOnly(line))

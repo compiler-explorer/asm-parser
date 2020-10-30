@@ -40,6 +40,7 @@ class AssemblyTextParserUtils
     static std::optional<std::string_view> getCudaLabel(const std::string_view line);
     static std::optional<std::string_view> getFunctionTypeDefinedLabel(const std::string_view line);
     static std::optional<std::string_view> getWeakDefinedLabel(const std::string_view line);
+    static std::optional<std::string_view> getGlobalDefinedLabel(const std::string_view line);
 
     static bool startAppBlock(const std::string_view line);
     static bool endAppBlock(const std::string_view line);
