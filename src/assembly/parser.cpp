@@ -240,6 +240,8 @@ void AsmParser::AssemblyTextParser::eol()
         }
     }
 
+    bool isDataDef = false;
+
     if (this->state.inNvccDef)
     {
         if (AssemblyTextParserUtils::isCudaEndDef(line))
@@ -249,9 +251,10 @@ void AsmParser::AssemblyTextParser::eol()
     {
         // Check for directives only if it wasn't a label; the regexp would
         // otherwise misinterpret labels as directives.
-        if (AssemblyTextParserUtils::isDataDefn(line) && !this->state.previousLabel.empty())
+        if (AssemblyTextParserUtils::isDataDefn(line))
         {
             // We're defining data that's being used somewhere.
+            isDataDef = true;
         }
         else
         {
@@ -298,6 +301,16 @@ void AsmParser::AssemblyTextParser::eol()
 
             for (auto &label_ref : this->state.currentLine.labels)
                 labels_used.insert(label_ref.name);
+        }
+        else if (isDataDef)
+        {
+            this->state.currentLine.labels.clear();
+            // todo: mark the labels in here as weakly linked (e.g. " .quad .L441")
+
+            // this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
+
+            // for (auto &label_ref : this->state.currentLine.labels)
+            //     labels_used.insert(label_ref.name);
         }
         else
         {
