@@ -247,17 +247,17 @@ void AsmParser::AssemblyTextParser::eol()
             // .inst generates an opcode, so does not count as a directive
             if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
             {
-                // const auto funcDef = AssemblyTextParserUtils::getFunctionTypeDefinedLabel(filteredLine);
-                // if (funcDef)
-                // {
-                //     const auto funcDefLabel = funcDef.value();
+                const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(filteredLine);
+                if (weakDef)
+                {
+                    const auto weakDefLabel = weakDef.value();
 
-                //     asm_label label_ref;
-                //     label_ref.name = funcDefLabel;
-                //     label_ref.range.start_col = funcDefLabel.find(funcDefLabel) + 1;
-                //     label_ref.range.end_col = label_ref.range.start_col + ustrlen(label_ref.name);
-                //     labels_used.insert(label_ref.name);
-                // }
+                    asm_label label_ref;
+                    label_ref.name = weakDefLabel;
+                    label_ref.range.start_col = filteredLine.find(weakDefLabel) + 1;
+                    label_ref.range.end_col = label_ref.range.start_col + ustrlen(label_ref.name);
+                    labels_used.insert(label_ref.name);
+                }
 
                 this->state.text.clear();
                 return;
