@@ -54,6 +54,8 @@ class AssemblyTextParser : public IParser
 
     void eol();
 
+    bool isEmptyOrJustWhitespace(const std::string_view line) const;
+    void maybeAddBlank();
     void amendPreviousLinesWith(const asm_source &source);
     bool determineUsage(const asm_line &lineWithLabel) const;
     void markLabelUsage();

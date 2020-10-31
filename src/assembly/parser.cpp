@@ -121,6 +121,27 @@ void AsmParser::AssemblyTextParser::markLabelOnLineAsUsed(const std::string_view
     labels_used.insert(label_ref.name);
 }
 
+void AsmParser::AssemblyTextParser::maybeAddBlank()
+{
+    bool lastBlank = lines.size() == 0 || lines[lines.size() - 1].text.empty();
+    if (!lastBlank)
+        lines.emplace_back(asm_line{});
+}
+
+bool AsmParser::AssemblyTextParser::isEmptyOrJustWhitespace(const std::string_view line) const
+{
+    if (line.empty())
+        return true;
+
+    for (auto c : line)
+    {
+        if (!is_whitespace(c))
+            return false;
+    }
+
+    return true;
+}
+
 void AsmParser::AssemblyTextParser::eol()
 {
     // if (this->lines.size() == 5000)
@@ -141,7 +162,10 @@ void AsmParser::AssemblyTextParser::eol()
         // asmResult = asmResult.replace(blockComments, '');
     }
 
-    // if (line.trim().length() == 0) {}; //return maybeAddBlank();
+    if (isEmptyOrJustWhitespace(line))
+    {
+        return maybeAddBlank();
+    }
 
     if (AssemblyTextParserUtils::startAppBlock(line) || AssemblyTextParserUtils::startAsmNesting(line))
     {
