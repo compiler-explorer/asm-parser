@@ -17,6 +17,9 @@ TEST_CASE("Test text assembly utilities", "[asm]")
 
     const auto endproc = AsmParser::AssemblyTextParserUtils::endBlock("\t.cfi_endproc");
     CHECK(endproc);
+
+    const auto indentedLabel = AsmParser::AssemblyTextParserUtils::getLineWithoutComment("\tlabel:");
+    REQUIRE(indentedLabel == "\tlabel:");
 }
 
 TEST_CASE("Clang-style file directive", "[asm]")

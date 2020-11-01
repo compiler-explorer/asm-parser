@@ -92,6 +92,7 @@ static inline void ltrim(std::string &s)
 std::string_view AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std::string_view line)
 {
     bool spacing = false;
+    bool stillStarting = true;
     auto lastit = line.end();
 
     for (auto it = line.begin(); it != line.end(); it++)
@@ -112,8 +113,15 @@ std::string_view AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const
         }
         else if (is_whitespace(c))
         {
-            spacing = true;
-            lastit = it;
+            if (!stillStarting)
+            {
+                spacing = true;
+                lastit = it;
+            }
+        }
+        else
+        {
+            stillStarting = false;
         }
     }
 
