@@ -313,6 +313,7 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.currentLine.is_label = probablyALabel;
     this->state.currentLine.text = filteredLine;
+    this->state.currentLine.is_data = isDataDef;
 
     const auto hasOpcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
 
@@ -412,6 +413,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
 
     bool remove = false;
     bool removeOnlyThis = false;
+    bool isUsed = false;
 
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
@@ -420,7 +422,9 @@ void AsmParser::AssemblyTextParser::removeUnused()
 
         if (line.is_label)
         {
-            if (remove && (line.is_used || line.source.is_usercode))
+            isUsed = line.is_used || line.source.is_usercode;
+
+            if (remove && isUsed)
             {
                 remove = false;
             }
@@ -428,16 +432,20 @@ void AsmParser::AssemblyTextParser::removeUnused()
             {
                 if (line.source.inside_proc && line.label.starts_with("."))
                 {
-                    removeOnlyThis = true;
+                    removeOnlyThis = this->filter.unused_labels;
                 }
                 else
                 {
-                    remove = true;
+                    remove = this->filter.unused_labels;
                 }
             }
         }
 
-        if (!remove && !removeOnlyThis)
+        if (remove || removeOnlyThis || (!isUsed && this->filter.compatmode && this->filter.directives && line.is_data))
+        {
+            // filter this out
+        }
+        else
         {
             this->filterOutReferedLabelsThatArentDefined(line);
 
@@ -471,14 +479,8 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         this->state.text += c;
     }
 
-    // if (!this->state.stopParsing)
-    {
-        if (this->filter.unused_labels)
-        {
-            this->markLabelUsage();
-            this->removeUnused();
-        }
-    }
+    this->markLabelUsage();
+    this->removeUnused();
 }
 
 std::vector<AsmParser::asm_labelpair> AsmParser::AssemblyTextParser::redetermineLabels() const
