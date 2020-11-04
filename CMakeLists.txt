@@ -18,7 +18,7 @@ conan_add_remote(NAME bincrafters INDEX 1
 
 conan_cmake_run(
         REQUIRES
-        CTRE/v3.2@ctre/stable
+        ctre/3.2
         catch2/2.12.4
         approvaltests.cpp/10.3.0
         fmt/7.0.3
