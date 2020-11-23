@@ -2,19 +2,46 @@
 
 #include "../types/filter.hpp"
 #include "../types/line.hpp"
-#include "../types/state.hpp"
-#include <istream>
+#include "../types/parser.hpp"
+#include <iosfwd>
 #include <string_view>
 #include <unordered_map>
 
 namespace AsmParser
 {
 
-class ObjDumpParser
+class ObjDumpParserState
+{
+    public:
+    bool inComment{};
+    bool inSomethingWithALabel{};
+    bool hasPrefixingWhitespace{};
+    bool inAddress{};
+    bool inLabel{};
+    bool inOpcodes{};
+    bool inSectionStart{};
+    bool inSectionName{};
+    bool inSourceRef{};
+    bool skipRestOfTheLine{};
+    bool stopParsing{};
+    bool ignoreUntilNextLabel{};
+
+    asm_label currentLabelReference{};
+    asm_source currentSourceRef{};
+    std::string previousLabel;
+    std::string text;
+    std::string currentFilename;
+    std::string currentSection;
+    asm_line currentLine{};
+
+    void commonReset();
+};
+
+class ObjDumpParser : public IParser
 {
     private:
     const Filter filter;
-    ParserState state{};
+    ObjDumpParserState state{};
     std::vector<asm_line> lines;
     std::vector<asm_labelpair> labels;
 
@@ -32,10 +59,10 @@ class ObjDumpParser
     public:
     ObjDumpParser(const Filter filter);
 
-    void fromStream(std::istream &in);
+    void fromStream(std::istream &in) override;
 
-    void outputJson(std::ostream &out) const;
-    void outputText(std::ostream &out) const;
+    void outputJson(std::ostream &out) const override;
+    void outputText(std::ostream &out) const override;
 };
 
 }; // namespace AsmParser

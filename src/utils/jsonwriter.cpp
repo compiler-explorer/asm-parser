@@ -1,10 +1,8 @@
 #include "jsonwriter.hpp"
 #include <algorithm>
+#include <ostream>
 
-AsmParser::JsonWriter::JsonWriter(std::ostream &out,
-                                  const std::vector<asm_line> lines,
-                                  const std::vector<asm_labelpair> labels,
-                                  const Filter filter)
+AsmParser::JsonWriter::JsonWriter(std::ostream &out, const std::vector<asm_line> &lines, const std::vector<asm_labelpair> &labels, const Filter filter)
 : filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
 {
 }
@@ -14,98 +12,125 @@ void AsmParser::JsonWriter::writeKeyName(const char *key)
     this->out << "\"" << key << "\": ";
 }
 
-void AsmParser::JsonWriter::writeKeyName(const std::string key)
+void AsmParser::JsonWriter::writeKeyName(const std::string &key)
 {
     this->out << "\"" << key << "\": ";
 }
 
 void AsmParser::JsonWriter::writeKvNull(const char *key, const jsonopt opts)
 {
-    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
 
     this->writeKeyName(key);
 
     this->out << "null";
 
-    if (opts == jsonopt::trailingcomma) this->out << ", ";
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
-std::string escape(const std::string in) {
+std::string escape(const std::string &in)
+{
     std::string out;
     out.reserve(in.length());
-    for (auto c : in) {
-        if (c == '\t') {
+    for (auto c : in)
+    {
+        if (c == '\t')
+        {
             out += "\\t";
-        } else if (c == '"') {
+        }
+        else if (c == '\\')
+        {
+            out += "\\\\";
+        }
+        else if (c == '"')
+        {
             out += "\\\"";
-        } else {
+        }
+        else
+        {
             out += c;
         }
     }
     return out;
 }
 
-void AsmParser::JsonWriter::writeKv(const char *key, const std::string value, const jsonopt opts)
+void AsmParser::JsonWriter::writeKv(const char *key, const std::string &value, const jsonopt opts)
 {
-    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
 
     this->writeKeyName(key);
 
     this->out << "\"" << escape(value) << "\"";
 
-    if (opts == jsonopt::trailingcomma) this->out << ", ";
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
 void AsmParser::JsonWriter::writeKv(const char *key, const int value, const jsonopt opts)
 {
-    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
 
     this->writeKeyName(key);
 
     this->out << value;
 
-    if (opts == jsonopt::trailingcomma) this->out << ", ";
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
-void AsmParser::JsonWriter::writeKv(const std::string key, const int value, const jsonopt opts)
+void AsmParser::JsonWriter::writeKv(const std::string &key, const int value, const jsonopt opts)
 {
-    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
 
     this->writeKeyName(key);
 
     this->out << value;
 
-    if (opts == jsonopt::trailingcomma) this->out << ", ";
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
-void AsmParser::JsonWriter::writeKv(const std::string key, const std::string value, const jsonopt opts)
+void AsmParser::JsonWriter::writeKv(const std::string &key, const std::string &value, const jsonopt opts)
 {
-    if (opts == jsonopt::prefixwithcomma) this->out << ", ";
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
 
     this->writeKeyName(key);
 
     this->out << value;
 
-    if (opts == jsonopt::trailingcomma) this->out << ", ";
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
-void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
+void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line &line)
 {
     bool wroteSomethingInRoot = false;
 
     this->out << "{";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 
     if (line.opcodes.size() > 0)
     {
@@ -122,7 +147,7 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
 
         this->out << "[";
         bool firstOpcode = true;
-        for (auto opcode : line.opcodes)
+        for (auto &opcode : line.opcodes)
         {
             if (!firstOpcode)
             {
@@ -174,13 +199,17 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
     if (!line.is_label && (line.source.line > 0))
     {
         this->out << "{";
-        if (this->filter.compatmode)
+        if (line.source.is_usercode || (this->filter.binary && this->filter.compatmode))
         {
             this->writeKvNull("file", jsonopt::trailingcomma);
         }
-        else
+        else if (!line.source.file.empty())
         {
             this->writeKv("file", line.source.file, jsonopt::trailingcomma);
+        }
+        else
+        {
+            this->writeKvNull("file", jsonopt::trailingcomma);
         }
 
         this->writeKv("line", line.source.line, jsonopt::none);
@@ -219,12 +248,13 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
     this->out << "[";
 
     bool firstLabel = true;
-    for (auto labelref : line.labels)
+    for (auto &labelref : line.labels)
     {
         if (!firstLabel)
         {
             this->out << ",";
-            if (this->prettyPrint) this->out << "\n";
+            if (this->prettyPrint)
+                this->out << "\n";
         }
         else
         {
@@ -242,7 +272,8 @@ void AsmParser::JsonWriter::JsonWriter::writeLine(const asm_line line)
     }
     this->out << "]";
 
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 
     this->out << "}";
 }
@@ -255,12 +286,13 @@ void AsmParser::JsonWriter::JsonWriter::write()
 
     bool firstLine = true;
 
-    for (auto line : this->lines)
+    for (auto &line : this->lines)
     {
         if (!firstLine)
         {
             this->out << ",";
-            if (this->prettyPrint) this->out << "\n";
+            if (this->prettyPrint)
+                this->out << "\n";
         }
         firstLine = false;
 
@@ -271,10 +303,11 @@ void AsmParser::JsonWriter::JsonWriter::write()
 
     this->writeKeyName("labelDefinitions");
     this->out << "{";
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
     bool firstLabel = true;
 
-    for (auto label : this->labels)
+    for (auto &label : this->labels)
     {
         if (firstLabel)
         {
@@ -287,5 +320,6 @@ void AsmParser::JsonWriter::JsonWriter::write()
         }
     }
     this->out << "}}";
-    if (this->prettyPrint) this->out << "\n";
+    if (this->prettyPrint)
+        this->out << "\n";
 }

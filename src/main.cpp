@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string_view>
 
+#include "assembly/parser.hpp"
 #include "objdump/parser.hpp"
 #include "types/filter.hpp"
 
@@ -40,6 +41,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.plt = true;
         else if (streq(argv[i], "-nocompat"))
             config.filter.compatmode = false;
+        else if (streq(argv[i], "-library_functions"))
+            config.filter.library_functions = true;
         else if (streq(argv[i], "-stdin"))
         {
             config.useStdin = true;
@@ -72,15 +75,33 @@ int main(int argc, const char **argv)
         std::fstream fs;
         fs.open(config.filename, std::fstream::in);
 
-        AsmParser::ObjDumpParser parser(config.filter);
-        parser.fromStream(fs);
-        parser.outputJson(std::cout);
+        if (config.filter.binary)
+        {
+            AsmParser::ObjDumpParser parser(config.filter);
+            parser.fromStream(fs);
+            parser.outputJson(std::cout);
+        }
+        else
+        {
+            AsmParser::AssemblyTextParser parser(config.filter);
+            parser.fromStream(fs);
+            parser.outputJson(std::cout);
+        }
     }
     else
     {
-        AsmParser::ObjDumpParser parser(config.filter);
-        parser.fromStream(std::cin);
-        parser.outputJson(std::cout);
+        if (config.filter.binary)
+        {
+            AsmParser::ObjDumpParser parser(config.filter);
+            parser.fromStream(std::cin);
+            parser.outputJson(std::cout);
+        }
+        else
+        {
+            AsmParser::AssemblyTextParser parser(config.filter);
+            parser.fromStream(std::cin);
+            parser.outputJson(std::cout);
+        }
     }
 
     return 0;

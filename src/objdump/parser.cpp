@@ -4,48 +4,31 @@
 #include "../utils/utils.hpp"
 #include <clocale>
 #include <ctre.hpp>
-#include <iostream>
+#include <istream>
+
+void AsmParser::ObjDumpParserState::commonReset()
+{
+    this->currentLine = {};
+    this->text.clear();
+    this->hasPrefixingWhitespace = false;
+    this->inComment = false;
+    this->inAddress = true;
+    this->inOpcodes = false;
+    this->inLabel = false;
+    this->inSectionStart = false;
+    this->inSectionName = false;
+    this->inSourceRef = false;
+    this->skipRestOfTheLine = false;
+}
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter)
 {
 }
 
-size_t ustrlen(const std::string s)
-{
-    const char *cstrptr = s.data();
-
-    mblen(NULL, 0);
-
-    size_t maxlen = s.length();
-
-    size_t ulen = 0;
-    while (maxlen != 0)
-    {
-        auto mbcharlen = mblen(cstrptr, maxlen);
-        if (mbcharlen < 1)
-        {
-            break;
-        }
-        cstrptr += mbcharlen;
-        ulen += 1;
-        if (maxlen > (size_t)mbcharlen)
-        {
-            maxlen -= mbcharlen;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return ulen;
-}
-
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name) const
 {
-    if (auto match =
-        ctre::match<"^(__.*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|"
-                    "frame_dummy|\\.plt.*|_dl_relocate_static_pie)$">(name))
+    if (auto match = ctre::match<"^(__.*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|"
+                                 "frame_dummy|\\.plt.*|_dl_relocate_static_pie)$">(name))
     {
         return true;
     }
@@ -113,7 +96,8 @@ void AsmParser::ObjDumpParser::eol()
 void AsmParser::ObjDumpParser::label()
 {
     this->state.ignoreUntilNextLabel = this->shouldIgnoreFunction(this->state.text);
-    if (this->state.ignoreUntilNextLabel) return;
+    if (this->state.ignoreUntilNextLabel)
+        return;
 
     this->state.previousLabel = this->state.text;
 
@@ -128,8 +112,7 @@ void AsmParser::ObjDumpParser::labelref()
     if (!this->state.ignoreUntilNextLabel)
     {
         this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
-        this->state.currentLabelReference.name =
-        this->state.text.substr(this->state.currentLabelReference.range.start_col);
+        this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
 
         if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name))
         {
@@ -174,7 +157,8 @@ void AsmParser::ObjDumpParser::actually_address()
         int8_t bitsdone = 0;
         for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++)
         {
-            if (!is_hex(*c)) break;
+            if (!is_hex(*c))
+                break;
 
             addr += hex2int(*c) << bitsdone;
             bitsdone += 4;
@@ -304,7 +288,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             {
                 if ((c == ' ') || (c == '\t'))
                 {
-                    if (this->state.text.empty()) continue;
+                    if (this->state.text.empty())
+                        continue;
                     if (this->state.text[this->state.text.length() - 1] == ' ')
                     {
                         this->opcodes();
@@ -362,8 +347,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 else if (c == '<')
                 {
                     this->state.inSomethingWithALabel = true;
-                    this->state.currentLabelReference.range = { (uint16_t)(ustrlen(this->state.text) + 1),
-                                                                (uint16_t)0 };
+                    this->state.currentLabelReference.range = { (uint16_t)(ustrlen(this->state.text) + 1), (uint16_t)0 };
                 }
                 else if (this->state.inSomethingWithALabel)
                 {
@@ -383,7 +367,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 }
             }
 
-            if (is_whitespace(c) && this->state.text.empty()) continue;
+            if (is_whitespace(c) && this->state.text.empty())
+                continue;
             this->state.text += c;
         }
     }
