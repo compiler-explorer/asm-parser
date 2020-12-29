@@ -55,3 +55,7 @@ build/bin/asm-parser -directives -unused_labels -comment_only /opt/compiler-expl
 echo bigboostexample
 build/bin/asm-parser -directives -unused_labels -comment_only resources/bigboostexample.asm > resources/bigboostexample.asm.directives.labels.comments.json
 /opt/compiler-explorer/node/bin/node prettyjson.js resources/bigboostexample.asm.directives.labels.comments.json
+
+echo arm-hellow
+build/bin/asm-parser -debugdump /opt/compiler-explorer/ce/test/filters-cases/arm-hellow.asm > /opt/compiler-explorer/ce/test/filters-cases/arm-hellow.directives.json
+/opt/compiler-explorer/node/bin/node prettyjson.js /opt/compiler-explorer/ce/test/filters-cases/arm-hellow.directives.json

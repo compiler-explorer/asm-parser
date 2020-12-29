@@ -502,6 +502,14 @@ std::vector<AsmParser::asm_labelpair> AsmParser::AssemblyTextParser::redetermine
     return labels;
 }
 
+void AsmParser::AssemblyTextParser::outputDebugJson(std::ostream &out) const
+{
+    const std::vector<asm_labelpair> labels = this->redetermineLabels();
+
+    DebugJsonWriter writer(out, this->lines, labels, this->filter);
+    writer.write();
+}
+
 void AsmParser::AssemblyTextParser::outputJson(std::ostream &out) const
 {
     const std::vector<asm_labelpair> labels = this->redetermineLabels();

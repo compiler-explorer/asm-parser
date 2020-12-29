@@ -380,6 +380,13 @@ void AsmParser::ObjDumpParser::outputJson(std::ostream &out) const
     writer.write();
 }
 
+void AsmParser::ObjDumpParser::outputDebugJson(std::ostream &out) const
+{
+    out << "Not implemented"
+        << "\n";
+    throw "Not implemented";
+}
+
 void AsmParser::ObjDumpParser::outputText(std::ostream &out) const
 {
     for (auto line : this->lines)

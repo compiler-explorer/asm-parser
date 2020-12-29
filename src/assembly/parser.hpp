@@ -72,6 +72,8 @@ class AssemblyTextParser : public IParser
 
     void outputJson(std::ostream &out) const override;
     void outputText(std::ostream &out) const override;
+
+    void outputDebugJson(std::ostream &out) const override;
 };
 
 }; // namespace AsmParser

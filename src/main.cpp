@@ -13,6 +13,7 @@ struct AsmParserConfiguration
     std::string filename;
     bool useStdin{};
     bool isConfigured{};
+    bool doDebugDump{};
 };
 
 bool streq(const std::string_view a, const std::string_view b)
@@ -43,6 +44,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.compatmode = false;
         else if (streq(argv[i], "-library_functions"))
             config.filter.library_functions = true;
+        else if (streq(argv[i], "-debugdump"))
+            config.doDebugDump = true;
         else if (streq(argv[i], "-stdin"))
         {
             config.useStdin = true;
@@ -85,6 +88,11 @@ int main(int argc, const char **argv)
         {
             AsmParser::AssemblyTextParser parser(config.filter);
             parser.fromStream(fs);
+            if (config.doDebugDump) {
+                std::fstream fdebug;
+                fdebug.open("./asm-parser-debugdump.json", std::fstream::out);
+                parser.outputDebugJson(fdebug);
+            }
             parser.outputJson(std::cout);
         }
     }

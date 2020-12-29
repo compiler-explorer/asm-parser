@@ -19,7 +19,7 @@ enum class jsonopt
 
 class JsonWriter
 {
-    private:
+    protected:
     const Filter filter;
     std::ostream &out;
     const std::vector<asm_line> lines;
@@ -34,12 +34,24 @@ class JsonWriter
     void writeKv(const char *key, const int value, const jsonopt opts);
     void writeKv(const std::string &key, const std::string &value, const jsonopt opts);
     void writeKv(const std::string &key, const int value, const jsonopt opts);
+    void writeSource(const asm_line &line);
     void writeLine(const asm_line &line);
 
     public:
     JsonWriter(std::ostream &out, const std::vector<asm_line> &lines, const std::vector<asm_labelpair> &labels, const Filter filter);
 
-    void write();
+    virtual void write();
+};
+
+class DebugJsonWriter : public JsonWriter
+{
+    protected:
+    void writeDebugLine(const asm_line &line);
+
+    public:
+    DebugJsonWriter(std::ostream &out, const std::vector<asm_line> &lines, const std::vector<asm_labelpair> &labels, const Filter filter);
+
+    void write() override;
 };
 
 } // namespace AsmParser
