@@ -3,4 +3,4 @@
 sudo -H apt install -y python3 python3-pip python3-setuptools g++-9
 sudo -H pip3 install conan
 
-#conan profile update settings.compiler.libcxx=libstdc++11 default
+conan profile update settings.compiler.libcxx=libstdc++11 default
