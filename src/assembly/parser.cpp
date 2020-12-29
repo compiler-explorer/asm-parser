@@ -164,7 +164,8 @@ void AsmParser::AssemblyTextParser::eol()
 
     if (isEmptyOrJustWhitespace(line))
     {
-        return maybeAddBlank();
+        maybeAddBlank();
+        return;
     }
 
     if (AssemblyTextParserUtils::startAppBlock(line) || AssemblyTextParserUtils::startAsmNesting(line))
@@ -467,6 +468,12 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         }
 
         this->state.text += c;
+    }
+
+    if (!this->state.text.empty())
+    {
+        // if last line wasn't terminated; still parse
+        this->eol();
     }
 
     this->markLabelUsage();

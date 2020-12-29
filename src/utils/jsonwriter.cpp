@@ -204,7 +204,6 @@ void AsmParser::JsonWriter::writeLine(const asm_line &line)
         this->writeKv("address", line.address.value(), jsonopt::none);
     }
 
-    if (!line.text.empty())
     {
         if (wroteSomethingInRoot)
         {

@@ -78,6 +78,8 @@ int main(int argc, const char **argv)
         std::fstream fs;
         fs.open(config.filename, std::fstream::in);
 
+        // todo: output an error when file doesn't exist?
+
         if (config.filter.binary)
         {
             AsmParser::ObjDumpParser parser(config.filter);
