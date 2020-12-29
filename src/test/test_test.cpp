@@ -67,6 +67,10 @@ TEST_CASE("line filters", "[asm]")
 
     const auto line4 = AsmParser::AssemblyTextParserUtils::getLineWithoutComment("_label123:");
     REQUIRE(line4 == "_label123:");
+
+    const auto line5 =
+    AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord("   mov eax, ptr #notacomment");
+    REQUIRE(line5 == " eax, ptr #notacomment");
 }
 
 TEST_CASE("potential label spotting", "[asm]")
@@ -81,6 +85,12 @@ TEST_CASE("potential label spotting", "[asm]")
     REQUIRE(jbe[0].name == ".LBB0_3");
     REQUIRE(jbe[0].range.start_col == 17);
     REQUIRE(jbe[0].range.end_col == 24);
+
+    const auto movlower = AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(R"("        movw    r1, #:lower16:.LC0")");
+    REQUIRE(movlower.size() == 3);
+    REQUIRE(movlower[0].name == "r1");
+    REQUIRE(movlower[1].name == "lower16");
+    REQUIRE(movlower[2].name == ".LC0");
 
     const auto morelabels =
     AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movsd   xmm0, qword ptr [rsi + 8*rax]");
@@ -133,4 +143,13 @@ TEST_CASE("squashes horizontal whitespace with quotes", "[strings]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(R"(  .string   "   abc  etc"   # hello   "  wor  ld")",
                                                                                      true) ==
             R"(  .string "   abc  etc"  # hello "  wor  ld")");
+}
+
+TEST_CASE("Data definitions", "[asm]")
+{
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(  .string   "   abc  etc"   # hello   "  wor  ld")"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .ascii  "Hello world\000")"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .ascii  "moo\012\000")"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .4byte  0x37d)"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .byte   0x2)"));
 }

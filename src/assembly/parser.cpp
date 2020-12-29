@@ -264,44 +264,34 @@ void AsmParser::AssemblyTextParser::eol()
         }
     }
 
-    bool isDataDef = false;
+    bool isDataDef = AssemblyTextParserUtils::isDataDefn(line);
 
     if (this->state.inNvccDef)
     {
         if (AssemblyTextParserUtils::isCudaEndDef(line))
             this->state.inNvccDef = false;
     }
-    else if (!probablyALabel && this->filter.directives)
+    else if (!probablyALabel && this->filter.directives && !isDataDef)
     {
-        // Check for directives only if it wasn't a label; the regexp would
-        // otherwise misinterpret labels as directives.
-        if (AssemblyTextParserUtils::isDataDefn(line))
+        // .inst generates an opcode, so does not count as a directive
+        if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
         {
-            // We're defining data that's being used somewhere.
-            isDataDef = true;
-        }
-        else
-        {
-            // .inst generates an opcode, so does not count as a directive
-            if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
+            const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(filteredLine);
+            if (weakDef)
             {
-                const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(filteredLine);
-                if (weakDef)
-                {
-                    markLabelOnLineAsUsed(weakDef.value(), filteredLine);
-                }
-                else
-                {
-                    const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(filteredLine);
-                    if (globalDef)
-                    {
-                        markLabelOnLineAsUsed(globalDef.value(), filteredLine);
-                    }
-                }
-
-                this->state.text.clear();
-                return;
+                markLabelOnLineAsUsed(weakDef.value(), filteredLine);
             }
+            else
+            {
+                const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(filteredLine);
+                if (globalDef)
+                {
+                    markLabelOnLineAsUsed(globalDef.value(), filteredLine);
+                }
+            }
+
+            this->state.text.clear();
+            return;
         }
     }
 

@@ -142,6 +142,19 @@ std::string_view AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStr
 
         if (c == ';' || c == '#')
         {
+            auto nextit = it + 1;
+
+            if (nextit != line.end())
+            {
+                auto nextchar = *nextit;
+
+                // it's only a comment if the ; or # is followed by a whitespace
+                if (nextchar != ' ' && nextchar != '\t')
+                {
+                    continue;
+                }
+            }
+
             if (!spacing)
                 lastit = it;
             break;
