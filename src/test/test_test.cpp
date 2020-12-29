@@ -71,6 +71,10 @@ TEST_CASE("line filters", "[asm]")
     const auto line5 =
     AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord("   mov eax, ptr #notacomment");
     REQUIRE(line5 == " eax, ptr #notacomment");
+
+    const auto line6 =
+    AsmParser::AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord("        movl    $.L.str, %edi");
+    REQUIRE(line6 == "    $.L.str, %edi");
 }
 
 TEST_CASE("potential label spotting", "[asm]")
@@ -86,11 +90,16 @@ TEST_CASE("potential label spotting", "[asm]")
     REQUIRE(jbe[0].range.start_col == 17);
     REQUIRE(jbe[0].range.end_col == 24);
 
-    const auto movlower = AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(R"("        movw    r1, #:lower16:.LC0")");
+    const auto movlower = AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movw    r1, #:lower16:.LC0");
     REQUIRE(movlower.size() == 3);
     REQUIRE(movlower[0].name == "r1");
     REQUIRE(movlower[1].name == "lower16");
     REQUIRE(movlower[2].name == ".LC0");
+
+    const auto movldollarlabel =
+    AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movl    $.L.str, %edi");
+    REQUIRE(movldollarlabel[0].name == ".L.str");
+    REQUIRE(movldollarlabel[1].name == "edi");
 
     const auto morelabels =
     AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movsd   xmm0, qword ptr [rsi + 8*rax]");
@@ -152,4 +161,5 @@ TEST_CASE("Data definitions", "[asm]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .ascii  "moo\012\000")"));
     REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .4byte  0x37d)"));
     REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .byte   0x2)"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .asciz   "Hello world")"));
 }

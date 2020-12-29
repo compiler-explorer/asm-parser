@@ -214,7 +214,7 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
     int diffLen = line.length() - filteredLine.length() + 1;
 
     int startidx = 0;
-    for (auto match : ctre::range<R"re(([$.@A-Z_a-z][\dA-Z_a-z]*))re">(filteredLine))
+    for (auto match : ctre::range<R"re([$%]?([.@A-Z_a-z][.\dA-Z_a-z]*))re">(filteredLine))
     {
         AsmParser::asm_label label{};
         label.name = std::string(match.get<1>().to_view());
