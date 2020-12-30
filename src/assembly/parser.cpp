@@ -415,7 +415,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
             {
                 remove = false;
             }
-            else if (!remove && !line.is_used && !line.source.is_usercode)
+            else if (!remove && !line.is_used)
             {
                 if (line.source.inside_proc && line.label.starts_with("."))
                 {
