@@ -248,21 +248,17 @@ void AsmParser::AssemblyTextParser::eol()
         filteredLine = AssemblyTextParserUtils::fixLabelIndentation(filteredLine);
     }
 
-    bool probablyALabel = AssemblyTextParserUtils::is_probably_label(filteredLine);
-    if (probablyALabel)
+    bool probablyALabel = false;
+
+    const auto found_label = this->getLabelFromLine(filteredLine);
+    if (found_label)
     {
-        const auto found_label = this->getLabelFromLine(filteredLine);
-        if (found_label)
-        {
-            const auto label = std::string(found_label.value());
-            this->state.currentLine.label = label;
-            this->state.previousLabel = label;
-            this->labels_defined[label] = lines.size() + 1;
-        }
-        else
-        {
-            probablyALabel = false;
-        }
+        probablyALabel = true;
+
+        const auto label = std::string(found_label.value());
+        this->state.currentLine.label = label;
+        this->state.previousLabel = label;
+        this->labels_defined[label] = lines.size() + 1;
     }
 
     bool isDataDef = AssemblyTextParserUtils::isDataDefn(line);

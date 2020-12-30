@@ -163,3 +163,18 @@ TEST_CASE("Data definitions", "[asm]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .byte   0x2)"));
     REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn(R"(        .asciz   "Hello world")"));
 }
+
+TEST_CASE("Labels", "[asm]")
+{
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel("hello:") == "hello");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel(".LC0:") == ".LC0");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel("_Z12testFunctionPii:") == "_Z12testFunctionPii");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel("_ZNSt9bad_allocC2Ev:") == "_ZNSt9bad_allocC2Ev");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel("..___tag_value_main.2:") == "..___tag_value_main.2");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel("$Ltext0:") == "$Ltext0");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel(
+            "_ZN95_$LT$example..Bla$LT$$u27$a$GT$$u20$as$u20$core..convert..Into$LT$alloc..string..String$GT$$GT$"
+            "4into17h38301ffbb2e8fb47E:") == "_ZN95_$LT$example..Bla$LT$$u27$a$GT$$u20$as$u20$core..convert..Into$LT$"
+                                             "alloc..string..String$GT$$GT$4into17h38301ffbb2e8fb47E");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel(".Lset0 = .Lpubnames_end1-.Lpubnames_begin1") == ".Lset0");
+}
