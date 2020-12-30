@@ -98,8 +98,17 @@ TEST_CASE("potential label spotting", "[asm]")
 
     const auto movldollarlabel =
     AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movl    $.L.str, %edi");
+    REQUIRE(movldollarlabel.size() == 4);
     REQUIRE(movldollarlabel[0].name == ".L.str");
-    REQUIRE(movldollarlabel[1].name == "edi");
+    REQUIRE(movldollarlabel[1].name == "$.L.str");
+    REQUIRE(movldollarlabel[2].name == "edi");
+    REQUIRE(movldollarlabel[3].name == "%edi");
+
+    const auto bltid = AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        bltid   r18,$L2");
+    REQUIRE(bltid.size() == 3);
+    REQUIRE(bltid[0].name == "r18");
+    REQUIRE(bltid[1].name == "L2");
+    REQUIRE(bltid[2].name == "$L2");
 
     const auto morelabels =
     AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine("        movsd   xmm0, qword ptr [rsi + 8*rax]");

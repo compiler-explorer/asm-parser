@@ -333,7 +333,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             {
                 if (c == ':')
                 {
-                    this->state.currentSourceRef = { this->state.text, 0 };
+                    this->state.currentSourceRef = asm_source{ .file = this->state.text, .line = 0 };
                     this->state.text.clear();
                     continue;
                 }
@@ -347,7 +347,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 else if (c == '<')
                 {
                     this->state.inSomethingWithALabel = true;
-                    this->state.currentLabelReference.range = { (uint16_t)(ustrlen(this->state.text) + 1), (uint16_t)0 };
+                    this->state.currentLabelReference.range =
+                    asm_range{ .start_col = (uint16_t)(ustrlen(this->state.text) + 1), .end_col = (uint16_t)0 };
                 }
                 else if (this->state.inSomethingWithALabel)
                 {

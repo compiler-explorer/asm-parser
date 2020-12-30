@@ -59,6 +59,7 @@ struct asm_line
     std::vector<asm_label> labels;
     std::vector<std::string> opcodes;
     bool is_label{};
+    bool is_internal_label{};
     std::string label;
     asm_source source;
     std::optional<int64_t> address;

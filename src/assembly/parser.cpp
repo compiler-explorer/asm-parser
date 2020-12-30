@@ -27,7 +27,7 @@ void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
         // cf http://www.math.utah.edu/docs/info/stabs_11.html#SEC48
         if (type == 68)
         {
-            this->state.currentSourceRef = { "<stdin>", line };
+            this->state.currentSourceRef = asm_source{ .file = "<stdin>", .line = line };
         }
         else if (type == 100 || type == 132)
         {
@@ -142,6 +142,23 @@ bool AsmParser::AssemblyTextParser::isEmptyOrJustWhitespace(const std::string_vi
     return true;
 }
 
+/*
+// todo
+        function handle6502(line) {
+            const match = line.match(source6502Dbg);
+            if (match) {
+                const file = match[1];
+                const sourceLine = parseInt(match[2]);
+                source = {
+                    file: !file.match(stdInLooking) ? file : null,
+                    line: sourceLine,
+                };
+            } else if (line.match(source6502DbgEnd)) {
+                source = null;
+            }
+        }
+*/
+
 void AsmParser::AssemblyTextParser::eol()
 {
     // if (this->lines.size() == 5000)
@@ -180,6 +197,16 @@ void AsmParser::AssemblyTextParser::eol()
     // if (source && source.file === null) {
     //     lastOwnSource = source;
     // }
+
+    if (AssemblyTextParserUtils::startBlock(line) && this->state.currentSourceRef.line == 0)
+    {
+        this->markPreviousInternalLabelAsInsideProc();
+        if (this->filter.directives)
+        {
+            this->state.text.clear();
+            return;
+        }
+    }
 
     if (AssemblyTextParserUtils::endBlock(line) || (this->state.inNvccCode && str_contains(line, '}')))
     {
@@ -299,6 +326,16 @@ void AsmParser::AssemblyTextParser::eol()
     }
 
     this->state.currentLine.is_label = probablyALabel;
+
+    if (probablyALabel)
+    {
+        this->state.currentLine.is_internal_label = isInternalLabel(this->state.currentLine.label);
+    }
+    else
+    {
+        this->state.currentLine.is_internal_label = false;
+    }
+
     this->state.currentLine.text = filteredLine;
     this->state.currentLine.is_data = isDataDef;
 
@@ -341,6 +378,11 @@ void AsmParser::AssemblyTextParser::eol()
     this->state.text.clear();
 }
 
+bool AsmParser::AssemblyTextParser::isInternalLabel(const std::string_view label) const
+{
+    return label.starts_with(".") || label.starts_with("$");
+}
+
 void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &source)
 {
     for (auto it = this->lines.rbegin(); it != this->lines.rend(); it++)
@@ -348,11 +390,34 @@ void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &sou
         auto &line = *it;
         if (line.is_label)
         {
-            line.source = { source.file, source.line, source.is_usercode && !line.label.starts_with("."), source.inside_proc };
-            if (line.label[0] != '.')
+            line.source = asm_source{ .file = source.file,
+                                      .line = source.line,
+                                      .is_usercode = source.is_usercode && !line.is_internal_label,
+                                      .inside_proc = source.inside_proc };
+            if (!line.is_internal_label)
             {
                 break;
             }
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
+void AsmParser::AssemblyTextParser::markPreviousInternalLabelAsInsideProc()
+{
+    for (auto it = this->lines.rbegin(); it != this->lines.rend(); it++)
+    {
+        auto &line = *it;
+        if (line.is_label)
+        {
+            if (line.is_internal_label)
+            {
+                line.source.inside_proc = true;
+            }
+            break;
         }
         else
         {
@@ -417,7 +482,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
             }
             else if (!remove && !line.is_used)
             {
-                if (line.source.inside_proc && line.label.starts_with("."))
+                if (line.source.inside_proc && line.is_internal_label)
                 {
                     removeOnlyThis = this->filter.unused_labels;
                 }

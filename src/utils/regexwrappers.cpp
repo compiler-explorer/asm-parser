@@ -214,10 +214,10 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
     int diffLen = line.length() - filteredLine.length() + 1;
 
     int startidx = 0;
-    for (auto match : ctre::range<R"re([$%]?([.@A-Z_a-z][.\dA-Z_a-z]*))re">(filteredLine))
+    for (auto match : ctre::range<R"re(([$%]?)([.@A-Z_a-z][.\dA-Z_a-z]*))re">(filteredLine))
     {
         AsmParser::asm_label label{};
-        label.name = std::string(match.get<1>().to_view());
+        label.name = std::string(match.get<2>().to_view());
 
         const auto len = label.name.length();
         const auto loc = filteredLine.find(label.name, startidx);
@@ -227,6 +227,17 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
         label.range.end_col = loc + diffLen + ustrlen(label.name);
 
         labelsInLine.push_back(label);
+
+        auto prefix = match.get<1>().to_view();
+        if (!prefix.empty())
+        {
+            AsmParser::asm_label labelWithPrefix = label;
+            labelWithPrefix.name = prefix;
+            labelWithPrefix.name += label.name;
+            labelWithPrefix.range.start_col--;
+
+            labelsInLine.push_back(labelWithPrefix);
+        }
     }
 
     return labelsInLine;
@@ -313,6 +324,14 @@ bool AsmParser::AssemblyTextParserUtils::startAsmNesting(const std::string_view 
 bool AsmParser::AssemblyTextParserUtils::endAsmNesting(const std::string_view line)
 {
     if (Regexes::endAsmNesting(line))
+        return true;
+
+    return false;
+}
+
+bool AsmParser::AssemblyTextParserUtils::startBlock(const std::string_view line)
+{
+    if (Regexes::startBlock(line))
         return true;
 
     return false;

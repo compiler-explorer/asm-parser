@@ -54,9 +54,11 @@ class AssemblyTextParser : public IParser
 
     void eol();
 
+    bool isInternalLabel(const std::string_view label) const;
     bool isEmptyOrJustWhitespace(const std::string_view line) const;
     void maybeAddBlank();
     void amendPreviousLinesWith(const asm_source &source);
+    void markPreviousInternalLabelAsInsideProc();
     bool determineUsage(const asm_line &lineWithLabel) const;
     void markLabelUsage();
     void markLabelOnLineAsUsed(const std::string_view label, const std::string_view line);
