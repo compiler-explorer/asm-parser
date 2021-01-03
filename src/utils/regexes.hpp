@@ -48,6 +48,8 @@ struct Regexes
     static constexpr auto startBlock = ctre::search<R"re(\.cfi_startproc)re">;
     static constexpr auto endBlock = ctre::search<R"re(\.(cfi_endproc|data|text|section))re">;
 
+    static constexpr auto sectionDef = ctre::search<R"re(\.(data|text|section)\h*"?([.a-zA-Z0-9\-]*)"?)re">;
+
     static constexpr auto findQuotes = ctre::search<R"re((.*?)("(?:[^"\\]|\\.)*")(.*))re">;
 };
 

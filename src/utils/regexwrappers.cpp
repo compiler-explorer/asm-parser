@@ -407,6 +407,24 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getGlobalDef
     return std::nullopt;
 }
 
+std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getSectionNameDef(const std::string_view line)
+{
+    auto match = Regexes::sectionDef(line);
+    if (match)
+    {
+        if (match.get<1>().to_view() == "section")
+        {
+            return match.get<2>().to_view();
+        }
+        else
+        {
+            return match.get<1>().to_view();
+        }
+    }
+
+    return std::nullopt;
+}
+
 bool AsmParser::AssemblyTextParserUtils::isJustComments(const std::string_view line)
 {
     if (Regexes::commentOnly(line))

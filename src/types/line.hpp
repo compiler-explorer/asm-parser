@@ -58,6 +58,7 @@ struct asm_line
     std::string section;
     std::vector<asm_label> labels;
     std::vector<std::string> opcodes;
+    std::string closest_parent_label;
     bool is_label{};
     bool is_internal_label{};
     std::string label;

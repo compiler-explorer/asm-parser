@@ -16,6 +16,7 @@ class AssemblyTextParserState
 {
     public:
     bool stopParsing{};
+    bool hasProcMarkers{};
 
     bool mayRemovePreviousLabel{ true };
     bool keepInlineCode{};
@@ -28,6 +29,7 @@ class AssemblyTextParserState
     asm_label currentLabelReference{};
     asm_source currentSourceRef{};
     std::string previousLabel;
+    std::string previousParentLabel;
     std::string text;
     std::string currentFilename;
     std::string currentSection;
@@ -51,6 +53,8 @@ class AssemblyTextParser : public IParser
     void handleStabs(const std::string_view line);
     void handleSource(const std::string_view line);
     void handleFiledef(const std::string_view line);
+    void handle6502(const std::string_view line);
+    void handleSection(const std::string_view line);
 
     void eol();
 

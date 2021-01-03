@@ -56,6 +56,8 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
         {
             const auto file = files.at(file_index);
 
+            this->state.hasProcMarkers = true;
+
             const auto match_stdin = AssemblyTextParserUtils::isExampleOrStdin(file);
             if (match_stdin)
             {
@@ -159,6 +161,23 @@ bool AsmParser::AssemblyTextParser::isEmptyOrJustWhitespace(const std::string_vi
         }
 */
 
+void AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
+{
+    if (line.empty())
+    {
+        // hello
+    }
+}
+
+void AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
+{
+    auto match = AssemblyTextParserUtils::getSectionNameDef(line);
+    if (match)
+    {
+        this->state.currentSection = match.value();
+    }
+}
+
 void AsmParser::AssemblyTextParser::eol()
 {
     // if (this->lines.size() == 5000)
@@ -221,6 +240,8 @@ void AsmParser::AssemblyTextParser::eol()
         this->handleStabs(line);
         // handle6502(line);
     }
+
+    this->handleSection(line);
 
     if (this->filter.library_functions && !this->state.lastOwnSource.line && this->state.currentFilename.empty())
     {
@@ -286,6 +307,11 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.currentLine.label = label;
         this->state.previousLabel = label;
         this->labels_defined[label] = lines.size() + 1;
+
+        if (!label.starts_with('.'))
+        {
+            this->state.previousParentLabel = label;
+        }
     }
 
     bool isDataDef = AssemblyTextParserUtils::isDataDefn(line);
@@ -371,7 +397,17 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.currentLine.labels.clear();
     }
 
+    if (this->state.currentLine.label == this->state.previousParentLabel)
+    {
+        this->state.currentLine.closest_parent_label.clear();
+    }
+    else
+    {
+        this->state.currentLine.closest_parent_label = this->state.previousParentLabel;
+    }
+
     this->state.currentLine.source = this->state.currentSourceRef;
+    this->state.currentLine.section = this->state.currentSection;
 
     this->lines.push_back(this->state.currentLine);
 
@@ -485,6 +521,11 @@ void AsmParser::AssemblyTextParser::removeUnused()
                 if (line.source.inside_proc && line.is_internal_label)
                 {
                     removeOnlyThis = this->filter.unused_labels;
+                }
+                else if (!this->state.hasProcMarkers && !line.closest_parent_label.empty())
+                {
+                    remove = !this->labels_used.contains(line.closest_parent_label);
+                    removeOnlyThis = !remove && line.is_internal_label;
                 }
                 else
                 {

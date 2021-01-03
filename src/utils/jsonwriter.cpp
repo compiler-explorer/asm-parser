@@ -355,6 +355,7 @@ void AsmParser::DebugJsonWriter::writeDebugLine(const asm_line &line)
     this->writeKv("is_used", line.is_used ? "true" : "false", jsonopt::trailingcomma);
     this->writeKv("is_label", line.is_label ? "true" : "false", jsonopt::trailingcomma);
     this->writeKv("is_internal_label", line.is_internal_label ? "true" : "false", jsonopt::trailingcomma);
+    this->writeKv("closest_parent_label", line.closest_parent_label, jsonopt::trailingcomma);
     this->writeKv("section", line.section, jsonopt::trailingcomma);
 
     this->writeKeyName("source");
