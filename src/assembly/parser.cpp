@@ -364,6 +364,7 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.currentLine.text = filteredLine;
     this->state.currentLine.is_data = isDataDef;
+    this->state.currentLine.is_inline_asm = (this->state.inCustomAssembly > 0);
 
     const auto hasOpcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
 
@@ -512,24 +513,31 @@ void AsmParser::AssemblyTextParser::removeUnused()
         {
             isUsed = line.is_used || line.source.is_usercode;
 
-            if (remove && isUsed)
+            if (this->filter.unused_labels)
             {
-                remove = false;
-            }
-            else if (!remove && !line.is_used)
-            {
-                if (line.source.inside_proc && line.is_internal_label)
+                if (remove && isUsed)
                 {
-                    removeOnlyThis = this->filter.unused_labels;
+                    remove = false;
                 }
-                else if (!this->state.hasProcMarkers && !line.closest_parent_label.empty())
+                else if (!remove && !isUsed)
                 {
-                    remove = !this->labels_used.contains(line.closest_parent_label);
-                    removeOnlyThis = !remove && line.is_internal_label;
-                }
-                else
-                {
-                    remove = this->filter.unused_labels;
+                    if ((this->state.hasProcMarkers && line.source.inside_proc) && line.is_internal_label)
+                    {
+                        removeOnlyThis = true;
+                    }
+                    else if (line.is_inline_asm)
+                    {
+                        removeOnlyThis = true;
+                    }
+                    else if (!this->state.hasProcMarkers && !line.closest_parent_label.empty())
+                    {
+                        remove = !this->labels_used.contains(line.closest_parent_label);
+                        removeOnlyThis = !remove && line.is_internal_label;
+                    }
+                    else
+                    {
+                        remove = true;
+                    }
                 }
             }
         }

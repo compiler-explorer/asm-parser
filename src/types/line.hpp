@@ -66,6 +66,7 @@ struct asm_line
     std::optional<int64_t> address;
     bool is_used{};
     bool is_data{};
+    bool is_inline_asm{};
 };
 
 } // namespace AsmParser
