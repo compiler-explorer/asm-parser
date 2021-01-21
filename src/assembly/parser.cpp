@@ -511,7 +511,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
 
         if (line.is_label)
         {
-            isUsed = line.is_used || line.source.is_usercode;
+            isUsed = line.is_used;
 
             if (this->filter.unused_labels)
             {
@@ -521,7 +521,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
                 }
                 else if (!remove && !isUsed)
                 {
-                    if ((this->state.hasProcMarkers && line.source.inside_proc) && line.is_internal_label)
+                    if (line.is_internal_label)
                     {
                         removeOnlyThis = true;
                     }
@@ -529,7 +529,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
                     {
                         removeOnlyThis = true;
                     }
-                    else if (!this->state.hasProcMarkers && !line.closest_parent_label.empty())
+                    else if (!line.closest_parent_label.empty())
                     {
                         remove = !this->labels_used.contains(line.closest_parent_label);
                         removeOnlyThis = !remove && line.is_internal_label;
