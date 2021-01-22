@@ -187,3 +187,15 @@ TEST_CASE("Labels", "[asm]")
                                              "alloc..string..String$GT$$GT$4into17h38301ffbb2e8fb47E");
     REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel(".Lset0 = .Lpubnames_end1-.Lpubnames_begin1") == ".Lset0");
 }
+
+TEST_CASE("6502 debugging", "[asm]")
+{
+    const auto match1 = AsmParser::AssemblyTextParserUtils::get6502DbgInfo(R"(	.dbg	line, "/tmp/test.c", 2)");
+    REQUIRE(match1.value().file == "/tmp/test.c");
+    REQUIRE(match1.value().line == 2);
+
+    const auto match2 = AsmParser::AssemblyTextParserUtils::get6502DbgInfo(R"(	.dbg	line)");
+    REQUIRE(match2.value().is_end);
+    REQUIRE(match2.value().file.empty());
+    REQUIRE(match2.value().line == 0);
+}

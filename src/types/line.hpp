@@ -36,6 +36,13 @@ struct asm_label
     asm_range range{};
 };
 
+struct asm_source_v
+{
+    std::string_view file;
+    int32_t line{ 0 };
+    bool is_end{};
+};
+
 struct asm_source
 {
     std::string file;
@@ -67,6 +74,7 @@ struct asm_line
     bool is_used{};
     bool is_data{};
     bool is_inline_asm{};
+    bool has_opcode{};
 };
 
 } // namespace AsmParser

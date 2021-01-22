@@ -125,7 +125,7 @@ void AsmParser::JsonWriter::writeKv(const std::string &key, const std::string &v
 
 void AsmParser::JsonWriter::writeSource(const asm_line &line)
 {
-    if (!line.is_label && (line.source.line > 0))
+    if ((!line.is_label || line.has_opcode) && (line.source.line > 0))
     {
         this->out << "{";
         if (line.source.is_usercode || (this->filter.binary && this->filter.compatmode))
@@ -358,6 +358,7 @@ void AsmParser::DebugJsonWriter::writeDebugLine(const asm_line &line)
     this->writeKv("is_inline_asm", line.is_inline_asm ? "true" : "false", jsonopt::trailingcomma);
     this->writeKv("closest_parent_label", line.closest_parent_label, jsonopt::trailingcomma);
     this->writeKv("section", line.section, jsonopt::trailingcomma);
+    this->writeKv("has_opcode", line.has_opcode ? "true" : "false", jsonopt::trailingcomma);
 
     this->writeKeyName("source");
     this->writeSource(line);

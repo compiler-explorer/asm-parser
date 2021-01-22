@@ -27,7 +27,7 @@ void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
         // cf http://www.math.utah.edu/docs/info/stabs_11.html#SEC48
         if (type == 68)
         {
-            this->state.currentSourceRef = asm_source{ .file = "<stdin>", .line = line };
+            this->state.currentSourceRef = asm_source{ .file = "", .line = line };
         }
         else if (type == 100 || type == 132)
         {
@@ -163,15 +163,18 @@ bool AsmParser::AssemblyTextParser::isEmptyOrJustWhitespace(const std::string_vi
 
 void AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
 {
-    if (line.empty())
+    const auto match = AssemblyTextParserUtils::get6502DbgInfo(line);
+    if (match)
     {
-        // hello
+        const auto source = match.value();
+        if (!source.is_end)
+            this->state.currentSourceRef = asm_source{ .file = std::string(source.file), .line = source.line };
     }
 }
 
 void AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
 {
-    auto match = AssemblyTextParserUtils::getSectionNameDef(line);
+    const auto match = AssemblyTextParserUtils::getSectionNameDef(line);
     if (match)
     {
         this->state.currentSection = match.value();
@@ -238,7 +241,7 @@ void AsmParser::AssemblyTextParser::eol()
         this->handleFiledef(line);
         this->handleSource(line);
         this->handleStabs(line);
-        // handle6502(line);
+        this->handle6502(line);
     }
 
     this->handleSection(line);
@@ -367,6 +370,7 @@ void AsmParser::AssemblyTextParser::eol()
     this->state.currentLine.is_inline_asm = (this->state.inCustomAssembly > 0);
 
     const auto hasOpcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
+    this->state.currentLine.has_opcode = hasOpcode;
 
     if (!this->state.currentLine.is_label)
     {

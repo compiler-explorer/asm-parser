@@ -297,6 +297,29 @@ std::optional<AsmParser::asm_stabn> AsmParser::AssemblyTextParserUtils::getSourc
     }
 }
 
+std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get6502DbgInfo(const std::string_view line)
+{
+    const auto match = Regexes::source6502Dbg(line);
+    if (match)
+    {
+        const auto file = match.get<1>().to_view();
+        const auto line = svtoi(match.get<2>().to_view());
+
+        // todo check if stdin?
+        return asm_source_v{ .file = file, .line = line, .is_end = false };
+    }
+    else
+    {
+        const auto matchend = Regexes::source6502DbgEnd(line);
+        if (matchend)
+        {
+            return asm_source_v{ .file = "", .line = 0, .is_end = true };
+        }
+    }
+
+    return std::nullopt;
+}
+
 bool AsmParser::AssemblyTextParserUtils::startAppBlock(const std::string_view line)
 {
     if (Regexes::startAppBlock(line))
