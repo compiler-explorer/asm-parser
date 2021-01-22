@@ -387,10 +387,10 @@ void AsmParser::AssemblyTextParser::eol()
             this->state.currentLine.labels.clear();
             // todo: mark the labels in here as weakly linked (e.g. " .quad .L441")
 
-            // this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
+            this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
-            // for (auto &label_ref : this->state.currentLine.labels)
-            //     labels_used.insert(label_ref.name);
+            for (auto &label_ref : this->state.currentLine.labels)
+                labels_used.insert(label_ref.name);
         }
         else
         {

@@ -363,6 +363,38 @@ void AsmParser::DebugJsonWriter::writeDebugLine(const asm_line &line)
     this->writeKeyName("source");
     this->writeSource(line);
 
+    this->out << ",\n";
+    this->writeKeyName("labels");
+    this->out << "[";
+
+    bool firstLabel = true;
+    for (auto &labelref : line.labels)
+    {
+        if (!firstLabel)
+        {
+            this->out << ",";
+            if (this->prettyPrint)
+                this->out << "\n";
+        }
+        else
+        {
+            firstLabel = false;
+        }
+
+        this->out << "{";
+        this->writeKv("name", labelref.name, jsonopt::trailingcomma);
+        this->writeKeyName("range");
+        this->out << "{";
+        this->writeKv("startCol", labelref.range.start_col, jsonopt::none);
+        this->writeKv("endCol", labelref.range.end_col, jsonopt::prefixwithcomma);
+        this->out << "}";
+        this->out << "}";
+    }
+    this->out << "]";
+
+    if (this->prettyPrint)
+        this->out << "\n";
+
     this->out << "}";
 }
 
