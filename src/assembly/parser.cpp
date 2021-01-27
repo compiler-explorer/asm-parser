@@ -112,17 +112,6 @@ std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(
     }
 }
 
-void AsmParser::AssemblyTextParser::markLabelOnLineAsUsed(const std::string_view label, const std::string_view line)
-{
-    asm_label label_ref;
-
-    label_ref.name = label;
-    label_ref.range.start_col = line.find(label) + 1;
-    label_ref.range.end_col = label_ref.range.start_col + ustrlen(label_ref.name);
-
-    labels_used.insert(label_ref.name);
-}
-
 void AsmParser::AssemblyTextParser::maybeAddBlank()
 {
     bool lastBlank = lines.size() == 0 || lines[lines.size() - 1].text.empty();
@@ -143,23 +132,6 @@ bool AsmParser::AssemblyTextParser::isEmptyOrJustWhitespace(const std::string_vi
 
     return true;
 }
-
-/*
-// todo
-        function handle6502(line) {
-            const match = line.match(source6502Dbg);
-            if (match) {
-                const file = match[1];
-                const sourceLine = parseInt(match[2]);
-                source = {
-                    file: !file.match(stdInLooking) ? file : null,
-                    line: sourceLine,
-                };
-            } else if (line.match(source6502DbgEnd)) {
-                source = null;
-            }
-        }
-*/
 
 void AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
 {
@@ -332,14 +304,14 @@ void AsmParser::AssemblyTextParser::eol()
             const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(filteredLine);
             if (weakDef)
             {
-                markLabelOnLineAsUsed(weakDef.value(), filteredLine);
+                used_labels.insert(std::string(weakDef.value()));
             }
             else
             {
                 const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(filteredLine);
                 if (globalDef)
                 {
-                    markLabelOnLineAsUsed(globalDef.value(), filteredLine);
+                    used_labels.insert(std::string(globalDef.value()));
                 }
             }
 
@@ -380,7 +352,7 @@ void AsmParser::AssemblyTextParser::eol()
             this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
             for (auto &label_ref : this->state.currentLine.labels)
-                labels_used.insert(label_ref.name);
+                used_labels.insert(label_ref.name);
         }
         else if (isDataDef)
         {
@@ -390,7 +362,7 @@ void AsmParser::AssemblyTextParser::eol()
             this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
             for (auto &label_ref : this->state.currentLine.labels)
-                labels_used.insert(label_ref.name);
+                weakly_used_labels[label_ref.name] = this->state.previousLabel;
         }
         else
         {
@@ -484,7 +456,21 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined(asm_l
 
 bool AsmParser::AssemblyTextParser::determineUsage(const asm_line &lineWithLabel) const
 {
-    return this->labels_used.contains(lineWithLabel.label);
+    if (this->used_labels.contains(lineWithLabel.label))
+    {
+        return true;
+    }
+
+    if (this->weakly_used_labels.contains(lineWithLabel.label))
+    {
+        const auto it = this->weakly_used_labels.find(lineWithLabel.label);
+        if (it != this->weakly_used_labels.end())
+        {
+            return this->used_labels.contains(it->second);
+        }
+    }
+
+    return false;
 }
 
 void AsmParser::AssemblyTextParser::markLabelUsage()
@@ -535,7 +521,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
                     }
                     else if (!line.closest_parent_label.empty())
                     {
-                        remove = !this->labels_used.contains(line.closest_parent_label);
+                        remove = !this->used_labels.contains(line.closest_parent_label);
                         removeOnlyThis = !remove && line.is_internal_label;
                     }
                     else

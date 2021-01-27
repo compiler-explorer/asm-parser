@@ -211,6 +211,11 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
 
     const auto filteredLine = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
 
+    if (filteredLine.find('\"') != std::string_view::npos)
+    {
+        return labelsInLine;
+    }
+
     int diffLen = line.length() - filteredLine.length() + 1;
 
     int startidx = 0;

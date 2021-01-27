@@ -133,6 +133,9 @@ TEST_CASE("potential label spotting", "[asm]")
     REQUIRE(morelabels[4].name == "rax");
     REQUIRE(morelabels[4].range.start_col == 42);
     REQUIRE(morelabels[4].range.end_col == 45);
+
+    const auto quoted = AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(R"( .ascii  \"Hello world\\000\")");
+    REQUIRE(quoted.size() == 0);
 }
 
 TEST_CASE("squashes horizontal whitespace", "[strings]")

@@ -45,7 +45,8 @@ class AssemblyTextParser : public IParser
     std::unordered_map<int, std::string> files;
     std::vector<asm_line> lines;
     std::unordered_map<std::string, int32_t> labels_defined;
-    std::unordered_set<std::string> labels_used;
+    std::unordered_set<std::string> used_labels;
+    std::unordered_map<std::string, std::string> weakly_used_labels;
 
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
@@ -65,7 +66,6 @@ class AssemblyTextParser : public IParser
     void markPreviousInternalLabelAsInsideProc();
     bool determineUsage(const asm_line &lineWithLabel) const;
     void markLabelUsage();
-    void markLabelOnLineAsUsed(const std::string_view label, const std::string_view line);
     void filterOutReferedLabelsThatArentDefined(asm_line &line);
     void removeUnused();
 
