@@ -2,6 +2,7 @@
 
 #include <iosfwd>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "../types/filter.hpp"
@@ -27,6 +28,7 @@ class JsonWriter
 
     bool prettyPrint;
 
+    void writeValue(const std::string &value, const jsonopt opts);
     void writeKeyName(const char *key);
     void writeKeyName(const std::string &key);
     void writeKvNull(const char *key, const jsonopt opts);
@@ -46,10 +48,18 @@ class JsonWriter
 class DebugJsonWriter : public JsonWriter
 {
     protected:
+    const std::unordered_set<std::string> used_labels;
+    const std::unordered_map<std::string, std::string> used_weak_labels;
+
     void writeDebugLine(const asm_line &line);
 
     public:
-    DebugJsonWriter(std::ostream &out, const std::vector<asm_line> &lines, const std::vector<asm_labelpair> &labels, const Filter filter);
+    DebugJsonWriter(std::ostream &out,
+                    const std::vector<asm_line> &lines,
+                    const std::vector<asm_labelpair> &labels,
+                    const Filter filter,
+                    const std::unordered_set<std::string> used_labels,
+                    const std::unordered_map<std::string, std::string> used_weak_labels);
 
     void write() override;
 };

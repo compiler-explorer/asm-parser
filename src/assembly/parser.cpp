@@ -296,7 +296,7 @@ void AsmParser::AssemblyTextParser::eol()
         if (AssemblyTextParserUtils::isCudaEndDef(line))
             this->state.inNvccDef = false;
     }
-    else if (!probablyALabel && this->filter.directives && !isDataDef)
+    else if (!probablyALabel && !isDataDef)
     {
         // .inst generates an opcode, so does not count as a directive
         if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
@@ -315,8 +315,15 @@ void AsmParser::AssemblyTextParser::eol()
                 }
             }
 
-            this->state.text.clear();
-            return;
+            if (this->filter.directives)
+            {
+                this->state.text.clear();
+                return;
+            }
+            else
+            {
+                this->state.currentLine.is_directive = true;
+            }
         }
     }
 
@@ -603,7 +610,7 @@ void AsmParser::AssemblyTextParser::outputDebugJson(std::ostream &out) const
 {
     const std::vector<asm_labelpair> labels = this->redetermineLabels();
 
-    DebugJsonWriter writer(out, this->lines, labels, this->filter);
+    DebugJsonWriter writer(out, this->lines, labels, this->filter, this->used_labels, this->weakly_used_labels);
     writer.write();
 }
 

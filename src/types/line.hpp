@@ -75,6 +75,7 @@ struct asm_line
     bool is_data{};
     bool is_inline_asm{};
     bool has_opcode{};
+    bool is_directive{};
 };
 
 } // namespace AsmParser
