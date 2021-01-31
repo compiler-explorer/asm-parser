@@ -369,7 +369,10 @@ void AsmParser::AssemblyTextParser::eol()
             this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
             for (auto &label_ref : this->state.currentLine.labels)
-                weakly_used_labels[label_ref.name] = this->state.previousLabel;
+            {
+                if (label_ref.name != this->state.previousLabel)
+                    weakly_used_labels[label_ref.name] = this->state.previousLabel;
+            }
         }
         else
         {
@@ -392,6 +395,23 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.currentLine.source = this->state.currentSourceRef;
     this->state.currentLine.section = this->state.currentSection;
+
+    if (!this->state.previousLabelOnSameAddress.empty())
+    {
+        if (this->state.currentLine.is_label)
+        {
+            this->aliased_labels.insert_or_assign(this->state.currentLine.label, this->state.previousLabelOnSameAddress);
+        }
+        else if (this->state.currentLine.has_opcode || this->state.currentLine.is_data)
+        {
+            this->state.previousLabelOnSameAddress.clear();
+        }
+    }
+
+    if (this->state.currentLine.is_label)
+    {
+        this->state.previousLabelOnSameAddress = this->state.currentLine.label;
+    }
 
     this->lines.push_back(this->state.currentLine);
 
@@ -461,20 +481,23 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined(asm_l
     }
 }
 
-bool AsmParser::AssemblyTextParser::determineUsage(const asm_line &lineWithLabel) const
+bool AsmParser::AssemblyTextParser::determineUsage(const std::string &label) const
 {
-    if (this->used_labels.contains(lineWithLabel.label))
+    if (this->used_labels.contains(label))
     {
         return true;
     }
 
-    if (this->weakly_used_labels.contains(lineWithLabel.label))
+    const auto weakfind = this->weakly_used_labels.find(label);
+    if (weakfind != this->weakly_used_labels.end())
     {
-        const auto it = this->weakly_used_labels.find(lineWithLabel.label);
-        if (it != this->weakly_used_labels.end())
-        {
-            return this->used_labels.contains(it->second);
-        }
+        return this->determineUsage(weakfind->second);
+    }
+
+    const auto aliasfind = this->aliased_labels.find(label);
+    if (aliasfind != this->aliased_labels.end())
+    {
+        return this->determineUsage(aliasfind->second);
     }
 
     return false;
@@ -485,7 +508,7 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
     for (auto &label : this->labels_defined)
     {
         auto &line = this->lines[label.second - 1];
-        if (this->determineUsage(line))
+        if (this->determineUsage(line.label))
         {
             line.is_used = true;
         }
@@ -610,7 +633,7 @@ void AsmParser::AssemblyTextParser::outputDebugJson(std::ostream &out) const
 {
     const std::vector<asm_labelpair> labels = this->redetermineLabels();
 
-    DebugJsonWriter writer(out, this->lines, labels, this->filter, this->used_labels, this->weakly_used_labels);
+    DebugJsonWriter writer(out, this->lines, labels, this->filter, this->used_labels, this->weakly_used_labels, this->aliased_labels);
     writer.write();
 }
 

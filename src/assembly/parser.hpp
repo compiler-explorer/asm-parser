@@ -30,6 +30,7 @@ class AssemblyTextParserState
     asm_source currentSourceRef{};
     std::string previousLabel;
     std::string previousParentLabel;
+    std::string previousLabelOnSameAddress;
     std::string text;
     std::string currentFilename;
     std::string currentSection;
@@ -47,6 +48,7 @@ class AssemblyTextParser : public IParser
     std::unordered_map<std::string, int32_t> labels_defined;
     std::unordered_set<std::string> used_labels;
     std::unordered_map<std::string, std::string> weakly_used_labels;
+    std::unordered_map<std::string, std::string> aliased_labels;
 
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
@@ -64,7 +66,7 @@ class AssemblyTextParser : public IParser
     void maybeAddBlank();
     void amendPreviousLinesWith(const asm_source &source);
     void markPreviousInternalLabelAsInsideProc();
-    bool determineUsage(const asm_line &lineWithLabel) const;
+    bool determineUsage(const std::string &label) const;
     void markLabelUsage();
     void filterOutReferedLabelsThatArentDefined(asm_line &line);
     void removeUnused();

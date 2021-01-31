@@ -333,8 +333,10 @@ AsmParser::DebugJsonWriter::DebugJsonWriter(std::ostream &out,
                                             const std::vector<asm_labelpair> &labels,
                                             const Filter filter,
                                             const std::unordered_set<std::string> used_labels,
-                                            const std::unordered_map<std::string, std::string> used_weak_labels)
-: AsmParser::JsonWriter::JsonWriter(out, lines, labels, filter), used_labels(used_labels), used_weak_labels(used_weak_labels)
+                                            const std::unordered_map<std::string, std::string> used_weak_labels,
+                                            const std::unordered_map<std::string, std::string> aliased_labels)
+: AsmParser::JsonWriter::JsonWriter(out, lines, labels, filter), used_labels(used_labels),
+  used_weak_labels(used_weak_labels), aliased_labels(aliased_labels)
 {
 }
 
@@ -466,6 +468,24 @@ void AsmParser::DebugJsonWriter::write()
     this->out << "{";
     firstLabel = true;
     for (auto &usedlabel : this->used_weak_labels)
+    {
+        if (firstLabel)
+        {
+            this->writeKv(usedlabel.first, usedlabel.second, jsonopt::none);
+            firstLabel = false;
+        }
+        else
+        {
+            this->writeKv(usedlabel.first, usedlabel.second, jsonopt::prefixwithcomma);
+        }
+    }
+    this->out << "}";
+
+    this->out << ",\n";
+    this->writeKeyName("aliased_labels");
+    this->out << "{";
+    firstLabel = true;
+    for (auto &usedlabel : this->aliased_labels)
     {
         if (firstLabel)
         {

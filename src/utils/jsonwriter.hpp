@@ -50,6 +50,7 @@ class DebugJsonWriter : public JsonWriter
     protected:
     const std::unordered_set<std::string> used_labels;
     const std::unordered_map<std::string, std::string> used_weak_labels;
+    const std::unordered_map<std::string, std::string> aliased_labels;
 
     void writeDebugLine(const asm_line &line);
 
@@ -59,7 +60,8 @@ class DebugJsonWriter : public JsonWriter
                     const std::vector<asm_labelpair> &labels,
                     const Filter filter,
                     const std::unordered_set<std::string> used_labels,
-                    const std::unordered_map<std::string, std::string> used_weak_labels);
+                    const std::unordered_map<std::string, std::string> used_weak_labels,
+                    const std::unordered_map<std::string, std::string> aliased_labels);
 
     void write() override;
 };
