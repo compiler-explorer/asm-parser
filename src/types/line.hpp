@@ -46,6 +46,7 @@ struct asm_source_v
 struct asm_source
 {
     std::string file;
+    int32_t file_idx{ 0 };
     int32_t line{ 0 };
     bool is_usercode{};
     bool inside_proc{};
@@ -72,10 +73,12 @@ struct asm_line
     asm_source source;
     std::optional<int64_t> address;
     bool is_used{};
+    bool is_used_through_alias{};
     bool is_data{};
     bool is_inline_asm{};
     bool has_opcode{};
     bool is_directive{};
+    bool is_assignment{};
 };
 
 } // namespace AsmParser

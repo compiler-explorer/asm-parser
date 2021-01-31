@@ -66,7 +66,8 @@ class AssemblyTextParser : public IParser
     void maybeAddBlank();
     void amendPreviousLinesWith(const asm_source &source);
     void markPreviousInternalLabelAsInsideProc();
-    bool determineUsage(const std::string &label) const;
+    bool isUsedThroughAlias(const std::string &label) const;
+    bool isUsed(const std::string &label) const;
     void markLabelUsage();
     void filterOutReferedLabelsThatArentDefined(asm_line &line);
     void removeUnused();

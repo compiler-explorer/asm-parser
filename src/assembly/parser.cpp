@@ -27,7 +27,7 @@ void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
         // cf http://www.math.utah.edu/docs/info/stabs_11.html#SEC48
         if (type == 68)
         {
-            this->state.currentSourceRef = asm_source{ .file = "", .line = line };
+            this->state.currentSourceRef = asm_source{ .file = "", .file_idx = 0, .line = line };
         }
         else if (type == 100 || type == 132)
         {
@@ -52,32 +52,14 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
     const auto [file_index, line_index] = AssemblyTextParserUtils::getSourceRef(line);
     if (file_index != 0)
     {
-        try
-        {
-            const auto file = files.at(file_index);
+        this->state.hasProcMarkers = true;
 
-            this->state.hasProcMarkers = true;
+        this->state.currentSourceRef.file_idx = file_index;
 
-            const auto match_stdin = AssemblyTextParserUtils::isExampleOrStdin(file);
-            if (match_stdin)
-            {
-                this->state.currentSourceRef.is_usercode = true;
-                this->state.currentSourceRef.file = file;
-            }
-            else
-            {
-                this->state.currentSourceRef.file = file;
-            }
+        this->state.currentSourceRef.line = line_index;
+        this->state.currentSourceRef.inside_proc = true;
 
-            this->state.currentSourceRef.line = line_index;
-            this->state.currentSourceRef.inside_proc = true;
-
-            this->amendPreviousLinesWith(this->state.currentSourceRef);
-        }
-        catch (...)
-        {
-            this->state.currentSourceRef = {};
-        }
+        this->amendPreviousLinesWith(this->state.currentSourceRef);
     }
 }
 
@@ -88,28 +70,30 @@ std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(
     {
         return match_label;
     }
-    else
+
+    auto match_label_assign = AssemblyTextParserUtils::getLabelAssignment(line);
+    if (match_label_assign)
     {
-        auto match_assign = AssemblyTextParserUtils::getAssignmentDef(line);
-        if (match_assign)
-        {
-            return match_assign;
-        }
-        else
-        {
-            auto match_cuda = AssemblyTextParserUtils::getCudaLabel(line);
-            if (match_cuda)
-            {
-                this->state.inNvccDef = true;
-                this->state.inNvccCode = true;
-                return match_cuda;
-            }
-            else
-            {
-                return std::nullopt;
-            }
-        }
+        this->state.currentLine.is_assignment = true;
+        return match_label_assign;
     }
+
+    auto match_assign = AssemblyTextParserUtils::getAssignmentDef(line);
+    if (match_assign)
+    {
+        this->state.currentLine.is_assignment = true;
+        return match_assign;
+    }
+
+    auto match_cuda = AssemblyTextParserUtils::getCudaLabel(line);
+    if (match_cuda)
+    {
+        this->state.inNvccDef = true;
+        this->state.inNvccCode = true;
+        return match_cuda;
+    }
+
+    return std::nullopt;
 }
 
 void AsmParser::AssemblyTextParser::maybeAddBlank()
@@ -155,6 +139,8 @@ void AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
 
 void AsmParser::AssemblyTextParser::eol()
 {
+    this->state.currentLine.is_assignment = false;
+
     // if (this->lines.size() == 5000)
     // {
     //     asm_line truncated = {};
@@ -364,14 +350,19 @@ void AsmParser::AssemblyTextParser::eol()
         else if (isDataDef)
         {
             this->state.currentLine.labels.clear();
-            // todo: mark the labels in here as weakly linked (e.g. " .quad .L441")
 
             this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
 
             for (auto &label_ref : this->state.currentLine.labels)
             {
                 if (label_ref.name != this->state.previousLabel)
+                {
                     weakly_used_labels[label_ref.name] = this->state.previousLabel;
+                }
+                else
+                {
+                    used_labels.insert(label_ref.name);
+                }
             }
         }
         else
@@ -384,7 +375,7 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.currentLine.labels.clear();
     }
 
-    if (this->state.currentLine.label == this->state.previousParentLabel)
+    if (this->state.currentLine.is_assignment || (this->state.currentLine.label == this->state.previousParentLabel))
     {
         this->state.currentLine.closest_parent_label.clear();
     }
@@ -398,17 +389,24 @@ void AsmParser::AssemblyTextParser::eol()
 
     if (!this->state.previousLabelOnSameAddress.empty())
     {
-        if (this->state.currentLine.is_label)
+        if (!this->state.currentLine.is_assignment)
         {
-            this->aliased_labels.insert_or_assign(this->state.currentLine.label, this->state.previousLabelOnSameAddress);
+            if (this->state.currentLine.is_label)
+            {
+                this->aliased_labels[this->state.currentLine.label] = this->state.previousLabelOnSameAddress;
+            }
+            else if (this->state.currentLine.has_opcode || this->state.currentLine.is_data)
+            {
+                this->state.previousLabelOnSameAddress.clear();
+            }
         }
-        else if (this->state.currentLine.has_opcode || this->state.currentLine.is_data)
+        else
         {
             this->state.previousLabelOnSameAddress.clear();
         }
     }
 
-    if (this->state.currentLine.is_label)
+    if (this->state.currentLine.is_label && !this->state.currentLine.is_assignment)
     {
         this->state.previousLabelOnSameAddress = this->state.currentLine.label;
     }
@@ -481,7 +479,18 @@ void AsmParser::AssemblyTextParser::filterOutReferedLabelsThatArentDefined(asm_l
     }
 }
 
-bool AsmParser::AssemblyTextParser::determineUsage(const std::string &label) const
+bool AsmParser::AssemblyTextParser::isUsedThroughAlias(const std::string &label) const
+{
+    const auto aliasfind = this->aliased_labels.find(label);
+    if (aliasfind != this->aliased_labels.end())
+    {
+        return this->isUsed(aliasfind->second);
+    }
+
+    return false;
+}
+
+bool AsmParser::AssemblyTextParser::isUsed(const std::string &label) const
 {
     if (this->used_labels.contains(label))
     {
@@ -491,13 +500,7 @@ bool AsmParser::AssemblyTextParser::determineUsage(const std::string &label) con
     const auto weakfind = this->weakly_used_labels.find(label);
     if (weakfind != this->weakly_used_labels.end())
     {
-        return this->determineUsage(weakfind->second);
-    }
-
-    const auto aliasfind = this->aliased_labels.find(label);
-    if (aliasfind != this->aliased_labels.end())
-    {
-        return this->determineUsage(aliasfind->second);
+        return this->isUsed(weakfind->second);
     }
 
     return false;
@@ -508,9 +511,13 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
     for (auto &label : this->labels_defined)
     {
         auto &line = this->lines[label.second - 1];
-        if (this->determineUsage(line.label))
+        if (this->isUsed(line.label))
         {
             line.is_used = true;
+        }
+        else if (this->isUsedThroughAlias(line.label))
+        {
+            line.is_used_through_alias = true;
         }
     }
 }
@@ -523,6 +530,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
     bool remove = false;
     bool removeOnlyThis = false;
     bool isUsed = false;
+    bool isUsedThroughAlias = false;
 
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
@@ -532,6 +540,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
         if (line.is_label)
         {
             isUsed = line.is_used;
+            isUsedThroughAlias = line.is_used_through_alias;
 
             if (this->filter.unused_labels)
             {
@@ -551,12 +560,12 @@ void AsmParser::AssemblyTextParser::removeUnused()
                     }
                     else if (!line.closest_parent_label.empty())
                     {
-                        remove = !this->used_labels.contains(line.closest_parent_label);
+                        remove = !this->used_labels.contains(line.closest_parent_label) && !isUsedThroughAlias;
                         removeOnlyThis = !remove && line.is_internal_label;
                     }
                     else
                     {
-                        remove = true;
+                        remove = !isUsedThroughAlias;
                     }
                 }
             }
@@ -571,6 +580,29 @@ void AsmParser::AssemblyTextParser::removeUnused()
             this->filterOutReferedLabelsThatArentDefined(line);
 
             rebuild.push_back(line);
+
+            if (line.source.file_idx != 0)
+            {
+                try
+                {
+                    const auto file = files.at(line.source.file_idx);
+
+                    const auto match_stdin = AssemblyTextParserUtils::isExampleOrStdin(file);
+                    if (match_stdin)
+                    {
+                        line.source.is_usercode = true;
+                        line.source.file = file;
+                    }
+                    else
+                    {
+                        line.source.file = file;
+                    }
+                }
+                catch (...)
+                {
+                    line.source = {};
+                }
+            }
         }
 
         ++it;

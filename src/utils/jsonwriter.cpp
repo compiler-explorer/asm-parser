@@ -61,6 +61,9 @@ std::string escape(const std::string &in)
 
 void AsmParser::JsonWriter::writeValue(const std::string &value, const jsonopt opts)
 {
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
+
     this->out << "\"" << escape(value) << "\"";
 
     if (opts == jsonopt::trailingcomma)
@@ -73,11 +76,19 @@ void AsmParser::JsonWriter::writeValue(const std::string &value, const jsonopt o
 void AsmParser::JsonWriter::writeKv(const char *key, const std::string &value, const jsonopt opts)
 {
     if (opts == jsonopt::prefixwithcomma)
+    {
         this->out << ", ";
 
-    this->writeKeyName(key);
+        this->writeKeyName(key);
 
-    this->writeValue(value, opts);
+        this->writeValue(value, jsonopt::none);
+    }
+    else
+    {
+        this->writeKeyName(key);
+
+        this->writeValue(value, opts);
+    }
 }
 
 void AsmParser::JsonWriter::writeKv(const char *key, const int value, const jsonopt opts)
@@ -115,11 +126,19 @@ void AsmParser::JsonWriter::writeKv(const std::string &key, const int value, con
 void AsmParser::JsonWriter::writeKv(const std::string &key, const std::string &value, const jsonopt opts)
 {
     if (opts == jsonopt::prefixwithcomma)
+    {
         this->out << ", ";
 
-    this->writeKeyName(key);
+        this->writeKeyName(key);
 
-    this->writeValue(value, opts);
+        this->writeValue(value, jsonopt::none);
+    }
+    else
+    {
+        this->writeKeyName(key);
+
+        this->writeValue(value, opts);
+    }
 }
 
 void AsmParser::JsonWriter::writeSource(const asm_line &line)
@@ -363,6 +382,7 @@ void AsmParser::DebugJsonWriter::writeDebugLine(const asm_line &line)
     this->writeKv("section", line.section, jsonopt::trailingcomma);
     this->writeKv("has_opcode", line.has_opcode ? "true" : "false", jsonopt::trailingcomma);
     this->writeKv("is_directive", line.is_directive ? "true" : "false", jsonopt::trailingcomma);
+    this->writeKv("is_assignment", line.is_assignment ? "true" : "false", jsonopt::trailingcomma);
 
     this->writeKeyName("source");
     this->writeSource(line);

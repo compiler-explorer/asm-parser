@@ -381,6 +381,11 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabel(con
         return match.get<1>().to_view();
     }
 
+    return std::nullopt;
+}
+
+std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabelAssignment(const std::string_view line)
+{
     auto matchAssign = Regexes::labelAssignmentDef(line);
     if (matchAssign)
     {

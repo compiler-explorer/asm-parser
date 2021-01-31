@@ -188,7 +188,8 @@ TEST_CASE("Labels", "[asm]")
             "_ZN95_$LT$example..Bla$LT$$u27$a$GT$$u20$as$u20$core..convert..Into$LT$alloc..string..String$GT$$GT$"
             "4into17h38301ffbb2e8fb47E:") == "_ZN95_$LT$example..Bla$LT$$u27$a$GT$$u20$as$u20$core..convert..Into$LT$"
                                              "alloc..string..String$GT$$GT$4into17h38301ffbb2e8fb47E");
-    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel(".Lset0 = .Lpubnames_end1-.Lpubnames_begin1") == ".Lset0");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabelAssignment(".Lset0 = .Lpubnames_end1-.Lpubnames_begin1") ==
+            ".Lset0");
 }
 
 TEST_CASE("6502 debugging", "[asm]")
