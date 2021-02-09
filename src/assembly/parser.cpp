@@ -291,22 +291,26 @@ void AsmParser::AssemblyTextParser::eol()
         filteredLine = AssemblyTextParserUtils::fixLabelIndentation(filteredLine);
     }
 
-    bool probablyALabel = false;
-
     const auto found_label = this->getLabelFromLine(filteredLine);
     if (found_label)
     {
-        probablyALabel = true;
+        this->state.currentLine.is_label = true;
+        this->state.currentLine.is_internal_label = isInternalLabel(this->state.currentLine.label);
 
         const auto label = std::string(found_label.value());
         this->state.currentLine.label = label;
         this->state.previousLabel = label;
         this->labels_defined[label] = lines.size() + 1;
 
-        if (!label.starts_with('.'))
+        if (!this->state.currentLine.is_internal_label)
         {
             this->state.previousParentLabel = label;
         }
+    }
+    else
+    {
+        this->state.currentLine.is_label = false;
+        this->state.currentLine.is_internal_label = false;
     }
 
     bool isDataDef = AssemblyTextParserUtils::isDataDefn(line);
@@ -316,7 +320,7 @@ void AsmParser::AssemblyTextParser::eol()
         if (AssemblyTextParserUtils::isCudaEndDef(line))
             this->state.inNvccDef = false;
     }
-    else if (!probablyALabel && !isDataDef)
+    else if (!this->state.currentLine.is_label && !isDataDef)
     {
         // .inst generates an opcode, so does not count as a directive
         if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
@@ -339,17 +343,6 @@ void AsmParser::AssemblyTextParser::eol()
     if (this->filter.whitespace)
     {
         filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
-    }
-
-    this->state.currentLine.is_label = probablyALabel;
-
-    if (this->state.currentLine.is_label)
-    {
-        this->state.currentLine.is_internal_label = isInternalLabel(this->state.currentLine.label);
-    }
-    else
-    {
-        this->state.currentLine.is_internal_label = false;
     }
 
     this->state.currentLine.text = filteredLine;
