@@ -137,6 +137,40 @@ void AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
     }
 }
 
+void AsmParser::AssemblyTextParser::extractUsedLabelsFromDirective(const std::string_view line)
+{
+    const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(line);
+    if (weakDef)
+    {
+        used_labels.insert(std::string(weakDef.value()));
+    }
+    else
+    {
+        const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(line);
+        if (globalDef)
+        {
+            used_labels.insert(std::string(globalDef.value()));
+        }
+    }
+}
+
+void AsmParser::AssemblyTextParser::extractUsedLabelsFromOpcodeLine(const std::string_view line)
+{
+    this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(line);
+
+    for (auto &label_ref : this->state.currentLine.labels)
+    {
+        if (label_ref.name != this->state.previousLabel)
+        {
+            weakly_used_labels[label_ref.name] = this->state.previousLabel;
+        }
+        else
+        {
+            used_labels.insert(label_ref.name);
+        }
+    }
+}
+
 void AsmParser::AssemblyTextParser::eol()
 {
     this->state.currentLine.is_assignment = false;
@@ -287,19 +321,7 @@ void AsmParser::AssemblyTextParser::eol()
         // .inst generates an opcode, so does not count as a directive
         if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
         {
-            const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(filteredLine);
-            if (weakDef)
-            {
-                used_labels.insert(std::string(weakDef.value()));
-            }
-            else
-            {
-                const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(filteredLine);
-                if (globalDef)
-                {
-                    used_labels.insert(std::string(globalDef.value()));
-                }
-            }
+            this->extractUsedLabelsFromDirective(filteredLine);
 
             if (this->filter.directives)
             {
@@ -321,7 +343,7 @@ void AsmParser::AssemblyTextParser::eol()
 
     this->state.currentLine.is_label = probablyALabel;
 
-    if (probablyALabel)
+    if (this->state.currentLine.is_label)
     {
         this->state.currentLine.is_internal_label = isInternalLabel(this->state.currentLine.label);
     }
@@ -337,42 +359,10 @@ void AsmParser::AssemblyTextParser::eol()
     const auto hasOpcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
     this->state.currentLine.has_opcode = hasOpcode;
 
-    if (!this->state.currentLine.is_label)
+    this->state.currentLine.labels.clear();
+    if (!this->state.currentLine.is_label && (hasOpcode || isDataDef))
     {
-        this->state.currentLine.label.clear();
-        if (hasOpcode)
-        {
-            this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
-
-            for (auto &label_ref : this->state.currentLine.labels)
-                used_labels.insert(label_ref.name);
-        }
-        else if (isDataDef)
-        {
-            this->state.currentLine.labels.clear();
-
-            this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(filteredLine);
-
-            for (auto &label_ref : this->state.currentLine.labels)
-            {
-                if (label_ref.name != this->state.previousLabel)
-                {
-                    weakly_used_labels[label_ref.name] = this->state.previousLabel;
-                }
-                else
-                {
-                    used_labels.insert(label_ref.name);
-                }
-            }
-        }
-        else
-        {
-            this->state.currentLine.labels.clear();
-        }
-    }
-    else
-    {
-        this->state.currentLine.labels.clear();
+        this->extractUsedLabelsFromOpcodeLine(filteredLine);
     }
 
     if (this->state.currentLine.is_assignment || (this->state.currentLine.label == this->state.previousParentLabel))
