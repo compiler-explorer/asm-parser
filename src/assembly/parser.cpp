@@ -171,6 +171,33 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromOpcodeLine(const std::s
     }
 }
 
+void AsmParser::AssemblyTextParser::handleLabelAliasing()
+{
+    if (!this->state.previousLabelOnSameAddress.empty())
+    {
+        if (!this->state.currentLine.is_assignment)
+        {
+            if (this->state.currentLine.is_label)
+            {
+                this->aliased_labels[this->state.currentLine.label] = this->state.previousLabelOnSameAddress;
+            }
+            else if (this->state.currentLine.has_opcode || this->state.currentLine.is_data)
+            {
+                this->state.previousLabelOnSameAddress.clear();
+            }
+        }
+        else
+        {
+            this->state.previousLabelOnSameAddress.clear();
+        }
+    }
+
+    if (this->state.currentLine.is_label && !this->state.currentLine.is_assignment)
+    {
+        this->state.previousLabelOnSameAddress = this->state.currentLine.label;
+    }
+}
+
 void AsmParser::AssemblyTextParser::eol()
 {
     this->state.currentLine.is_assignment = false;
@@ -370,29 +397,7 @@ void AsmParser::AssemblyTextParser::eol()
     this->state.currentLine.source = this->state.currentSourceRef;
     this->state.currentLine.section = this->state.currentSection;
 
-    if (!this->state.previousLabelOnSameAddress.empty())
-    {
-        if (!this->state.currentLine.is_assignment)
-        {
-            if (this->state.currentLine.is_label)
-            {
-                this->aliased_labels[this->state.currentLine.label] = this->state.previousLabelOnSameAddress;
-            }
-            else if (this->state.currentLine.has_opcode || this->state.currentLine.is_data)
-            {
-                this->state.previousLabelOnSameAddress.clear();
-            }
-        }
-        else
-        {
-            this->state.previousLabelOnSameAddress.clear();
-        }
-    }
-
-    if (this->state.currentLine.is_label && !this->state.currentLine.is_assignment)
-    {
-        this->state.previousLabelOnSameAddress = this->state.currentLine.label;
-    }
+    this->handleLabelAliasing();
 
     this->lines.push_back(this->state.currentLine);
 
