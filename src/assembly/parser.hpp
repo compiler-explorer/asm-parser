@@ -75,6 +75,7 @@ class AssemblyTextParser : public IParser
     void extractUsedLabelsFromDirective(const std::string_view line);
     void extractUsedLabelsFromOpcodeLine(const std::string_view line);
     void handleLabelAliasing();
+    void handleLabelDefinition(const std::string_view line);
 
     std::vector<asm_labelpair> redetermineLabels() const;
 

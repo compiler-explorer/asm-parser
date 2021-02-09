@@ -142,14 +142,14 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromDirective(const std::st
     const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(line);
     if (weakDef)
     {
-        used_labels.insert(std::string(weakDef.value()));
+        this->used_labels.insert(std::string(weakDef.value()));
     }
     else
     {
         const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(line);
         if (globalDef)
         {
-            used_labels.insert(std::string(globalDef.value()));
+            this->used_labels.insert(std::string(globalDef.value()));
         }
     }
 }
@@ -162,11 +162,11 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromOpcodeLine(const std::s
     {
         if (label_ref.name != this->state.previousLabel)
         {
-            weakly_used_labels[label_ref.name] = this->state.previousLabel;
+            this->weakly_used_labels[label_ref.name] = this->state.previousLabel;
         }
         else
         {
-            used_labels.insert(label_ref.name);
+            this->used_labels.insert(label_ref.name);
         }
     }
 }
@@ -195,6 +195,31 @@ void AsmParser::AssemblyTextParser::handleLabelAliasing()
     if (this->state.currentLine.is_label && !this->state.currentLine.is_assignment)
     {
         this->state.previousLabelOnSameAddress = this->state.currentLine.label;
+    }
+}
+
+void AsmParser::AssemblyTextParser::handleLabelDefinition(const std::string_view line)
+{
+    const auto found_label = this->getLabelFromLine(line);
+    if (found_label)
+    {
+        this->state.currentLine.is_label = true;
+        this->state.currentLine.is_internal_label = this->isInternalLabel(this->state.currentLine.label);
+
+        const auto label = std::string(found_label.value());
+        this->state.currentLine.label = label;
+        this->state.previousLabel = label;
+        this->labels_defined[label] = lines.size() + 1;
+
+        if (!this->state.currentLine.is_internal_label)
+        {
+            this->state.previousParentLabel = label;
+        }
+    }
+    else
+    {
+        this->state.currentLine.is_label = false;
+        this->state.currentLine.is_internal_label = false;
     }
 }
 
@@ -318,39 +343,28 @@ void AsmParser::AssemblyTextParser::eol()
         filteredLine = AssemblyTextParserUtils::fixLabelIndentation(filteredLine);
     }
 
-    const auto found_label = this->getLabelFromLine(filteredLine);
-    if (found_label)
+    filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
+    if (this->filter.whitespace)
     {
-        this->state.currentLine.is_label = true;
-        this->state.currentLine.is_internal_label = isInternalLabel(this->state.currentLine.label);
-
-        const auto label = std::string(found_label.value());
-        this->state.currentLine.label = label;
-        this->state.previousLabel = label;
-        this->labels_defined[label] = lines.size() + 1;
-
-        if (!this->state.currentLine.is_internal_label)
-        {
-            this->state.previousParentLabel = label;
-        }
-    }
-    else
-    {
-        this->state.currentLine.is_label = false;
-        this->state.currentLine.is_internal_label = false;
+        filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
     }
 
-    bool isDataDef = AssemblyTextParserUtils::isDataDefn(line);
+    this->handleLabelDefinition(filteredLine);
+
+    this->state.currentLine.is_data = AssemblyTextParserUtils::isDataDefn(filteredLine);
+    this->state.currentLine.is_directive = false;
 
     if (this->state.inNvccDef)
     {
-        if (AssemblyTextParserUtils::isCudaEndDef(line))
+        if (AssemblyTextParserUtils::isCudaEndDef(filteredLine))
             this->state.inNvccDef = false;
     }
-    else if (!this->state.currentLine.is_label && !isDataDef)
+    else if (!this->state.currentLine.is_label && !this->state.currentLine.is_data)
     {
+        this->state.currentLine.is_directive = AssemblyTextParserUtils::isDirective(filteredLine);
+
         // .inst generates an opcode, so does not count as a directive
-        if (AssemblyTextParserUtils::isDirective(line) && !AssemblyTextParserUtils::isInstOpcode(line))
+        if (this->state.currentLine.is_directive && !AssemblyTextParserUtils::isInstOpcode(filteredLine))
         {
             this->extractUsedLabelsFromDirective(filteredLine);
 
@@ -359,28 +373,16 @@ void AsmParser::AssemblyTextParser::eol()
                 this->state.text.clear();
                 return;
             }
-            else
-            {
-                this->state.currentLine.is_directive = true;
-            }
         }
     }
 
-    filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
-    if (this->filter.whitespace)
-    {
-        filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
-    }
-
     this->state.currentLine.text = filteredLine;
-    this->state.currentLine.is_data = isDataDef;
     this->state.currentLine.is_inline_asm = (this->state.inCustomAssembly > 0);
 
-    const auto hasOpcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
-    this->state.currentLine.has_opcode = hasOpcode;
+    this->state.currentLine.has_opcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
 
     this->state.currentLine.labels.clear();
-    if (!this->state.currentLine.is_label && (hasOpcode || isDataDef))
+    if (!this->state.currentLine.is_label && (this->state.currentLine.has_opcode || this->state.currentLine.is_data))
     {
         this->extractUsedLabelsFromOpcodeLine(filteredLine);
     }
