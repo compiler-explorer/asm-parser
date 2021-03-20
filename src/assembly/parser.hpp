@@ -47,7 +47,7 @@ class AssemblyTextParser : public IParser
     std::vector<asm_line> lines;
     std::unordered_map<std::string, int32_t> labels_defined;
     std::unordered_set<std::string> used_labels;
-    std::unordered_map<std::string, std::string> weakly_used_labels;
+    std::unordered_map<std::string, std::unordered_set<std::string>> weakly_used_labels;
     std::unordered_map<std::string, std::string> aliased_labels;
 
     bool label_is_defined(const std::string_view s) const;

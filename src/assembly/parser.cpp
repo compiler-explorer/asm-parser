@@ -162,7 +162,7 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromOpcodeLine(const std::s
     {
         if (label_ref.name != this->state.previousLabel)
         {
-            this->weakly_used_labels[label_ref.name] = this->state.previousLabel;
+            this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
         }
         else
         {
@@ -491,7 +491,12 @@ bool AsmParser::AssemblyTextParser::isUsed(const std::string &label) const
     const auto weakfind = this->weakly_used_labels.find(label);
     if (weakfind != this->weakly_used_labels.end())
     {
-        return this->isUsed(weakfind->second);
+        for (auto &ref : weakfind->second)
+        {
+            const auto used = this->isUsed(ref);
+            if (used)
+                return true;
+        }
     }
 
     return false;
