@@ -419,6 +419,7 @@ void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &sou
         if (line.is_label)
         {
             line.source = asm_source{ .file = source.file,
+                                      .file_idx = source.file_idx,
                                       .line = source.line,
                                       .is_usercode = source.is_usercode && !line.is_internal_label,
                                       .inside_proc = source.inside_proc };
@@ -569,8 +570,6 @@ void AsmParser::AssemblyTextParser::removeUnused()
         {
             this->filterOutReferedLabelsThatArentDefined(line);
 
-            rebuild.push_back(line);
-
             if (line.source.file_idx != 0)
             {
                 try
@@ -593,6 +592,8 @@ void AsmParser::AssemblyTextParser::removeUnused()
                     line.source = {};
                 }
             }
+
+            rebuild.push_back(line);
         }
 
         ++it;
