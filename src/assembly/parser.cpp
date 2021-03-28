@@ -3,6 +3,7 @@
 #include "../utils/regexwrappers.hpp"
 #include "../utils/utils.hpp"
 
+#include <algorithm>
 #include <cstdlib>
 #include <istream>
 
@@ -160,14 +161,17 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromOpcodeLine(const std::s
 
     for (auto &label_ref : this->state.currentLine.labels)
     {
-        if (label_ref.name != this->state.previousLabel)
-        {
-            this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
-        }
-        else
-        {
-            this->used_labels.insert(label_ref.name);
-        }
+        this->used_labels.insert(label_ref.name);
+    }
+}
+
+void AsmParser::AssemblyTextParser::extractUsedLabelsFromDataLine(const std::string_view line)
+{
+    this->state.currentLine.labels = AssemblyTextParserUtils::getUsedLabelsInLine(line);
+
+    for (auto &label_ref : this->state.currentLine.labels)
+    {
+        this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
     }
 }
 
@@ -203,10 +207,11 @@ void AsmParser::AssemblyTextParser::handleLabelDefinition(const std::string_view
     const auto found_label = this->getLabelFromLine(line);
     if (found_label)
     {
-        this->state.currentLine.is_label = true;
-        this->state.currentLine.is_internal_label = this->isInternalLabel(this->state.currentLine.label);
-
         const auto label = std::string(found_label.value());
+
+        this->state.currentLine.is_label = true;
+        this->state.currentLine.is_internal_label = this->isInternalLabel(label);
+
         this->state.currentLine.label = label;
         this->state.previousLabel = label;
         this->labels_defined[label] = lines.size() + 1;
@@ -382,9 +387,14 @@ void AsmParser::AssemblyTextParser::eol()
     this->state.currentLine.has_opcode = AssemblyTextParserUtils::hasOpcode(filteredLine, this->state.inNvccCode);
 
     this->state.currentLine.labels.clear();
-    if (!this->state.currentLine.is_label && (this->state.currentLine.has_opcode || this->state.currentLine.is_data))
+    if (!this->state.currentLine.is_label && this->state.currentLine.has_opcode)
     {
         this->extractUsedLabelsFromOpcodeLine(filteredLine);
+    }
+
+    if (!this->state.currentLine.is_label && this->state.currentLine.is_data)
+    {
+        this->extractUsedLabelsFromDataLine(filteredLine);
     }
 
     if (this->state.currentLine.is_assignment || (this->state.currentLine.label == this->state.previousParentLabel))
@@ -500,6 +510,17 @@ bool AsmParser::AssemblyTextParser::isUsed(const std::string &label) const
     }
 
     return false;
+}
+
+void AsmParser::AssemblyTextParser::filterNonLabels()
+{
+    std::erase_if(this->used_labels, [this](auto &label) {
+        return !this->labels_defined.contains(label);
+    });
+
+    std::erase_if(this->weakly_used_labels, [this](auto &label) {
+        return !this->labels_defined.contains(label.first);
+    });
 }
 
 void AsmParser::AssemblyTextParser::markLabelUsage()
@@ -634,6 +655,7 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
         this->eol();
     }
 
+    this->filterNonLabels();
     this->markLabelUsage();
     this->removeUnused();
 }
