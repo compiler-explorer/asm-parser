@@ -171,7 +171,7 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromDataLine(const std::str
 
     for (auto &label_ref : this->state.currentLine.labels)
     {
-        if (label_ref.name != this->state.previousLabel)
+        if (label_ref.name != this->state.previousLabel && !this->state.previousLabel.empty())
             this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
     }
 }
@@ -486,27 +486,30 @@ bool AsmParser::AssemblyTextParser::isUsedThroughAlias(const std::string &label)
     const auto aliasfind = this->aliased_labels.find(label);
     if (aliasfind != this->aliased_labels.end())
     {
-        return this->isUsed(aliasfind->second);
+        return this->isUsed(aliasfind->second, 0);
     }
 
     return false;
 }
 
-bool AsmParser::AssemblyTextParser::isUsed(const std::string &label) const
+bool AsmParser::AssemblyTextParser::isUsed(const std::string &label, const int depth) const
 {
     if (this->used_labels.contains(label))
     {
         return true;
     }
 
-    const auto weakfind = this->weakly_used_labels.find(label);
-    if (weakfind != this->weakly_used_labels.end())
+    if (depth > 0)
     {
-        for (auto &ref : weakfind->second)
+        const auto weakfind = this->weakly_used_labels.find(label);
+        if (weakfind != this->weakly_used_labels.end())
         {
-            const auto used = this->isUsed(ref);
-            if (used)
-                return true;
+            for (auto &ref : weakfind->second)
+            {
+                const auto used = this->isUsed(ref, depth - 1);
+                if (used)
+                    return true;
+            }
         }
     }
 
@@ -529,7 +532,7 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
     for (auto &label : this->labels_defined)
     {
         auto &line = this->lines[label.second - 1];
-        if (this->isUsed(line.label))
+        if (this->isUsed(line.label, 1))
         {
             line.is_used = true;
         }
@@ -566,7 +569,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
                 {
                     remove = false;
                 }
-                else if (!remove && !isUsed)
+                else if (!remove && !isUsed && !isUsedThroughAlias)
                 {
                     if (line.is_internal_label)
                     {
@@ -578,12 +581,12 @@ void AsmParser::AssemblyTextParser::removeUnused()
                     }
                     else if (!line.closest_parent_label.empty())
                     {
-                        remove = !this->used_labels.contains(line.closest_parent_label) && !isUsedThroughAlias;
+                        remove = !this->used_labels.contains(line.closest_parent_label);
                         removeOnlyThis = !remove && line.is_internal_label;
                     }
                     else
                     {
-                        remove = !isUsedThroughAlias;
+                        remove = true;
                     }
                 }
             }
