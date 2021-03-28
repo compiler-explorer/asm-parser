@@ -171,7 +171,8 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromDataLine(const std::str
 
     for (auto &label_ref : this->state.currentLine.labels)
     {
-        this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
+        if (label_ref.name != this->state.previousLabel)
+            this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
     }
 }
 
