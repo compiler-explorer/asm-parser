@@ -74,6 +74,7 @@ struct asm_line
     std::optional<int64_t> address;
     bool is_used{};
     bool is_used_through_alias{};
+    bool is_used_data_through_alias{};
     bool is_data{};
     bool is_inline_asm{};
     bool has_opcode{};

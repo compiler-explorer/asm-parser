@@ -171,8 +171,7 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromDataLine(const std::str
 
     for (auto &label_ref : this->state.currentLine.labels)
     {
-        if (label_ref.name != this->state.previousLabel && !this->state.previousLabel.empty())
-            this->weakly_used_labels[label_ref.name].insert(this->state.previousLabel);
+        this->data_used_labels[label_ref.name].insert(this->state.previousLabel);
     }
 }
 
@@ -486,7 +485,7 @@ bool AsmParser::AssemblyTextParser::isUsedThroughAlias(const std::string &label)
     const auto aliasfind = this->aliased_labels.find(label);
     if (aliasfind != this->aliased_labels.end())
     {
-        return this->isUsed(aliasfind->second, 0);
+        return this->isUsed(aliasfind->second, 1);
     }
 
     return false;
@@ -510,6 +509,33 @@ bool AsmParser::AssemblyTextParser::isUsed(const std::string &label, const int d
                 if (used)
                     return true;
             }
+        }
+
+        const auto datafind = this->data_used_labels.find(label);
+        if (datafind != this->data_used_labels.end())
+        {
+            for (auto &ref : datafind->second)
+            {
+                const auto used = this->isUsed(ref, depth - 1);
+                if (used)
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool AsmParser::AssemblyTextParser::isDataUsedThroughAlias(const std::string &label) const
+{
+    const auto weakfind = this->data_used_labels.find(label);
+    if (weakfind != this->data_used_labels.end())
+    {
+        for (auto &ref : weakfind->second)
+        {
+            const auto used = this->isUsedThroughAlias(ref);
+            if (used)
+                return true;
         }
     }
 
@@ -536,6 +562,10 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
         {
             line.is_used = true;
         }
+        else if (this->isDataUsedThroughAlias(line.label))
+        {
+            line.is_used_data_through_alias = true;
+        }
         else if (this->isUsedThroughAlias(line.label))
         {
             line.is_used_through_alias = true;
@@ -552,6 +582,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
     bool removeOnlyThis = false;
     bool isUsed = false;
     bool isUsedThroughAlias = false;
+    bool isDataUsedThroughAlias = false;
 
     for (auto it = this->lines.begin(); it != this->lines.end();)
     {
@@ -562,6 +593,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
         {
             isUsed = line.is_used;
             isUsedThroughAlias = line.is_used_through_alias;
+            isDataUsedThroughAlias = line.is_used_data_through_alias;
 
             if (this->filter.unused_labels)
             {
@@ -569,30 +601,42 @@ void AsmParser::AssemblyTextParser::removeUnused()
                 {
                     remove = false;
                 }
-                else if (!remove && !isUsed && !isUsedThroughAlias)
+                else if (!remove && !isUsed)
                 {
-                    if (line.is_internal_label)
+                    if (isUsedThroughAlias)
                     {
                         removeOnlyThis = true;
                     }
-                    else if (line.is_inline_asm)
+                    else if (isDataUsedThroughAlias)
                     {
-                        removeOnlyThis = true;
-                    }
-                    else if (!line.closest_parent_label.empty())
-                    {
-                        remove = !this->used_labels.contains(line.closest_parent_label);
-                        removeOnlyThis = !remove && line.is_internal_label;
                     }
                     else
                     {
-                        remove = true;
+                        if (line.is_internal_label)
+                        {
+                            removeOnlyThis = true;
+                        }
+                        else if (line.is_inline_asm)
+                        {
+                            removeOnlyThis = true;
+                        }
+                        else if (!line.closest_parent_label.empty())
+                        {
+                            remove = !this->used_labels.contains(line.closest_parent_label);
+                            removeOnlyThis = !remove && line.is_internal_label;
+                        }
+                        else
+                        {
+                            remove = true;
+                        }
                     }
                 }
             }
         }
 
-        if (remove || removeOnlyThis || (!isUsed && this->filter.compatmode && this->filter.directives && line.is_data))
+        if (remove || removeOnlyThis ||
+            (!isUsed && !isUsedThroughAlias && !isDataUsedThroughAlias && this->filter.compatmode &&
+             this->filter.directives && line.is_data))
         {
             // filter this out
         }

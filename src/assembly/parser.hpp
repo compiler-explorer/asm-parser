@@ -47,6 +47,7 @@ class AssemblyTextParser : public IParser
     std::vector<asm_line> lines;
     std::unordered_map<std::string, int32_t> labels_defined;
     std::unordered_set<std::string> used_labels;
+    std::unordered_map<std::string, std::unordered_set<std::string>> data_used_labels;
     std::unordered_map<std::string, std::unordered_set<std::string>> weakly_used_labels;
     std::unordered_map<std::string, std::string> aliased_labels;
 
@@ -67,6 +68,7 @@ class AssemblyTextParser : public IParser
     void amendPreviousLinesWith(const asm_source &source);
     void markPreviousInternalLabelAsInsideProc();
     bool isUsedThroughAlias(const std::string &label) const;
+    bool isDataUsedThroughAlias(const std::string &label) const;
     bool isUsed(const std::string &label, const int depth) const;
 
     void filterNonLabels();
