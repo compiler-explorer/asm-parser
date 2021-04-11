@@ -143,14 +143,15 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromDirective(const std::st
     const auto weakDef = AssemblyTextParserUtils::getWeakDefinedLabel(line);
     if (weakDef)
     {
-        this->used_labels.insert(std::string(weakDef.value()));
+        this->used_labels[std::string(weakDef.value())].insert(this->state.previousLabel);
     }
     else
     {
         const auto globalDef = AssemblyTextParserUtils::getGlobalDefinedLabel(line);
         if (globalDef)
         {
-            this->used_labels.insert(std::string(globalDef.value()));
+            this->usercode_labels.insert(std::string(globalDef.value()));
+            this->used_labels[std::string(globalDef.value())].insert(this->state.previousLabel);
         }
     }
 }
@@ -161,7 +162,8 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromOpcodeLine(const std::s
 
     for (auto &label_ref : this->state.currentLine.labels)
     {
-        this->used_labels.insert(label_ref.name);
+        if (label_ref.name != this->state.previousParentLabel)
+            this->used_labels[label_ref.name].insert(this->state.previousParentLabel);
     }
 }
 
@@ -493,9 +495,21 @@ bool AsmParser::AssemblyTextParser::isUsedThroughAlias(const std::string &label)
 
 bool AsmParser::AssemblyTextParser::isUsed(const std::string &label, const int depth) const
 {
-    if (this->used_labels.contains(label))
-    {
+    if (usercode_labels.contains(label))
         return true;
+
+    const auto usedfind = this->used_labels.find(label);
+    if (usedfind != this->used_labels.end())
+    {
+        for (auto &ref : usedfind->second)
+        {
+            if (ref.empty())
+                return true;
+
+            const auto used = this->isUsed(ref, 0);
+            if (used)
+                return true;
+        }
     }
 
     if (depth > 0)
@@ -545,7 +559,7 @@ bool AsmParser::AssemblyTextParser::isDataUsedThroughAlias(const std::string &la
 void AsmParser::AssemblyTextParser::filterNonLabels()
 {
     std::erase_if(this->used_labels, [this](auto &label) {
-        return !this->labels_defined.contains(label);
+        return !this->labels_defined.contains(label.first);
     });
 
     std::erase_if(this->weakly_used_labels, [this](auto &label) {

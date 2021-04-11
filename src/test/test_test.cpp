@@ -203,3 +203,9 @@ TEST_CASE("6502 debugging", "[asm]")
     REQUIRE(match2.value().file.empty());
     REQUIRE(match2.value().line == 0);
 }
+
+TEST_CASE("instruction directives", "[asm]")
+{
+    const auto match = AsmParser::AssemblyTextParserUtils::isInstOpcode("        .inst.n 0xdefe");
+    REQUIRE(match == true);
+}
