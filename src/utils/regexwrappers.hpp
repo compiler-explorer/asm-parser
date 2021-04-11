@@ -45,6 +45,9 @@ class AssemblyTextParserUtils
     static std::optional<std::string_view> getGlobalDefinedLabel(const std::string_view line);
     static std::optional<std::string_view> getSectionNameDef(const std::string_view line);
 
+    static bool startCommentBlock(const std::string_view line);
+    static bool endCommentBlock(const std::string_view line);
+
     static bool startAppBlock(const std::string_view line);
     static bool endAppBlock(const std::string_view line);
     static bool startAsmNesting(const std::string_view line);

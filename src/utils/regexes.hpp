@@ -38,7 +38,8 @@ struct Regexes
     // static constexpr auto destRe = make_matcher<R"re(\h([\da-f]+)\h+<([^+>]+)(\+0x[\da-f]+)?>$)re">;
     static constexpr auto commentRe = ctre::search<R"re([#;])re">;
     static constexpr auto instOpcodeRe = ctre::search<R"re((\.inst\.?\w?)\h*(.*))re">;
-    // static constexpr auto blockComments = make_matcher<R"re(^[\t ]*/\*(\*(?!/)|[^*])*\*/\h*)re">;
+    static constexpr auto blockCommentStart = ctre::search<R"re(^\h*/\*)re">;
+    static constexpr auto blockCommentStop = ctre::search<R"re(\*/)re">;
     static constexpr auto commentOnly = ctre::match<R"re(^\h*(((#|@|//).*)|(/\*.*\*/)|(;\s*)|(;[^;].*)|(;;.*\S.*))$)re">;
     static constexpr auto commentOnlyNvcc = ctre::match<R"re(^\h*(((#|;|//).*)|(/\*.*\*/))$)re">;
     static constexpr auto sourceTag = ctre::match<R"re(^\h*\.loc\h+(\d+)\h+(\d+).*)re">;

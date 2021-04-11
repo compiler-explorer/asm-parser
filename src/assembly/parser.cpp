@@ -247,9 +247,24 @@ void AsmParser::AssemblyTextParser::eol()
 
     if (this->filter.comment_only)
     {
-        // todo: this needs to be handled outside of the lines (or with state)
-        // Remove any block comments that start and end on a line if we're removing comment-only lines.
-        // asmResult = asmResult.replace(blockComments, '');
+        bool removeThisLine = false;
+
+        if (!this->state.hasStartedCommentBlock)
+        {
+            this->state.hasStartedCommentBlock = AssemblyTextParserUtils::startCommentBlock(line);
+        }
+
+        if (this->state.hasStartedCommentBlock)
+        {
+            removeThisLine = true;
+            this->state.hasStartedCommentBlock = !AssemblyTextParserUtils::endCommentBlock(line);
+        }
+
+        if (removeThisLine)
+        {
+            this->state.text.clear();
+            return;
+        }
     }
 
     if (isEmptyOrJustWhitespace(line))

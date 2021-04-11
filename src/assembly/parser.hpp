@@ -17,6 +17,7 @@ class AssemblyTextParserState
     public:
     bool stopParsing{};
     bool hasProcMarkers{};
+    bool hasStartedCommentBlock{};
 
     bool mayRemovePreviousLabel{ true };
     bool keepInlineCode{};

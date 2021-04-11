@@ -325,6 +325,22 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
     return std::nullopt;
 }
 
+bool AsmParser::AssemblyTextParserUtils::startCommentBlock(const std::string_view line)
+{
+    if (Regexes::blockCommentStart(line))
+        return true;
+
+    return false;
+}
+
+bool AsmParser::AssemblyTextParserUtils::endCommentBlock(const std::string_view line)
+{
+    if (Regexes::blockCommentStop(line))
+        return true;
+
+    return false;
+}
+
 bool AsmParser::AssemblyTextParserUtils::startAppBlock(const std::string_view line)
 {
     if (Regexes::startAppBlock(line))
