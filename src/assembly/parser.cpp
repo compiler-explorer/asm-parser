@@ -18,7 +18,7 @@ bool str_contains(const std::string_view s, char c)
     return (found != std::string::npos);
 }
 
-void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
+bool AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
 {
     const auto stabs_opt = AssemblyTextParserUtils::getSourceInfoFromStabs(line);
     if (stabs_opt)
@@ -35,20 +35,28 @@ void AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
             this->state.currentSourceRef = {};
             this->state.previousLabel.clear();
         }
+
+        return true;
     }
+
+    return false;
 }
 
-void AsmParser::AssemblyTextParser::handleFiledef(const std::string_view line)
+bool AsmParser::AssemblyTextParser::handleFiledef(const std::string_view line)
 {
     const auto opt_file_def = AssemblyTextParserUtils::getFileDef(line);
     if (opt_file_def)
     {
         const auto file_def = opt_file_def.value();
         files[file_def.file_index] = file_def.file_name;
+
+        return true;
     }
+
+    return false;
 }
 
-void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
+bool AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
 {
     const auto [file_index, line_index] = AssemblyTextParserUtils::getSourceRef(line);
     if (file_index != 0)
@@ -61,7 +69,10 @@ void AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
         this->state.currentSourceRef.inside_proc = true;
 
         this->amendPreviousLinesWith(this->state.currentSourceRef);
+        return true;
     }
+
+    return false;
 }
 
 std::optional<std::string_view> AsmParser::AssemblyTextParser::getLabelFromLine(const std::string_view line)
@@ -118,7 +129,34 @@ bool AsmParser::AssemblyTextParser::isEmptyOrJustWhitespace(const std::string_vi
     return true;
 }
 
-void AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
+bool AsmParser::AssemblyTextParser::handleD2(const std::string_view line)
+{
+    const auto match_line = AssemblyTextParserUtils::getD2LineInfo(line);
+    if (match_line)
+    {
+        const auto line_source = match_line.value();
+
+        const auto match_stdin = AssemblyTextParserUtils::isExampleOrStdin(this->state.currentSourceFile);
+        this->state.currentSourceRef = { .file = this->state.currentSourceFile, .line = line_source.line, .is_usercode = match_stdin };
+
+        this->amendPreviousLinesWith(this->state.currentSourceRef);
+        return true;
+    }
+    else
+    {
+        const auto match_file = AssemblyTextParserUtils::getD2FileInfo(line);
+        if (match_file)
+        {
+            const auto file_source = match_file.value();
+            this->state.currentSourceFile = std::string(file_source.file);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
 {
     const auto match = AssemblyTextParserUtils::get6502DbgInfo(line);
     if (match)
@@ -126,16 +164,23 @@ void AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
         const auto source = match.value();
         if (!source.is_end)
             this->state.currentSourceRef = asm_source{ .file = std::string(source.file), .line = source.line };
+
+        return true;
     }
+
+    return false;
 }
 
-void AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
+bool AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
 {
     const auto match = AssemblyTextParserUtils::getSectionNameDef(line);
     if (match)
     {
         this->state.currentSection = match.value();
+        return true;
     }
+
+    return false;
 }
 
 void AsmParser::AssemblyTextParser::extractUsedLabelsFromDirective(const std::string_view line)
@@ -296,6 +341,8 @@ void AsmParser::AssemblyTextParser::eol()
         }
     }
 
+    bool handledSourceDirective = false;
+
     if (AssemblyTextParserUtils::endBlock(line) || (this->state.inNvccCode && str_contains(line, '}')))
     {
         this->state.currentSourceRef = {};
@@ -304,13 +351,19 @@ void AsmParser::AssemblyTextParser::eol()
     }
     else
     {
-        this->handleFiledef(line);
-        this->handleSource(line);
-        this->handleStabs(line);
-        this->handle6502(line);
+        handledSourceDirective = this->handleFiledef(line);
+        if (!handledSourceDirective)
+            handledSourceDirective = this->handleSource(line);
+        if (!handledSourceDirective)
+            handledSourceDirective = this->handleStabs(line);
+        if (!handledSourceDirective)
+            handledSourceDirective = this->handle6502(line);
+        if (!handledSourceDirective)
+            handledSourceDirective = this->handleD2(line);
     }
 
-    this->handleSection(line);
+    if (!handledSourceDirective)
+        this->handleSection(line);
 
     if (this->filter.library_functions && !this->state.lastOwnSource.line && this->state.currentFilename.empty())
     {
@@ -371,10 +424,20 @@ void AsmParser::AssemblyTextParser::eol()
         filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
     }
 
-    this->handleLabelDefinition(filteredLine);
+    if (handledSourceDirective)
+    {
+        this->state.currentLine.is_data = false;
+        this->state.currentLine.is_directive = true;
+        this->state.currentLine.is_label = false;
+        this->state.currentLine.is_internal_label = false;
+    }
+    else
+    {
+        this->handleLabelDefinition(filteredLine);
 
-    this->state.currentLine.is_data = AssemblyTextParserUtils::isDataDefn(filteredLine);
-    this->state.currentLine.is_directive = false;
+        this->state.currentLine.is_data = AssemblyTextParserUtils::isDataDefn(filteredLine);
+        this->state.currentLine.is_directive = false;
+    }
 
     if (this->state.inNvccDef)
     {
@@ -383,7 +446,8 @@ void AsmParser::AssemblyTextParser::eol()
     }
     else if (!this->state.currentLine.is_label && !this->state.currentLine.is_data)
     {
-        this->state.currentLine.is_directive = AssemblyTextParserUtils::isDirective(filteredLine);
+        if (!handledSourceDirective)
+            this->state.currentLine.is_directive = AssemblyTextParserUtils::isDirective(filteredLine);
 
         // .inst generates an opcode, so does not count as a directive
         if (this->state.currentLine.is_directive && !AssemblyTextParserUtils::isInstOpcode(filteredLine))
@@ -435,7 +499,7 @@ void AsmParser::AssemblyTextParser::eol()
 
 bool AsmParser::AssemblyTextParser::isInternalLabel(const std::string_view label) const
 {
-    return label.starts_with(".") || label.starts_with("$");
+    return label.starts_with(".") || label.starts_with("$") || label.starts_with("L");
 }
 
 void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &source)

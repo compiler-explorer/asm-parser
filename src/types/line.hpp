@@ -43,6 +43,16 @@ struct asm_source_v
     bool is_end{};
 };
 
+struct asm_source_f
+{
+    std::string_view file;
+};
+
+struct asm_source_l
+{
+    int32_t line{ 0 };
+};
+
 struct asm_source
 {
     std::string file;

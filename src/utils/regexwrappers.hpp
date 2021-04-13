@@ -36,6 +36,9 @@ class AssemblyTextParserUtils
     static std::optional<AsmParser::asm_stabn> getSourceInfoFromStabs(const std::string_view line);
     static std::optional<AsmParser::asm_source_v> get6502DbgInfo(const std::string_view line);
 
+    static std::optional<AsmParser::asm_source_f> getD2FileInfo(const std::string_view line);
+    static std::optional<AsmParser::asm_source_l> getD2LineInfo(const std::string_view line);
+
     static std::optional<std::string_view> getLabel(const std::string_view line);
     static std::optional<std::string_view> getAssignmentDef(const std::string_view line);
     static std::optional<std::string_view> getLabelAssignment(const std::string_view line);

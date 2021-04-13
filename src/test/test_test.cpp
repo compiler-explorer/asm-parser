@@ -190,6 +190,7 @@ TEST_CASE("Labels", "[asm]")
                                              "alloc..string..String$GT$$GT$4into17h38301ffbb2e8fb47E");
     REQUIRE(AsmParser::AssemblyTextParserUtils::getLabelAssignment(".Lset0 = .Lpubnames_end1-.Lpubnames_begin1") ==
             ".Lset0");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabelAssignment("$LFB0 = .") == "$LFB0");
 }
 
 TEST_CASE("6502 debugging", "[asm]")
@@ -208,4 +209,17 @@ TEST_CASE("instruction directives", "[asm]")
 {
     const auto match = AsmParser::AssemblyTextParserUtils::isInstOpcode("        .inst.n 0xdefe");
     REQUIRE(match == true);
+}
+
+TEST_CASE("d2 source directives", "[asm]")
+{
+    const auto matchf = AsmParser::AssemblyTextParserUtils::getD2FileInfo(
+    R"(        .d2file   "/tmp/compiler-explorer-compiler202107-8023-z5iran.8cqm/example.cpp")");
+    REQUIRE(matchf.value().file == "/tmp/compiler-explorer-compiler202107-8023-z5iran.8cqm/example.cpp");
+
+    const auto matchlc = AsmParser::AssemblyTextParserUtils::getD2LineInfo(R"(        .d2line         4,8)");
+    REQUIRE(matchlc.value().line == 4);
+
+    const auto matchl = AsmParser::AssemblyTextParserUtils::getD2LineInfo(R"(        .d2line         5)");
+    REQUIRE(matchl.value().line == 5);
 }

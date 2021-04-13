@@ -35,6 +35,7 @@ class AssemblyTextParserState
     std::string text;
     std::string currentFilename;
     std::string currentSection;
+    std::string currentSourceFile;
     asm_line currentLine{};
 };
 
@@ -56,11 +57,12 @@ class AssemblyTextParser : public IParser
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
 
-    void handleStabs(const std::string_view line);
-    void handleSource(const std::string_view line);
-    void handleFiledef(const std::string_view line);
-    void handle6502(const std::string_view line);
-    void handleSection(const std::string_view line);
+    bool handleStabs(const std::string_view line);
+    bool handleSource(const std::string_view line);
+    bool handleFiledef(const std::string_view line);
+    bool handle6502(const std::string_view line);
+    bool handleD2(const std::string_view line);
+    bool handleSection(const std::string_view line);
 
     void eol();
 

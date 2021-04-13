@@ -9,7 +9,7 @@ namespace AsmParser
 struct Regexes
 {
     static constexpr auto labelDef = ctre::search<R"re(^(?:.proc\h+)?([\w$.@]+):)re">;
-    static constexpr auto labelAssignmentDef = ctre::search<R"re(^([\.\w][\w\d]*)\h+=)re">;
+    static constexpr auto labelAssignmentDef = ctre::search<R"re(^([\.$\w][\w\d]*)\h+=)re">;
     static constexpr auto labelFindNonMips = ctre::match<R"re([.A-Z_a-z][\w$.]*)re">;
     static constexpr auto labelFindMips = ctre::match<R"re([$.A-Z_a-z][\w$.]*)re">;
     static constexpr auto mipsLabelDefinition = ctre::match<R"re(^\$[\w$.]+:)re">;
@@ -46,6 +46,8 @@ struct Regexes
     static constexpr auto source6502Dbg = ctre::match<R"re(^\h*\.dbg\h+line,\h*"([^"]+)",\h*(\d+))re">;
     static constexpr auto source6502DbgEnd = ctre::search<R"re(^\h*\.dbg\h+line)re">;
     static constexpr auto sourceStab = ctre::search<R"re(^\h*\.stabn\h+(\d+),0,(\d+),.*)re">;
+    static constexpr auto sourceD2Tag = ctre::match<R"re(^\h*\.d2line\h+(\d+),?\h*(\d*).*)re">;
+    static constexpr auto sourceD2File = ctre::match<R"re(^\h*\.d2file\h+"(.*)")re">;
     static constexpr auto stdInLooking = ctre::search<R"re(<stdin>|^-$|example\.[^/]+$|<source>)re">;
     static constexpr auto startBlock = ctre::search<R"re(\.cfi_startproc)re">;
     static constexpr auto endBlock = ctre::search<R"re(\.(cfi_endproc|data|text|section))re">;

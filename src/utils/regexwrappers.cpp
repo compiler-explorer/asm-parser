@@ -325,6 +325,33 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
     return std::nullopt;
 }
 
+std::optional<AsmParser::asm_source_l> AsmParser::AssemblyTextParserUtils::getD2LineInfo(const std::string_view line)
+{
+    const auto match = Regexes::sourceD2Tag(line);
+    if (match)
+    {
+        const auto line = svtoi(match.get<1>().to_view());
+
+        return asm_source_l{ .line = line };
+    }
+
+    return std::nullopt;
+}
+
+std::optional<AsmParser::asm_source_f> AsmParser::AssemblyTextParserUtils::getD2FileInfo(const std::string_view line)
+{
+    const auto match = Regexes::sourceD2File(line);
+    if (match)
+    {
+        const auto file = match.get<1>().to_view();
+
+        return asm_source_f{ .file = file };
+    }
+
+    return std::nullopt;
+}
+
+
 bool AsmParser::AssemblyTextParserUtils::startCommentBlock(const std::string_view line)
 {
     if (Regexes::blockCommentStart(line))
