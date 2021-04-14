@@ -449,17 +449,17 @@ void AsmParser::AssemblyTextParser::eol()
         if (!handledSourceDirective)
         {
             this->state.currentLine.is_directive = AssemblyTextParserUtils::isDirective(filteredLine);
+        }
 
-            // .inst generates an opcode, so does not count as a directive
-            if (this->state.currentLine.is_directive && !AssemblyTextParserUtils::isInstOpcode(filteredLine))
+        // .inst generates an opcode, so does not count as a directive
+        if (this->state.currentLine.is_directive && !AssemblyTextParserUtils::isInstOpcode(filteredLine))
+        {
+            this->extractUsedLabelsFromDirective(filteredLine);
+
+            if (this->filter.directives)
             {
-                this->extractUsedLabelsFromDirective(filteredLine);
-
-                if (this->filter.directives)
-                {
-                    this->state.text.clear();
-                    return;
-                }
+                this->state.text.clear();
+                return;
             }
         }
     }
