@@ -2,18 +2,37 @@
 
 PATH=$PATH:/opt/compiler-explorer/cmake/bin
 
-export CXX=/opt/compiler-explorer/gcc-10.2.0/bin/g++
-export CC=/opt/compiler-explorer/gcc-10.2.0/bin/gcc
+# export CXX=/opt/compiler-explorer/gcc-10.2.0/bin/g++
+# export CC=/opt/compiler-explorer/gcc-10.2.0/bin/gcc
+
+export CXX=/opt/compiler-explorer/clang-12.0.0/bin/clang++
+export CC=/opt/compiler-explorer/clang-12.0.0/bin/clang
+export CXXFLAGS="--gcc-toolchain=/opt/compiler-explorer/gcc-10.3.0 -I$PWD/ctre/include"
+
+if test -f "ctre/include/ctre.hpp"; then
+  echo Updating ctre
+  cd ctre
+  git pull
+  cd ..
+else
+  echo Cloning ctre
+  git clone https://github.com/hanickadot/compile-time-regular-expressions ctre
+fi
 
 /opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.cpp
 /opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.hpp
 
 mkdir -p build
 cd build
-cmake -DCMAKE_BUILD_TYPE=RELEASE ..
+cmake -DCMAKE_BUILD_TYPE=DEBUG ..
 if [ $? -ne 0 ]; then
   exit $?
 fi
+
+# /opt/compiler-explorer/clang-trunk/bin/clang-tidy --extra-arg=-std=c++20 ../src/assembly/*.cpp
+# if [ $? -ne 0 ]; then
+#   exit $?
+# fi
 
 make test
 if [ $? -ne 0 ]; then

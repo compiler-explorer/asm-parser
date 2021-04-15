@@ -377,7 +377,13 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
 
 void AsmParser::ObjDumpParser::outputJson(std::ostream &out) const
 {
-    JsonWriter writer(out, this->lines, this->labels, this->filter);
+    std::vector<std::unique_ptr<asm_line_v>> v;
+    for (auto &line : this->lines)
+    {
+        v.push_back(std::make_unique<asm_line_v>(line));
+    }
+
+    JsonWriter writer(out, v, this->labels, this->filter);
     writer.write();
 }
 

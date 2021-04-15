@@ -17,7 +17,7 @@ int8_t AsmParser::hex2int(const char c)
     }
 }
 
-size_t AsmParser::ustrlen(const std::string s)
+size_t AsmParser::ustrlen(const std::string_view s)
 {
     const char *cstrptr = s.data();
 

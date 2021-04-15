@@ -24,7 +24,7 @@ class AssemblyTextParserUtils
     static std::string squashHorizontalWhitespace(const std::string_view line, bool atStart = true);
     static std::string squashHorizontalWhitespaceWithQuotes(const std::string_view line, bool atStart);
 
-    static std::vector<AsmParser::asm_label> getUsedLabelsInLine(const std::string_view line);
+    static std::vector<AsmParser::asm_label_v> getUsedLabelsInLine(const std::string_view line);
 
     static bool hasOpcode(const std::string_view line, bool inNvccCode);
 

@@ -36,6 +36,12 @@ struct asm_label
     asm_range range{};
 };
 
+struct asm_label_v
+{
+    std::string_view name;
+    asm_range range{};
+};
+
 struct asm_source_v
 {
     std::string_view file;
@@ -68,7 +74,7 @@ struct asm_file_def
     std::string file_name;
 };
 
-using asm_labelpair = std::pair<std::string, int32_t>;
+using asm_labelpair = std::pair<std::string_view, int32_t>;
 
 struct asm_line
 {
@@ -90,6 +96,52 @@ struct asm_line
     bool has_opcode{};
     bool is_directive{};
     bool is_assignment{};
+};
+
+class asm_line_v
+{
+    public:
+    std::string text;
+    std::string section;
+    std::vector<asm_label_v> labels;
+    std::vector<std::string> opcodes;
+    std::string closest_parent_label;
+    bool is_label{};
+    bool is_internal_label{};
+    std::string_view label;
+    asm_source source;
+    std::optional<int64_t> address;
+    bool is_used{};
+    bool is_used_through_alias{};
+    bool is_used_data_through_alias{};
+    bool is_data{};
+    bool is_inline_asm{};
+    bool has_opcode{};
+    bool is_directive{};
+    bool is_assignment{};
+
+    asm_line_v() = default;
+    asm_line_v(const asm_line &line)
+    {
+        this->text = line.text;
+        this->section = line.section;
+        // .labels = ;
+        this->opcodes = line.opcodes;
+        this->closest_parent_label = line.closest_parent_label;
+        this->is_label = line.is_label;
+        this->is_internal_label = line.is_internal_label;
+        this->label = line.label;
+        this->source = line.source;
+        this->address = line.address;
+        this->is_used = line.is_used;
+        this->is_used_through_alias = line.is_used_through_alias;
+        this->is_used_data_through_alias = line.is_used_through_alias;
+        this->is_data = line.is_data;
+        this->is_inline_asm = line.is_inline_asm;
+        this->has_opcode = line.has_opcode;
+        this->is_directive = line.is_directive;
+        this->is_assignment = line.is_assignment;
+    }
 };
 
 } // namespace AsmParser
