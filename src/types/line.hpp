@@ -103,7 +103,7 @@ class asm_line_v
 {
     public:
     std::string text;
-    std::string section;
+    std::string_view section;
     std::vector<asm_label_v> labels;
     std::vector<std::string> opcodes;
     std::string closest_parent_label;

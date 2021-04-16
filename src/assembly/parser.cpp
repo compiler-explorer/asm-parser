@@ -176,7 +176,7 @@ bool AsmParser::AssemblyTextParser::handleSection(const std::string_view line)
     const auto match = AssemblyTextParserUtils::getSectionNameDef(line);
     if (match)
     {
-        this->state.currentSection = std::string(match.value());
+        this->state.currentSection = match.value();
         return true;
     }
 
@@ -325,11 +325,24 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.inCustomAssembly--;
     }
 
-    // if (source && source.file === null) {
-    //     lastOwnSource = source;
-    // }
+    {
+        std::string filteredLine{ line };
 
-    if (AssemblyTextParserUtils::startBlock(line) && this->state.currentSourceRef.line == 0)
+        if (this->state.inCustomAssembly > 0)
+        {
+            filteredLine = AssemblyTextParserUtils::fixLabelIndentation(filteredLine);
+        }
+
+        filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
+        if (this->filter.whitespace)
+        {
+            filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
+        }
+
+        this->state.currentLine->text = std::move(filteredLine);
+    }
+
+    if (AssemblyTextParserUtils::startBlock(this->state.currentLine->text) && this->state.currentSourceRef.line == 0)
     {
         this->markPreviousInternalLabelAsInsideProc();
         if (this->filter.directives)
@@ -341,7 +354,8 @@ void AsmParser::AssemblyTextParser::eol()
 
     bool handledSourceDirective = false;
 
-    if (AssemblyTextParserUtils::endBlock(line) || (this->state.inNvccCode && str_contains(line, '}')))
+    if (AssemblyTextParserUtils::endBlock(this->state.currentLine->text) ||
+        (this->state.inNvccCode && str_contains(this->state.currentLine->text, '}')))
     {
         this->state.currentSourceRef = {};
         this->state.previousLabel = {};
@@ -349,19 +363,19 @@ void AsmParser::AssemblyTextParser::eol()
     }
     else
     {
-        handledSourceDirective = this->handleFiledef(line);
+        handledSourceDirective = this->handleFiledef(this->state.currentLine->text);
         if (!handledSourceDirective)
-            handledSourceDirective = this->handleSource(line);
+            handledSourceDirective = this->handleSource(this->state.currentLine->text);
         if (!handledSourceDirective)
-            handledSourceDirective = this->handleStabs(line);
+            handledSourceDirective = this->handleStabs(this->state.currentLine->text);
         if (!handledSourceDirective)
-            handledSourceDirective = this->handle6502(line);
+            handledSourceDirective = this->handle6502(this->state.currentLine->text);
         if (!handledSourceDirective)
-            handledSourceDirective = this->handleD2(line);
+            handledSourceDirective = this->handleD2(this->state.currentLine->text);
     }
 
     if (!handledSourceDirective)
-        this->handleSection(line);
+        this->handleSection(this->state.currentLine->text);
 
     if (this->filter.library_functions && !this->state.lastOwnSource.line && this->state.currentFilename.empty())
     {
@@ -405,23 +419,6 @@ void AsmParser::AssemblyTextParser::eol()
     {
         this->state.text.clear();
         return;
-    }
-
-    {
-        std::string filteredLine{ line };
-
-        if (this->state.inCustomAssembly > 0)
-        {
-            filteredLine = AssemblyTextParserUtils::fixLabelIndentation(filteredLine);
-        }
-
-        filteredLine = AssemblyTextParserUtils::expandTabs(filteredLine);
-        if (this->filter.whitespace)
-        {
-            filteredLine = AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(filteredLine, true);
-        }
-
-        this->state.currentLine->text = std::move(filteredLine);
     }
 
     if (handledSourceDirective)
