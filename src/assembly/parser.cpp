@@ -458,7 +458,7 @@ void AsmParser::AssemblyTextParser::eol()
 
             if (this->filter.directives)
             {
-                this->state.filteredlines.emplace_back(std::move(this->state.currentLine->text));
+                this->state.filteredlines.push_back(std::move(this->state.currentLine));
                 this->state.text.clear();
                 return;
             }
@@ -736,7 +736,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
              this->filter.directives && line->is_data))
         {
             // filter this out
-            this->state.filteredlines.push_back(std::move(line->text));
+            this->state.filteredlines.push_back(std::move(line));
             it = this->lines.erase(it);
         }
         else

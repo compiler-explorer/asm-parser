@@ -39,7 +39,7 @@ class AssemblyTextParserState
     std::string currentSourceFile;
     std::unique_ptr<asm_line_v> currentLine;
 
-    std::vector<std::string> filteredlines;
+    std::vector<std::unique_ptr<asm_line_v>> filteredlines;
 };
 
 class AssemblyTextParser : public IParser
