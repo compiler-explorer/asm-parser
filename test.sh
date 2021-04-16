@@ -2,12 +2,13 @@
 
 PATH=$PATH:/opt/compiler-explorer/cmake/bin
 
-# export CXX=/opt/compiler-explorer/gcc-10.2.0/bin/g++
-# export CC=/opt/compiler-explorer/gcc-10.2.0/bin/gcc
+export CXX=/opt/compiler-explorer/gcc-10.2.0/bin/g++
+export CC=/opt/compiler-explorer/gcc-10.2.0/bin/gcc
+export CXXFLAGS="-I$PWD/ctre/include -O3 -flto"
 
-export CXX=/opt/compiler-explorer/clang-12.0.0/bin/clang++
-export CC=/opt/compiler-explorer/clang-12.0.0/bin/clang
-export CXXFLAGS="--gcc-toolchain=/opt/compiler-explorer/gcc-10.3.0 -I$PWD/ctre/include"
+# export CXX=/opt/compiler-explorer/clang-12.0.0/bin/clang++
+# export CC=/opt/compiler-explorer/clang-12.0.0/bin/clang
+# export CXXFLAGS="--gcc-toolchain=/opt/compiler-explorer/gcc-10.3.0 -I$PWD/ctre/include -O3 -flto"
 
 if test -f "ctre/include/ctre.hpp"; then
   echo Updating ctre
@@ -24,7 +25,7 @@ fi
 
 mkdir -p build
 cd build
-cmake -DCMAKE_BUILD_TYPE=DEBUG ..
+cmake -DCMAKE_BUILD_TYPE=RELEASE ..
 if [ $? -ne 0 ]; then
   exit $?
 fi
