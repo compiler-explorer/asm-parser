@@ -42,6 +42,15 @@ struct asm_label_v
     asm_range range{};
 };
 
+struct asm_source
+{
+    std::string file;
+    int32_t file_idx{ 0 };
+    int32_t line{ 0 };
+    bool is_usercode{};
+    bool inside_proc{};
+};
+
 struct asm_source_v
 {
     std::string_view file;
@@ -59,15 +68,6 @@ struct asm_source_l
     int32_t line{ 0 };
 };
 
-struct asm_source
-{
-    std::string file;
-    int32_t file_idx{ 0 };
-    int32_t line{ 0 };
-    bool is_usercode{};
-    bool inside_proc{};
-};
-
 struct asm_file_def
 {
     int file_index;
@@ -75,6 +75,7 @@ struct asm_file_def
 };
 
 using asm_labelpair = std::pair<std::string_view, int32_t>;
+using asm_labelpair_t = std::pair<std::string, int32_t>;
 
 struct asm_line
 {
@@ -125,7 +126,13 @@ class asm_line_v
     {
         this->text = line.text;
         this->section = line.section;
-        // .labels = ;
+
+        this->labels.reserve(line.labels.size());
+        for (auto &label : line.labels)
+        {
+            this->labels.push_back(asm_label_v{ .name = std::string_view(label.name), .range = label.range });
+        }
+
         this->opcodes = line.opcodes;
         this->closest_parent_label = line.closest_parent_label;
         this->is_label = line.is_label;
