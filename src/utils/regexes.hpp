@@ -30,7 +30,7 @@ struct Regexes
     static constexpr auto endAppBlock = ctre::match<R"re(\h*#NO_APP.*)re">;
     static constexpr auto startAsmNesting = ctre::match<R"re(\h*# Begin ASM.*)re">;
     static constexpr auto endAsmNesting = ctre::match<R"re(\h*# End ASM.*)re">;
-    static constexpr auto cudaBeginDef = ctre::match<R"re(\.(entry|func)\h+(?:\([^)]*\)\h*)?([$.A-Z_a-z][\w$.]*)\($)re">;
+    static constexpr auto cudaBeginDef = ctre::search<R"re(\.(entry|func)\h+(?:\([^)]*\)\h*)?([$.A-Z_a-z][\w$.]*)\($)re">;
     static constexpr auto cudaEndDef = ctre::match<R"re(^\h*\)\h*$)re">;
     // static constexpr auto asmOpcodeRe = make_matcher<R"re(^\h*([\da-f]+):\h*(([\da-f]{2} ?)+)\h*(.*))re">;
     // static constexpr auto lineRe = make_matcher<R"re(^(/[^:]+):(\d+).*)re">;
