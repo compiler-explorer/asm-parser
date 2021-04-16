@@ -30,9 +30,9 @@ class AssemblyTextParserState
 
     asm_label_v currentLabelReference{};
     asm_source currentSourceRef{};
-    std::string previousLabel;
-    std::string previousParentLabel;
-    std::string previousLabelOnSameAddress;
+    std::string_view previousLabel;
+    std::string_view previousParentLabel;
+    std::string_view previousLabelOnSameAddress;
     std::string text;
     std::string currentFilename;
     std::string currentSection;

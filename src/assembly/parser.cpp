@@ -33,7 +33,7 @@ bool AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
         else if (type == 100 || type == 132)
         {
             this->state.currentSourceRef = {};
-            this->state.previousLabel.clear();
+            this->state.previousLabel = {};
         }
 
         return true;
@@ -234,12 +234,12 @@ void AsmParser::AssemblyTextParser::handleLabelAliasing()
             }
             else if (this->state.currentLine->has_opcode || this->state.currentLine->is_data)
             {
-                this->state.previousLabelOnSameAddress.clear();
+                this->state.previousLabelOnSameAddress = {};
             }
         }
         else
         {
-            this->state.previousLabelOnSameAddress.clear();
+            this->state.previousLabelOnSameAddress = {};
         }
     }
 
@@ -344,7 +344,7 @@ void AsmParser::AssemblyTextParser::eol()
     if (AssemblyTextParserUtils::endBlock(line) || (this->state.inNvccCode && str_contains(line, '}')))
     {
         this->state.currentSourceRef = {};
-        this->state.previousLabel.clear();
+        this->state.previousLabel = {};
         this->state.lastOwnSource = {};
     }
     else
