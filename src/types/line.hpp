@@ -77,8 +77,17 @@ struct asm_file_def
     std::string file_name;
 };
 
-using asm_labelpair = std::pair<std::string_view, int32_t>;
-using asm_labelpair_t = std::pair<std::string, int32_t>;
+struct asm_labelpair
+{
+    std::string_view first;
+    int32_t second;
+};
+
+struct asm_labelpair_t
+{
+    std::string first;
+    int32_t second;
+};
 
 struct asm_line
 {

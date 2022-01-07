@@ -104,7 +104,7 @@ void AsmParser::ObjDumpParser::label()
     this->state.text = this->state.text + ":";
     this->state.currentLine.is_label = true;
 
-    labels.push_back({ this->state.previousLabel, lines.size() + 1 });
+    labels.push_back({ this->state.previousLabel, static_cast<int32_t>(lines.size() + 1) });
 }
 
 void AsmParser::ObjDumpParser::labelref()
