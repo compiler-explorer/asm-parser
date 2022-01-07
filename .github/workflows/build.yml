@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 "-DCMAKE_CXXFLAGS=-I$PWD/../ctre/include" -DCMAKE_BUILD_TYPE=Release ..
+          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 "-DCMAKE_CXX_FLAGS=-I$PWD/../ctre/include" -DCMAKE_BUILD_TYPE=Release ..
           cmake --build .
 
       - name: Test
