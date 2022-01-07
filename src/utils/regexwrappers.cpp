@@ -412,9 +412,9 @@ bool AsmParser::AssemblyTextParserUtils::endAsmNesting(const std::string_view li
     return false;
 }
 
-bool AsmParser::AssemblyTextParserUtils::startBlock(const std::string_view line)
+bool AsmParser::AssemblyTextParserUtils::startProcBlock(const std::string_view line)
 {
-    if (Regexes::startBlock(line))
+    if (Regexes::startProcBlock(line))
         return true;
 
     return false;
@@ -423,6 +423,14 @@ bool AsmParser::AssemblyTextParserUtils::startBlock(const std::string_view line)
 bool AsmParser::AssemblyTextParserUtils::endBlock(const std::string_view line)
 {
     if (Regexes::endBlock(line))
+        return true;
+
+    return false;
+}
+
+bool AsmParser::AssemblyTextParserUtils::endProcBlock(const std::string_view line)
+{
+    if (Regexes::endProcBlock(line))
         return true;
 
     return false;

@@ -16,8 +16,11 @@ TEST_CASE("Test text assembly utilities", "[asm]")
     REQUIRE(file_def.value().file_index == 2);
     REQUIRE(file_def.value().file_name == "/opt/compiler-explorer/gcc-10.2.0/include/c++/10.2.0/bits/char_traits.h");
 
-    const auto endproc = AsmParser::AssemblyTextParserUtils::endBlock("\t.cfi_endproc");
-    CHECK(endproc);
+    const auto endproc1 = AsmParser::AssemblyTextParserUtils::endBlock("\t.cfi_endproc");
+    CHECK(endproc1);
+
+    const auto endproc2 = AsmParser::AssemblyTextParserUtils::endProcBlock("\t.cfi_endproc");
+    CHECK(endproc2);
 
     const auto indentedLabel = AsmParser::AssemblyTextParserUtils::getLineWithoutComment("\tlabel:");
     REQUIRE(indentedLabel == "\tlabel:");

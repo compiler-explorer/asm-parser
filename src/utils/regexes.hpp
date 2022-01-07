@@ -50,8 +50,9 @@ struct Regexes
     static constexpr auto sourceD2Tag = ctre::match<R"re(^\h*\.d2line\h+(\d+),?\h*(\d*).*)re">;
     static constexpr auto sourceD2File = ctre::match<R"re(^\h*\.d2file\h+"(.*)")re">;
     static constexpr auto stdInLooking = ctre::search<R"re(<stdin>|^-$|example\.[^/]+$|<source>)re">;
-    static constexpr auto startBlock = ctre::search<R"re(\.cfi_startproc)re">;
+    static constexpr auto startProcBlock = ctre::search<R"re(\.cfi_startproc)re">;
     static constexpr auto endBlock = ctre::search<R"re(\.(cfi_endproc|data|text|section))re">;
+    static constexpr auto endProcBlock = ctre::search<R"re(\.cfi_endproc)re">;
 
     static constexpr auto sectionDef = ctre::search<R"re(\.(data|text|section)\h*"?([.a-zA-Z0-9\-]*)"?)re">;
 

@@ -58,6 +58,7 @@ class DebugJsonWriter : public JsonWriter
     const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels;
     const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_weak_labels;
     const std::unordered_map<std::string_view, std::string_view> aliased_labels;
+    const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels;
 
     void writeDebugLine(const asm_line_v *line);
 
@@ -68,7 +69,8 @@ class DebugJsonWriter : public JsonWriter
                     const Filter filter,
                     const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels,
                     const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_weak_labels,
-                    const std::unordered_map<std::string_view, std::string_view> aliased_labels);
+                    const std::unordered_map<std::string_view, std::string_view> aliased_labels,
+                    const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels);
 
     void write() override;
 };

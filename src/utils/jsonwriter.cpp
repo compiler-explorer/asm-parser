@@ -378,9 +378,10 @@ AsmParser::DebugJsonWriter::DebugJsonWriter(std::ostream &out,
                                             const Filter filter,
                                             const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels,
                                             const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_weak_labels,
-                                            const std::unordered_map<std::string_view, std::string_view> aliased_labels)
+                                            const std::unordered_map<std::string_view, std::string_view> aliased_labels,
+                                            const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels)
 : AsmParser::JsonWriter::JsonWriter(out, lines, labels, filter), used_labels(used_labels),
-  used_weak_labels(used_weak_labels), aliased_labels(aliased_labels)
+  used_weak_labels(used_weak_labels), aliased_labels(aliased_labels), used_data_labels(used_data_labels)
 {
 }
 
@@ -531,6 +532,40 @@ void AsmParser::DebugJsonWriter::write()
     this->out << "{";
     firstLabel = true;
     for (auto &usedlabel : this->used_weak_labels)
+    {
+        if (firstLabel)
+        {
+            firstLabel = false;
+        }
+        else
+        {
+            this->out << ",";
+        }
+
+        this->writeKeyName(usedlabel.first);
+        this->out << "[";
+        bool firstref = true;
+        for (auto &ref : usedlabel.second)
+        {
+            if (firstref)
+            {
+                firstref = false;
+                this->writeValue(ref, jsonopt::none);
+            }
+            else
+            {
+                this->writeValue(ref, jsonopt::prefixwithcomma);
+            }
+        }
+        this->out << "]";
+    }
+    this->out << "}";
+
+    this->out << ",\n";
+    this->writeKeyName("used_data_labels");
+    this->out << "{";
+    firstLabel = true;
+    for (auto &usedlabel : this->used_data_labels)
     {
         if (firstLabel)
         {

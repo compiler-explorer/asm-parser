@@ -229,6 +229,11 @@ void AsmParser::AssemblyTextParser::extractUsedLabelsFromDataLine(const std::str
     for (auto &label_ref : this->state.currentLine->labels)
     {
         this->data_used_labels[label_ref.name].insert(this->state.previousLabel);
+
+        if (this->state.currentSourceRef.inside_proc)
+        {
+            this->data_used_labels[label_ref.name].insert(this->state.previousParentLabel);
+        }
     }
 }
 
@@ -352,7 +357,7 @@ void AsmParser::AssemblyTextParser::eol()
         this->state.currentLine->text = std::move(filteredLine);
     }
 
-    if (AssemblyTextParserUtils::startBlock(this->state.currentLine->text) && this->state.currentSourceRef.line == 0)
+    if (AssemblyTextParserUtils::startProcBlock(this->state.currentLine->text) && this->state.currentSourceRef.line == 0)
     {
         this->markPreviousInternalLabelAsInsideProc();
         if (this->filter.directives)
@@ -586,7 +591,7 @@ bool AsmParser::AssemblyTextParser::isUsedThroughAlias(const std::string_view la
 
 bool AsmParser::AssemblyTextParser::isUsed(const std::string_view label, const int depth) const
 {
-    if (usercode_labels.contains(label))
+    if (this->usercode_labels.contains(label))
         return true;
 
     const auto usedfind = this->used_labels.find(label);
@@ -742,7 +747,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
 
         if (remove || removeOnlyThis ||
             (!isUsed && !isUsedThroughAlias && !isDataUsedThroughAlias && this->filter.compatmode &&
-             this->filter.directives && line->is_data))
+             this->filter.directives && line->is_data && !line->source.inside_proc))
         {
             // filter this out
             this->state.filteredlines.push_back(std::move(line));
@@ -835,7 +840,8 @@ void AsmParser::AssemblyTextParser::outputDebugJson(std::ostream &out) const
 {
     const std::vector<asm_labelpair> labels = this->redetermineLabels();
 
-    DebugJsonWriter writer(out, this->lines, labels, this->filter, this->used_labels, this->weakly_used_labels, this->aliased_labels);
+    DebugJsonWriter writer(out, this->lines, labels, this->filter, this->used_labels, this->weakly_used_labels,
+                           this->aliased_labels, this->data_used_labels);
     writer.write();
 }
 

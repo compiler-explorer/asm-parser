@@ -5,7 +5,7 @@ PATH=$PATH:/opt/compiler-explorer/cmake/bin
 export CXX=/opt/compiler-explorer/gcc-11.2.0/bin/g++
 export CC=/opt/compiler-explorer/gcc-11.2.0/bin/gcc
 export CXXFLAGS="-I$PWD/ctre/include"
-export LD_LIBRARY_PATH=/opt/compiler-explorer/gcc-11.2.0/lib64
+# export LD_LIBRARY_PATH=/opt/compiler-explorer/gcc-11.2.0/lib64
 
 # export CXX=/opt/compiler-explorer/clang-12.0.0/bin/clang++
 # export CC=/opt/compiler-explorer/clang-12.0.0/bin/clang
@@ -43,6 +43,8 @@ if [ $? -ne 0 ]; then
   exit $?
 fi
 
+patchelf --set-rpath /opt/compiler-explorer/gcc-11.2.0/lib64 bin/test
+
 bin/test
 if [ $? -ne 0 ]; then
   exit $?
@@ -54,10 +56,11 @@ if [ $? -ne 0 ]; then
   exit $?
 fi
 
+patchelf --set-rpath /opt/compiler-explorer/gcc-11.2.0/lib64 bin/asm-parser
+
 cd ..
 
-echo 995test
-/usr/bin/time --verbose build/bin/asm-parser -comment_only -directives -unused_labels /opt/compiler-explorer/ce/test/filters-cases/bug-995.asm > bla.json
+# /usr/bin/time --verbose build/bin/asm-parser -comment_only -directives -unused_labels /opt/compiler-explorer/ce/test/filters-cases/bug-995.asm > bla.json
 
 # echo bintest-1
 # build/bin/asm-parser -binary /opt/compiler-explorer/ce/test/filters-cases/bintest-1.asm > /opt/compiler-explorer/ce/test/filters-cases/bintest-1.asm.binary.directives.labels.comments.json

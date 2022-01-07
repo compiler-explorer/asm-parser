@@ -63,8 +63,9 @@ class AssemblyTextParserUtils
     static bool startAsmNesting(const std::string_view line);
     static bool endAsmNesting(const std::string_view line);
 
-    static bool startBlock(const std::string_view line);
+    static bool startProcBlock(const std::string_view line);
     static bool endBlock(const std::string_view line);
+    static bool endProcBlock(const std::string_view line);
 
     static bool isCudaEndDef(const std::string_view line);
     static bool isDataDefn(const std::string_view line);
