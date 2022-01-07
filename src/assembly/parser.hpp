@@ -4,6 +4,7 @@
 #include "../types/line.hpp"
 #include "../types/parser.hpp"
 #include <iosfwd>
+#include <memory>
 #include <optional>
 #include <string_view>
 #include <unordered_map>
@@ -21,22 +22,24 @@ class AssemblyTextParserState
 
     bool mayRemovePreviousLabel{ true };
     bool keepInlineCode{};
-    asm_source lastOwnSource{};
+    asm_source_v lastOwnSource{};
 
     bool inNvccDef{};
     bool inNvccCode{};
     int inCustomAssembly{ 0 };
 
-    asm_label currentLabelReference{};
-    asm_source currentSourceRef{};
-    std::string previousLabel;
-    std::string previousParentLabel;
-    std::string previousLabelOnSameAddress;
+    asm_label_v currentLabelReference{};
+    asm_source_v currentSourceRef{};
+    std::string_view previousLabel;
+    std::string_view previousParentLabel;
+    std::string_view previousLabelOnSameAddress;
     std::string text;
-    std::string currentFilename;
-    std::string currentSection;
-    std::string currentSourceFile;
-    asm_line currentLine{};
+    std::string_view currentFilename;
+    std::string_view currentSection;
+    std::string_view currentSourceFile;
+    std::unique_ptr<asm_line_v> currentLine;
+
+    std::vector<std::unique_ptr<asm_line_v>> filteredlines;
 };
 
 class AssemblyTextParser : public IParser
@@ -46,13 +49,13 @@ class AssemblyTextParser : public IParser
     AssemblyTextParserState state{};
 
     std::unordered_map<int, std::string> files;
-    std::vector<asm_line> lines;
-    std::unordered_map<std::string, int32_t> labels_defined;
-    std::unordered_set<std::string> usercode_labels;
-    std::unordered_map<std::string, std::unordered_set<std::string>> used_labels;
-    std::unordered_map<std::string, std::unordered_set<std::string>> data_used_labels;
-    std::unordered_map<std::string, std::unordered_set<std::string>> weakly_used_labels;
-    std::unordered_map<std::string, std::string> aliased_labels;
+    std::vector<std::unique_ptr<asm_line_v>> lines;
+    std::unordered_map<std::string_view, int32_t> labels_defined;
+    std::unordered_set<std::string_view> usercode_labels;
+    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels;
+    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> data_used_labels;
+    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> weakly_used_labels;
+    std::unordered_map<std::string_view, std::string_view> aliased_labels;
 
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
@@ -69,15 +72,15 @@ class AssemblyTextParser : public IParser
     bool isInternalLabel(const std::string_view label) const;
     bool isEmptyOrJustWhitespace(const std::string_view line) const;
     void maybeAddBlank();
-    void amendPreviousLinesWith(const asm_source &source);
+    void amendPreviousLinesWith(const asm_source_v &source);
     void markPreviousInternalLabelAsInsideProc();
-    bool isUsedThroughAlias(const std::string &label) const;
-    bool isDataUsedThroughAlias(const std::string &label) const;
-    bool isUsed(const std::string &label, const int depth) const;
+    bool isUsedThroughAlias(const std::string_view label) const;
+    bool isDataUsedThroughAlias(const std::string_view label) const;
+    bool isUsed(const std::string_view label, const int depth) const;
 
     void filterNonLabels();
     void markLabelUsage();
-    void filterOutReferedLabelsThatArentDefined(asm_line &line);
+    void filterOutReferedLabelsThatArentDefined(asm_line_v *line);
     void removeUnused();
 
     void extractUsedLabelsFromDirective(const std::string_view line);

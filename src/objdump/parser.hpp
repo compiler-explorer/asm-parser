@@ -43,7 +43,7 @@ class ObjDumpParser : public IParser
     const Filter filter;
     ObjDumpParserState state{};
     std::vector<asm_line> lines;
-    std::vector<asm_labelpair> labels;
+    std::vector<asm_labelpair_t> labels;
 
     // todo: bad names
     void actually_address();

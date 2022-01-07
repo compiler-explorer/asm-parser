@@ -2,20 +2,43 @@
 
 PATH=$PATH:/opt/compiler-explorer/cmake/bin
 
-export CXX=/opt/compiler-explorer/gcc-10.2.0/bin/g++
-export CC=/opt/compiler-explorer/gcc-10.2.0/bin/gcc
+export CXX=/opt/compiler-explorer/gcc-11.2.0/bin/g++
+export CC=/opt/compiler-explorer/gcc-11.2.0/bin/gcc
+export CXXFLAGS="-I$PWD/ctre/include"
+export LD_LIBRARY_PATH=/opt/compiler-explorer/gcc-11.2.0/lib64
+
+# export CXX=/opt/compiler-explorer/clang-12.0.0/bin/clang++
+# export CC=/opt/compiler-explorer/clang-12.0.0/bin/clang
+# export CXXFLAGS="--gcc-toolchain=/opt/compiler-explorer/gcc-10.3.0 -I$PWD/ctre/include -O3 -flto"
+
+if test -f "ctre/include/ctre.hpp"; then
+  echo Updating ctre
+  cd ctre
+  git pull
+  cd ..
+else
+  echo Cloning ctre
+  git clone https://github.com/hanickadot/compile-time-regular-expressions ctre
+fi
 
 /opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.cpp
 /opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.hpp
 
 mkdir -p build
 cd build
-cmake -DCMAKE_BUILD_TYPE=RELEASE ..
+echo cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
+cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
 if [ $? -ne 0 ]; then
   exit $?
 fi
 
-make test
+# /opt/compiler-explorer/clang-trunk/bin/clang-tidy --extra-arg=-std=c++20 ../src/assembly/*.cpp
+# if [ $? -ne 0 ]; then
+#   exit $?
+# fi
+
+echo cmake --build . --target test
+cmake --build . --target test
 if [ $? -ne 0 ]; then
   exit $?
 fi
@@ -25,12 +48,16 @@ if [ $? -ne 0 ]; then
   exit $?
 fi
 
-make asm-parser
+echo cmake --build . --target asm-parser
+cmake --build . --target asm-parser
 if [ $? -ne 0 ]; then
   exit $?
 fi
 
 cd ..
+
+echo 995test
+/usr/bin/time --verbose build/bin/asm-parser -comment_only -directives -unused_labels /opt/compiler-explorer/ce/test/filters-cases/bug-995.asm > bla.json
 
 # echo bintest-1
 # build/bin/asm-parser -binary /opt/compiler-explorer/ce/test/filters-cases/bintest-1.asm > /opt/compiler-explorer/ce/test/filters-cases/bintest-1.asm.binary.directives.labels.comments.json

@@ -72,21 +72,24 @@ std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string_vie
     return expandedLine;
 }
 
-static inline void rtrim(std::string &s)
-{
-    s.erase(std::find_if(s.rbegin(), s.rend(),
-                         [](unsigned char ch) {
-                             return !std::isspace(ch);
-                         })
-            .base(),
-            s.end());
-}
+// static inline void rtrim(std::string &s)
+// {
+//     s.erase(std::find_if(s.rbegin(), s.rend(),
+//                          [](unsigned char ch)
+//                          {
+//                              return !std::isspace(ch);
+//                          })
+//             .base(),
+//             s.end());
+// }
 
 static inline void ltrim(std::string &s)
 {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-                return !std::isspace(ch);
-            }));
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+                                    [](unsigned char ch)
+                                    {
+                                        return !std::isspace(ch);
+                                    }));
 }
 
 std::string_view AsmParser::AssemblyTextParserUtils::getLineWithoutComment(const std::string_view line)
@@ -205,9 +208,9 @@ std::string AsmParser::AssemblyTextParserUtils::fixLabelIndentation(const std::s
     return filtered;
 }
 
-std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(const std::string_view line)
+std::vector<AsmParser::asm_label_v> AsmParser::AssemblyTextParserUtils::getUsedLabelsInLine(const std::string_view line)
 {
-    std::vector<AsmParser::asm_label> labelsInLine;
+    std::vector<AsmParser::asm_label_v> labelsInLine;
 
     const auto filteredLine = AssemblyTextParserUtils::getLineWithoutCommentAndStripFirstWord(line);
 
@@ -221,8 +224,8 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
     int startidx = 0;
     for (auto match : ctre::range<R"re(([$%]?)([.@A-Z_a-z][.\dA-Z_a-z]*))re">(filteredLine))
     {
-        AsmParser::asm_label label{};
-        label.name = std::string(match.get<2>().to_view());
+        AsmParser::asm_label_v label{};
+        label.name = match.get<2>().to_view();
 
         const auto len = label.name.length();
         const auto loc = filteredLine.find(label.name, startidx);
@@ -236,9 +239,8 @@ std::vector<AsmParser::asm_label> AsmParser::AssemblyTextParserUtils::getUsedLab
         auto prefix = match.get<1>().to_view();
         if (!prefix.empty())
         {
-            AsmParser::asm_label labelWithPrefix = label;
-            labelWithPrefix.name = prefix;
-            labelWithPrefix.name += label.name;
+            AsmParser::asm_label_v labelWithPrefix = label;
+            labelWithPrefix.name = std::string_view(prefix.begin(), label.name.end());
             labelWithPrefix.range.start_col--;
 
             labelsInLine.push_back(labelWithPrefix);
@@ -308,17 +310,17 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
     if (match)
     {
         const auto file = match.get<1>().to_view();
-        const auto line = svtoi(match.get<2>().to_view());
+        const auto iline = svtoi(match.get<2>().to_view());
 
         // todo check if stdin?
-        return asm_source_v{ .file = file, .line = line, .is_end = false };
+        return asm_source_v{ .file = file, .file_idx = 0, .line = iline, .is_end = false, .is_usercode = false, .inside_proc = false };
     }
     else
     {
         const auto matchend = Regexes::source6502DbgEnd(line);
         if (matchend)
         {
-            return asm_source_v{ .file = "", .line = 0, .is_end = true };
+            return asm_source_v{ .file = {}, .file_idx = 0, .line = 0, .is_end = true, .is_usercode = false, .inside_proc = false };
         }
     }
 
