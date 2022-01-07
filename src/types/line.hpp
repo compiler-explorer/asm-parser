@@ -54,8 +54,11 @@ struct asm_source
 struct asm_source_v
 {
     std::string_view file;
-    int32_t line{ 0 };
-    bool is_end{};
+    int32_t file_idx;
+    int32_t line;
+    bool is_end;
+    bool is_usercode;
+    bool inside_proc;
 };
 
 struct asm_source_f
@@ -110,7 +113,7 @@ class asm_line_v
     bool is_label{};
     bool is_internal_label{};
     std::string_view label;
-    asm_source source;
+    asm_source_v source;
     std::optional<int64_t> address;
     bool is_used{};
     bool is_used_through_alias{};
@@ -138,7 +141,12 @@ class asm_line_v
         this->is_label = line.is_label;
         this->is_internal_label = line.is_internal_label;
         this->label = line.label;
-        this->source = line.source;
+        this->source = asm_source_v{ .file = line.source.file,
+                                     .file_idx = line.source.file_idx,
+                                     .line = line.source.line,
+                                     .is_end = false,
+                                     .is_usercode = line.source.is_usercode,
+                                     .inside_proc = line.source.inside_proc };
         this->address = line.address;
         this->is_used = line.is_used;
         this->is_used_through_alias = line.is_used_through_alias;

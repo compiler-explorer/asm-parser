@@ -310,17 +310,17 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
     if (match)
     {
         const auto file = match.get<1>().to_view();
-        const auto line = svtoi(match.get<2>().to_view());
+        const auto iline = svtoi(match.get<2>().to_view());
 
         // todo check if stdin?
-        return asm_source_v{ .file = file, .line = line, .is_end = false };
+        return asm_source_v{ .file = file, .file_idx = 0, .line = iline, .is_end = false, .is_usercode = false, .inside_proc = false };
     }
     else
     {
         const auto matchend = Regexes::source6502DbgEnd(line);
         if (matchend)
         {
-            return asm_source_v{ .file = "", .line = 0, .is_end = true };
+            return asm_source_v{ .file = {}, .file_idx = 0, .line = 0, .is_end = true, .is_usercode = false, .inside_proc = false };
         }
     }
 

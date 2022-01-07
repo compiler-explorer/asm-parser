@@ -22,21 +22,21 @@ class AssemblyTextParserState
 
     bool mayRemovePreviousLabel{ true };
     bool keepInlineCode{};
-    asm_source lastOwnSource{};
+    asm_source_v lastOwnSource{};
 
     bool inNvccDef{};
     bool inNvccCode{};
     int inCustomAssembly{ 0 };
 
     asm_label_v currentLabelReference{};
-    asm_source currentSourceRef{};
+    asm_source_v currentSourceRef{};
     std::string_view previousLabel;
     std::string_view previousParentLabel;
     std::string_view previousLabelOnSameAddress;
     std::string text;
-    std::string currentFilename;
-    std::string currentSection;
-    std::string currentSourceFile;
+    std::string_view currentFilename;
+    std::string_view currentSection;
+    std::string_view currentSourceFile;
     std::unique_ptr<asm_line_v> currentLine;
 
     std::vector<std::unique_ptr<asm_line_v>> filteredlines;
@@ -72,7 +72,7 @@ class AssemblyTextParser : public IParser
     bool isInternalLabel(const std::string_view label) const;
     bool isEmptyOrJustWhitespace(const std::string_view line) const;
     void maybeAddBlank();
-    void amendPreviousLinesWith(const asm_source &source);
+    void amendPreviousLinesWith(const asm_source_v &source);
     void markPreviousInternalLabelAsInsideProc();
     bool isUsedThroughAlias(const std::string_view label) const;
     bool isDataUsedThroughAlias(const std::string_view label) const;

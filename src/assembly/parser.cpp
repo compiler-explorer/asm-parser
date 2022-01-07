@@ -23,12 +23,13 @@ bool AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
     const auto stabs_opt = AssemblyTextParserUtils::getSourceInfoFromStabs(line);
     if (stabs_opt)
     {
-        const auto [type, line] = stabs_opt.value();
+        const auto [type, iline] = stabs_opt.value();
 
         // cf http://www.math.utah.edu/docs/info/stabs_11.html#SEC48
         if (type == 68)
         {
-            this->state.currentSourceRef = asm_source{ .file = "", .file_idx = 0, .line = line };
+            this->state.currentSourceRef =
+            asm_source_v{ .file = {}, .file_idx = 0, .line = iline, .is_end = false, .is_usercode = false, .inside_proc = false };
         }
         else if (type == 100 || type == 132)
         {
@@ -137,7 +138,12 @@ bool AsmParser::AssemblyTextParser::handleD2(const std::string_view line)
         const auto line_source = match_line.value();
 
         const auto match_stdin = AssemblyTextParserUtils::isExampleOrStdin(this->state.currentSourceFile);
-        this->state.currentSourceRef = { .file = this->state.currentSourceFile, .line = line_source.line, .is_usercode = match_stdin };
+        this->state.currentSourceRef = asm_source_v{ .file = this->state.currentSourceFile,
+                                                     .file_idx = 0,
+                                                     .line = line_source.line,
+                                                     .is_end = false,
+                                                     .is_usercode = match_stdin,
+                                                     .inside_proc = false };
 
         this->amendPreviousLinesWith(this->state.currentSourceRef);
         return true;
@@ -148,7 +154,7 @@ bool AsmParser::AssemblyTextParser::handleD2(const std::string_view line)
         if (match_file)
         {
             const auto file_source = match_file.value();
-            this->state.currentSourceFile = std::string(file_source.file);
+            this->state.currentSourceFile = file_source.file;
             return true;
         }
     }
@@ -163,7 +169,9 @@ bool AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
     {
         const auto source = match.value();
         if (!source.is_end)
-            this->state.currentSourceRef = asm_source{ .file = std::string(source.file), .line = source.line };
+            this->state.currentSourceRef = asm_source_v{
+                .file = source.file, .file_idx = 0, .line = source.line, .is_end = false, .is_usercode = false, .inside_proc = false
+            };
 
         return true;
     }
@@ -501,18 +509,19 @@ bool AsmParser::AssemblyTextParser::isInternalLabel(const std::string_view label
     return label.starts_with(".") || label.starts_with("$") || label.starts_with("L");
 }
 
-void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source &source)
+void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source_v &source)
 {
     for (auto it = this->lines.rbegin(); it != this->lines.rend(); it++)
     {
         auto &line = *it;
         if (line->is_label)
         {
-            line->source = asm_source{ .file = source.file,
-                                       .file_idx = source.file_idx,
-                                       .line = source.line,
-                                       .is_usercode = source.is_usercode && !line->is_internal_label,
-                                       .inside_proc = source.inside_proc };
+            line->source = asm_source_v{ .file = source.file,
+                                         .file_idx = source.file_idx,
+                                         .line = source.line,
+                                         .is_end = false,
+                                         .is_usercode = source.is_usercode && !line->is_internal_label,
+                                         .inside_proc = source.inside_proc };
             if (!line->is_internal_label)
             {
                 break;
