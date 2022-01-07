@@ -40,6 +40,8 @@ class JsonWriter
     void writeKv(const char *key, const int value, const jsonopt opts);
     void writeSource(const asm_line_v *line);
     void writeLine(const asm_line_v *line);
+    void writeLabelArray(const asm_line_v *line);
+    void writeOpcodesArray(const asm_line_v *line);
 
     public:
     JsonWriter(std::ostream &out,

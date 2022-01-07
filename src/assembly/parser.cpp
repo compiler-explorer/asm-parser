@@ -29,7 +29,7 @@ bool AsmParser::AssemblyTextParser::handleStabs(const std::string_view line)
         if (type == 68)
         {
             this->state.currentSourceRef =
-            asm_source_v{ .file = {}, .file_idx = 0, .line = iline, .is_end = false, .is_usercode = false, .inside_proc = false };
+            asm_source_v{ .file = {}, .file_idx = 0, .line = iline, .column = 0, .is_end = false, .is_usercode = false, .inside_proc = false };
         }
         else if (type == 100 || type == 132)
         {
@@ -59,7 +59,7 @@ bool AsmParser::AssemblyTextParser::handleFiledef(const std::string_view line)
 
 bool AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
 {
-    const auto [file_index, line_index] = AssemblyTextParserUtils::getSourceRef(line);
+    const auto [file_index, line_index, column] = AssemblyTextParserUtils::getSourceRef(line);
     if (file_index != 0)
     {
         this->state.hasProcMarkers = true;
@@ -67,6 +67,7 @@ bool AsmParser::AssemblyTextParser::handleSource(const std::string_view line)
         this->state.currentSourceRef.file_idx = file_index;
 
         this->state.currentSourceRef.line = line_index;
+        this->state.currentSourceRef.column = column;
         this->state.currentSourceRef.inside_proc = true;
 
         this->amendPreviousLinesWith(this->state.currentSourceRef);
@@ -141,6 +142,7 @@ bool AsmParser::AssemblyTextParser::handleD2(const std::string_view line)
         this->state.currentSourceRef = asm_source_v{ .file = this->state.currentSourceFile,
                                                      .file_idx = 0,
                                                      .line = line_source.line,
+                                                     .column = 0,
                                                      .is_end = false,
                                                      .is_usercode = match_stdin,
                                                      .inside_proc = false };
@@ -170,7 +172,7 @@ bool AsmParser::AssemblyTextParser::handle6502(const std::string_view line)
         const auto source = match.value();
         if (!source.is_end)
             this->state.currentSourceRef = asm_source_v{
-                .file = source.file, .file_idx = 0, .line = source.line, .is_end = false, .is_usercode = false, .inside_proc = false
+                .file = source.file, .file_idx = 0, .line = source.line, .column = 0, .is_end = false, .is_usercode = false, .inside_proc = false
             };
 
         return true;
@@ -519,6 +521,7 @@ void AsmParser::AssemblyTextParser::amendPreviousLinesWith(const asm_source_v &s
             line->source = asm_source_v{ .file = source.file,
                                          .file_idx = source.file_idx,
                                          .line = source.line,
+                                         .column = source.column,
                                          .is_end = false,
                                          .is_usercode = source.is_usercode && !line->is_internal_label,
                                          .inside_proc = source.inside_proc };

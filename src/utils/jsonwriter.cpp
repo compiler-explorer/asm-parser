@@ -163,6 +163,12 @@ void AsmParser::JsonWriter::writeSource(const asm_line_v *line)
     if ((!line->is_label || line->has_opcode) && (line->source.line > 0))
     {
         this->out << "{";
+
+        if (line->source.column != 0)
+        {
+            this->writeKv("column", line->source.column, jsonopt::trailingcomma);
+        }
+
         if (line->source.is_usercode || (this->filter.binary && this->filter.compatmode))
         {
             this->writeKvNull("file", jsonopt::trailingcomma);
@@ -177,6 +183,7 @@ void AsmParser::JsonWriter::writeSource(const asm_line_v *line)
         }
 
         this->writeKv("line", line->source.line, jsonopt::none);
+
         this->out << "}";
     }
     else
@@ -194,6 +201,10 @@ void AsmParser::JsonWriter::writeLine(const asm_line_v *line)
     if (this->prettyPrint)
         this->out << "\n";
 
+    this->writeKeyName("labels");
+    this->writeLabelArray(line);
+    wroteSomethingInRoot = true;
+
     if (line->opcodes.size() > 0)
     {
         if (wroteSomethingInRoot)
@@ -206,23 +217,7 @@ void AsmParser::JsonWriter::writeLine(const asm_line_v *line)
         }
 
         this->writeKeyName("opcodes");
-
-        this->out << "[";
-        bool firstOpcode = true;
-        for (auto &opcode : line->opcodes)
-        {
-            if (!firstOpcode)
-            {
-                this->out << ", ";
-            }
-            else
-            {
-                firstOpcode = false;
-            }
-
-            this->out << "\"" << opcode << "\"";
-        }
-        this->out << "]";
+        this->writeOpcodesArray(line);
     }
 
     if (line->address.has_value() && !(line->is_label && this->filter.compatmode))
@@ -237,19 +232,6 @@ void AsmParser::JsonWriter::writeLine(const asm_line_v *line)
         }
 
         this->writeKv("address", line->address.value(), jsonopt::none);
-    }
-
-    {
-        if (wroteSomethingInRoot)
-        {
-            this->out << ", ";
-        }
-        else
-        {
-            wroteSomethingInRoot = true;
-        }
-
-        this->writeKv("text", line->text, jsonopt::none);
     }
 
     if (wroteSomethingInRoot)
@@ -274,16 +256,47 @@ void AsmParser::JsonWriter::writeLine(const asm_line_v *line)
         this->writeKv("section", line->section, jsonopt::none);
     }
 
-    if (wroteSomethingInRoot)
     {
-        this->out << ", ";
-    }
-    else
-    {
-        wroteSomethingInRoot = true;
+        if (wroteSomethingInRoot)
+        {
+            this->out << ", ";
+        }
+        else
+        {
+            wroteSomethingInRoot = true;
+        }
+
+        this->writeKv("text", line->text, jsonopt::none);
     }
 
-    this->writeKeyName("labels");
+    if (this->prettyPrint)
+        this->out << "\n";
+
+    this->out << "}";
+}
+
+void AsmParser::JsonWriter::writeOpcodesArray(const asm_line_v *line)
+{
+    this->out << "[";
+    bool firstOpcode = true;
+    for (auto &opcode : line->opcodes)
+    {
+        if (!firstOpcode)
+        {
+            this->out << ", ";
+        }
+        else
+        {
+            firstOpcode = false;
+        }
+
+        this->out << "\"" << opcode << "\"";
+    }
+    this->out << "]";
+}
+
+void AsmParser::JsonWriter::writeLabelArray(const asm_line_v *line)
+{
     this->out << "[";
 
     bool firstLabel = true;
@@ -310,11 +323,6 @@ void AsmParser::JsonWriter::writeLine(const asm_line_v *line)
         this->out << "}";
     }
     this->out << "]";
-
-    if (this->prettyPrint)
-        this->out << "\n";
-
-    this->out << "}";
 }
 
 void AsmParser::JsonWriter::JsonWriter::write()

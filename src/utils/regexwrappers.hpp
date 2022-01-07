@@ -9,10 +9,17 @@
 namespace AsmParser
 {
 
+struct regexed_sourceref
+{
+    int file_index;
+    int line_index;
+    int column;
+};
+
 class AssemblyTextParserUtils
 {
     public:
-    static std::pair<int, int> getSourceRef(const std::string_view line);
+    static regexed_sourceref getSourceRef(const std::string_view line);
     static std::optional<AsmParser::asm_file_def> getFileDef(const std::string_view line);
     static bool is_probably_label(const std::string_view line);
     static std::string fixLabelIndentation(const std::string_view line);

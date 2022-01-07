@@ -333,7 +333,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             {
                 if (c == ':')
                 {
-                    this->state.currentSourceRef = asm_source{ .file = this->state.text, .line = 0 };
+                    this->state.currentSourceRef = asm_source{ .file = this->state.text, .line = 0, .column = 0 };
                     this->state.text.clear();
                     continue;
                 }

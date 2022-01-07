@@ -47,6 +47,7 @@ struct asm_source
     std::string file;
     int32_t file_idx{ 0 };
     int32_t line{ 0 };
+    int32_t column;
     bool is_usercode{};
     bool inside_proc{};
 };
@@ -56,6 +57,7 @@ struct asm_source_v
     std::string_view file;
     int32_t file_idx;
     int32_t line;
+    int32_t column;
     bool is_end;
     bool is_usercode;
     bool inside_proc;
@@ -153,6 +155,7 @@ class asm_line_v
         this->source = asm_source_v{ .file = line.source.file,
                                      .file_idx = line.source.file_idx,
                                      .line = line.source.line,
+                                     .column = line.source.column,
                                      .is_end = false,
                                      .is_usercode = line.source.is_usercode,
                                      .inside_proc = line.source.inside_proc };

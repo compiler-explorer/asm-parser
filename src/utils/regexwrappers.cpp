@@ -8,7 +8,7 @@ inline int svtoi(const std::string_view sv)
     return std::atoi(sv.data());
 }
 
-std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRef(const std::string_view line)
+AsmParser::regexed_sourceref AsmParser::AssemblyTextParserUtils::getSourceRef(const std::string_view line)
 {
     const auto match = AsmParser::Regexes::sourceTag(line);
     if (match)
@@ -16,11 +16,19 @@ std::pair<int, int> AsmParser::AssemblyTextParserUtils::getSourceRef(const std::
         const auto file_index = svtoi(match.get<1>().to_view());
         const auto line_index = svtoi(match.get<2>().to_view());
 
-        return { file_index, line_index };
+        int column = 0;
+
+        const auto matchWithColumn = AsmParser::Regexes::sourceTagWithColumn(line);
+        if (matchWithColumn)
+        {
+            column = svtoi(matchWithColumn.get<3>().to_view());
+        }
+
+        return { file_index, line_index, column };
     }
     else
     {
-        return { 0, 0 };
+        return { 0, 0, 0 };
     }
 }
 
@@ -313,14 +321,16 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
         const auto iline = svtoi(match.get<2>().to_view());
 
         // todo check if stdin?
-        return asm_source_v{ .file = file, .file_idx = 0, .line = iline, .is_end = false, .is_usercode = false, .inside_proc = false };
+        return asm_source_v{
+            .file = file, .file_idx = 0, .line = iline, .column = 0, .is_end = false, .is_usercode = false, .inside_proc = false
+        };
     }
     else
     {
         const auto matchend = Regexes::source6502DbgEnd(line);
         if (matchend)
         {
-            return asm_source_v{ .file = {}, .file_idx = 0, .line = 0, .is_end = true, .is_usercode = false, .inside_proc = false };
+            return asm_source_v{ .file = {}, .file_idx = 0, .line = 0, .column = 0, .is_end = true, .is_usercode = false, .inside_proc = false };
         }
     }
 
