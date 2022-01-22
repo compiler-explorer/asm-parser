@@ -169,18 +169,29 @@ void AsmParser::JsonWriter::writeSource(const asm_line_v *line)
             this->writeKv("column", line->source.column, jsonopt::trailingcomma);
         }
 
-        if (line->source.is_usercode || (this->filter.binary && this->filter.compatmode))
+        bool isMainSource{};
+        if (!line->source.file.empty())
+        {
+            isMainSource = line->source.file.starts_with("/app/example.") || line->source.file.starts_with("example.");
+
+            if (!filter.dont_mask_filenames && isMainSource)
         {
             this->writeKvNull("file", jsonopt::trailingcomma);
         }
-        else if (!line->source.file.empty())
-        {
+            else if (line->source.file.starts_with("/app/")) {
+                const auto withoutapp = std::string_view(line->source.file.begin() + 5, line->source.file.end());
+                this->writeKv("file", withoutapp, jsonopt::trailingcomma);
+            } else {
             this->writeKv("file", line->source.file, jsonopt::trailingcomma);
+            }
         }
         else
         {
             this->writeKvNull("file", jsonopt::trailingcomma);
+            isMainSource = true;
         }
+
+        this->writeKv("mainsource", isMainSource ? "true" : "false", jsonopt::trailingcomma);
 
         this->writeKv("line", line->source.line, jsonopt::none);
 

@@ -44,6 +44,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.compatmode = false;
         else if (streq(argv[i], "-library_functions"))
             config.filter.library_functions = true;
+        else if (streq(argv[i], "-dont_mask_filenames"))
+            config.filter.dont_mask_filenames = true;
         else if (streq(argv[i], "-debugdump"))
             config.doDebugDump = true;
         else if (streq(argv[i], "-stdin"))

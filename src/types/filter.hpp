@@ -13,6 +13,7 @@ struct Filter
     bool whitespace{};
     bool plt{};
 
+    bool dont_mask_filenames{};
     bool compatmode{};
 
     bool code_only{};
