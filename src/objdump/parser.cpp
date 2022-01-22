@@ -151,14 +151,18 @@ void AsmParser::ObjDumpParser::opcodes()
 
 void AsmParser::ObjDumpParser::actually_address()
 {
+    bool maybeNotHexAfterall = false;
+
     if (!this->state.ignoreUntilNextLabel)
     {
         int64_t addr = 0;
         int8_t bitsdone = 0;
         for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++)
         {
-            if (!is_hex(*c))
+            if (!is_hex(*c)) {
+                maybeNotHexAfterall = true;
                 break;
+            }
 
             addr += hex2int(*c) << bitsdone;
             bitsdone += 4;
@@ -167,8 +171,13 @@ void AsmParser::ObjDumpParser::actually_address()
         this->state.currentLine.address = addr;
     }
 
-    this->state.inAddress = false;
-    this->state.inOpcodes = true;
+    if (maybeNotHexAfterall) {
+        // then it must be a filename, right?
+        actually_filename();
+    } else {
+        this->state.inAddress = false;
+        this->state.inOpcodes = true;
+    }
 }
 
 void AsmParser::ObjDumpParser::actually_filename()
