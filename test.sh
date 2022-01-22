@@ -24,10 +24,12 @@ fi
 /opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.cpp
 /opt/compiler-explorer/clang-trunk/bin/clang-format -i src/*/*.hpp
 
+BUILDTYPE=Release
+
 mkdir -p build
 cd build
-echo cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
-cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..
+echo cmake -GNinja -DCMAKE_BUILD_TYPE=$BUILDTYPE ..
+cmake -GNinja -DCMAKE_BUILD_TYPE=$BUILDTYPE ..
 if [ $? -ne 0 ]; then
   exit $?
 fi
