@@ -10,8 +10,7 @@ inline int svtoi(const std::string_view sv)
 
 AsmParser::regexed_sourceref AsmParser::AssemblyTextParserUtils::getSourceRef(const std::string_view line)
 {
-    const auto match = AsmParser::Regexes::sourceTag(line);
-    if (match)
+    if (const auto match = AsmParser::Regexes::sourceTag(line))
     {
         const auto file_index = svtoi(match.get<1>().to_view());
         const auto line_index = svtoi(match.get<2>().to_view());
@@ -26,16 +25,13 @@ AsmParser::regexed_sourceref AsmParser::AssemblyTextParserUtils::getSourceRef(co
 
         return { file_index, line_index, column };
     }
-    else
-    {
-        return { 0, 0, 0 };
-    }
+
+    return { 0, 0, 0 };
 }
 
 std::optional<AsmParser::asm_file_def> AsmParser::AssemblyTextParserUtils::getFileDef(const std::string_view line)
 {
-    const auto match = Regexes::fileFind(line);
-    if (match)
+    if (const auto match = Regexes::fileFind(line))
     {
         const auto file_index = svtoi(match.get<1>().to_view());
         const auto file_name = match.get<2>().to_view();
@@ -45,10 +41,7 @@ std::optional<AsmParser::asm_file_def> AsmParser::AssemblyTextParserUtils::getFi
         {
             return asm_file_def{ file_index, fmt::format("{}/{}", file_name, file_name_rest) };
         }
-        else
-        {
-            return asm_file_def{ file_index, std::string(file_name) };
-        }
+        return asm_file_def{ file_index, std::string(file_name) };
     }
 
     return std::nullopt;
@@ -261,8 +254,7 @@ std::vector<AsmParser::asm_label_v> AsmParser::AssemblyTextParserUtils::getUsedL
 bool AsmParser::AssemblyTextParserUtils::hasOpcode(const std::string_view line, bool inNvccCode)
 {
     // Remove any leading label definition...
-    const auto match = Regexes::labelDef(line);
-    if (match)
+    if (const auto match = Regexes::labelDef(line))
     {
         // todo
         // line = line.substr(match[0].length);
@@ -314,8 +306,7 @@ std::optional<AsmParser::asm_stabn> AsmParser::AssemblyTextParserUtils::getSourc
 
 std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get6502DbgInfo(const std::string_view line)
 {
-    const auto match = Regexes::source6502Dbg(line);
-    if (match)
+    if (const auto match = Regexes::source6502Dbg(line))
     {
         const auto file = match.get<1>().to_view();
         const auto iline = svtoi(match.get<2>().to_view());
@@ -325,13 +316,10 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
             .file = file, .file_idx = 0, .line = iline, .column = 0, .is_end = false, .is_usercode = false, .inside_proc = false
         };
     }
-    else
+
+    if (const auto matchend = Regexes::source6502DbgEnd(line))
     {
-        const auto matchend = Regexes::source6502DbgEnd(line);
-        if (matchend)
-        {
-            return asm_source_v{ .file = {}, .file_idx = 0, .line = 0, .column = 0, .is_end = true, .is_usercode = false, .inside_proc = false };
-        }
+        return asm_source_v{ .file = {}, .file_idx = 0, .line = 0, .column = 0, .is_end = true, .is_usercode = false, .inside_proc = false };
     }
 
     return std::nullopt;
@@ -339,8 +327,7 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
 
 std::optional<AsmParser::asm_source_l> AsmParser::AssemblyTextParserUtils::getD2LineInfo(const std::string_view line)
 {
-    const auto match = Regexes::sourceD2Tag(line);
-    if (match)
+    if (const auto match = Regexes::sourceD2Tag(line))
     {
         const auto line = svtoi(match.get<1>().to_view());
 
@@ -352,8 +339,7 @@ std::optional<AsmParser::asm_source_l> AsmParser::AssemblyTextParserUtils::getD2
 
 std::optional<AsmParser::asm_source_f> AsmParser::AssemblyTextParserUtils::getD2FileInfo(const std::string_view line)
 {
-    const auto match = Regexes::sourceD2File(line);
-    if (match)
+    if (const auto match = Regexes::sourceD2File(line))
     {
         const auto file = match.get<1>().to_view();
 
@@ -438,8 +424,7 @@ bool AsmParser::AssemblyTextParserUtils::endProcBlock(const std::string_view lin
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabel(const std::string_view line)
 {
-    auto match = Regexes::labelDef(line);
-    if (match)
+    if (const auto match = Regexes::labelDef(line))
     {
         return match.get<1>().to_view();
     }
@@ -449,8 +434,7 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabel(con
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabelAssignment(const std::string_view line)
 {
-    auto matchAssign = Regexes::labelAssignmentDef(line);
-    if (matchAssign)
+    if (const auto matchAssign = Regexes::labelAssignmentDef(line))
     {
         return matchAssign.get<1>().to_view();
     }
@@ -460,8 +444,7 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabelAssi
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getAssignmentDef(const std::string_view line)
 {
-    auto match = Regexes::assignmentDef(line);
-    if (match)
+    if (const auto match = Regexes::assignmentDef(line))
         return match.get<1>().to_view();
 
     return std::nullopt;
@@ -469,8 +452,7 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getAssignmen
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getCudaLabel(const std::string_view line)
 {
-    auto match = Regexes::cudaBeginDef(line);
-    if (match)
+    if (const auto match = Regexes::cudaBeginDef(line))
         return match.get<1>().to_view();
 
     return std::nullopt;
@@ -478,8 +460,7 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getCudaLabel
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getFunctionTypeDefinedLabel(const std::string_view line)
 {
-    auto match = Regexes::definesFunctionOrObject(line);
-    if (match)
+    if (const auto match = Regexes::definesFunctionOrObject(line))
         return match.get<1>().to_view();
 
     return std::nullopt;
@@ -487,8 +468,7 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getFunctionT
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getWeakDefinedLabel(const std::string_view line)
 {
-    auto match = Regexes::definesWeak(line);
-    if (match)
+    if (const auto match = Regexes::definesWeak(line))
         return match.get<1>().to_view();
 
     return std::nullopt;
@@ -496,8 +476,7 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getWeakDefin
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getGlobalDefinedLabel(const std::string_view line)
 {
-    auto match = Regexes::definesGlobal(line);
-    if (match)
+    if (const auto match = Regexes::definesGlobal(line))
         return match.get<1>().to_view();
 
     return std::nullopt;
@@ -505,17 +484,13 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getGlobalDef
 
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getSectionNameDef(const std::string_view line)
 {
-    auto match = Regexes::sectionDef(line);
-    if (match)
+    if (const auto match = Regexes::sectionDef(line))
     {
         if (match.get<1>().to_view() == "section")
         {
             return match.get<2>().to_view();
         }
-        else
-        {
-            return match.get<1>().to_view();
-        }
+        return match.get<1>().to_view();
     }
 
     return std::nullopt;
@@ -594,7 +569,7 @@ std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace(const
 
     bool justspaces = true;
 
-    for (auto c : line)
+    for (const auto c : line)
     {
         if (state == HorSpaceState::Stop)
         {
@@ -661,8 +636,7 @@ std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespace(const
 
 std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespaceWithQuotes(const std::string_view line, bool atStart)
 {
-    const auto quotes = Regexes::findQuotes(line);
-    if (quotes)
+    if (const auto quotes = Regexes::findQuotes(line))
     {
         return fmt::format("{}{}{}", squashHorizontalWhitespaceWithQuotes(quotes.get<1>().to_view(), atStart),
                            quotes.get<2>().to_view(), squashHorizontalWhitespaceWithQuotes(quotes.get<3>().to_view(), false));

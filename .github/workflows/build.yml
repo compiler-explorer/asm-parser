@@ -14,15 +14,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Download Conan package manager.
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@v1.0
+
+      - name: Configure conan
         run: |
-             ./setup.sh
+          conan profile new default --detect
+          conan profile update settings.compiler.libcxx=libstdc++11 default
 
       - name: Build
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 "-DCMAKE_CXX_FLAGS=-I$PWD/../ctre/include" -DCMAKE_BUILD_TYPE=Release ..
+          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
           cmake --build .
 
       - name: Test
