@@ -49,7 +49,7 @@ class ObjDumpParser : public IParser
     void actually_address();
     void actually_filename();
 
-    bool shouldIgnoreFunction(const std::string_view name) const;
+    bool shouldIgnoreFunction(std::string_view name) const;
     void eol();
     void address();
     void opcodes();
@@ -57,7 +57,7 @@ class ObjDumpParser : public IParser
     void labelref();
 
     public:
-    ObjDumpParser(const Filter filter);
+    explicit ObjDumpParser(const Filter &filter);
 
     void fromStream(std::istream &in) override;
 
@@ -67,4 +67,4 @@ class ObjDumpParser : public IParser
     void outputDebugJson(std::ostream &out) const override;
 };
 
-}; // namespace AsmParser
+} // namespace AsmParser

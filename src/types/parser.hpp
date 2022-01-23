@@ -16,4 +16,4 @@ class IParser
     virtual void outputDebugJson(std::ostream &out) const = 0;
 };
 
-}; // namespace AsmParser
+} // namespace AsmParser

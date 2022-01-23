@@ -60,4 +60,4 @@ struct Regexes
 };
 
 
-}; // namespace AsmParser
+} // namespace AsmParser

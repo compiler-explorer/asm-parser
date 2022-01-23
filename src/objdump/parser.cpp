@@ -21,7 +21,7 @@ void AsmParser::ObjDumpParserState::commonReset()
     this->skipRestOfTheLine = false;
 }
 
-AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter)
+AsmParser::ObjDumpParser::ObjDumpParser(const Filter &filter) : filter(filter)
 {
 }
 
@@ -408,12 +408,12 @@ void AsmParser::ObjDumpParser::outputDebugJson(std::ostream &out) const
 {
     out << "Not implemented"
         << "\n";
-    throw "Not implemented";
+    throw std::runtime_error("Not implemented");
 }
 
 void AsmParser::ObjDumpParser::outputText(std::ostream &out) const
 {
-    for (auto line : this->lines)
+    for (const auto &line : this->lines)
     {
         out << line.text << "\n";
     }

@@ -22,7 +22,7 @@ size_t AsmParser::ustrlen(const std::string_view s)
 {
     const char *cstrptr = s.data();
 
-    mblen(NULL, 0);
+    mblen(nullptr, 0);
 
     size_t maxlen = s.length();
 
