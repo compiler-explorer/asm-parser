@@ -33,4 +33,6 @@ conan_cmake_run(
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
+enable_testing()
+
 add_subdirectory(src)
