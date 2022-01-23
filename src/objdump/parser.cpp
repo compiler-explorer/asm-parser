@@ -112,11 +112,16 @@ void AsmParser::ObjDumpParser::labelref()
     if (!this->state.ignoreUntilNextLabel)
     {
         this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
-        this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
+        try {
+            this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
 
-        if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name))
-        {
-            this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+            if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name))
+            {
+                this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+            }
+        } catch(...) {
+            // ignore erroneous nonsense
+            this->state.currentLabelReference.name = "";
         }
     }
 
