@@ -29,15 +29,15 @@ fi
 #   exit $?
 # fi
 
-echo cmake --build . --target test
-cmake --build . --target test
+echo cmake --build . --target asm-parser-test
+cmake --build . --target asm-parser-test
 if [ $? -ne 0 ]; then
   exit $?
 fi
 
-patchelf --set-rpath /opt/compiler-explorer/gcc-11.2.0/lib64 bin/test
+patchelf --set-rpath /opt/compiler-explorer/gcc-11.2.0/lib64 bin/asm-parser-test
 
-bin/test
+bin/asm-parser-test
 if [ $? -ne 0 ]; then
   exit $?
 fi

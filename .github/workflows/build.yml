@@ -28,9 +28,13 @@ jobs:
           mkdir build
           cd build
           cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build .
+          cmake --build . --parallel $(nproc)
 
-      - name: Test
+      - name: Unit test
+        run: |
+          cd build && ctest -V
+
+      - name: Smoke test
         run: |
           $GITHUB_WORKSPACE/build/bin/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
 
