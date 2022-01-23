@@ -438,6 +438,16 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabel(con
     return std::nullopt;
 }
 
+std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabelFromObjdumpLabel(std::string_view line)
+{
+    if (line.starts_with("<") && line.ends_with(">:"))
+    {
+        return std::string_view{ line.begin() + 1, line.end() - 2 };
+    }
+
+    return std::nullopt;
+}
+
 std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabelAssignment(const std::string_view line)
 {
     if (const auto matchAssign = Regexes::labelAssignmentDef(line))

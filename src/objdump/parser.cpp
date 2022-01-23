@@ -1,7 +1,9 @@
 #include "parser.hpp"
 #include "../types/line.hpp"
 #include "../utils/jsonwriter.hpp"
+#include "../utils/regexwrappers.hpp"
 #include "../utils/utils.hpp"
+#include <algorithm>
 #include <clocale>
 #include <ctre.hpp>
 #include <istream>
@@ -27,7 +29,7 @@ AsmParser::ObjDumpParser::ObjDumpParser(const Filter filter) : filter(filter)
 
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name) const
 {
-    if (auto match = ctre::match<"^(__.*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|"
+    if (auto match = ctre::match<"^(__[^_]*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|"
                                  "frame_dummy|\\.plt.*|_dl_relocate_static_pie)$">(name))
     {
         return true;
@@ -44,6 +46,11 @@ bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name)
 
 void AsmParser::ObjDumpParser::eol()
 {
+    if (this->state.inLabel)
+    {
+        this->label();
+    }
+
     if (this->state.ignoreUntilNextLabel)
     {
         this->state.commonReset();
@@ -79,7 +86,7 @@ void AsmParser::ObjDumpParser::eol()
 
         if (lines.size() < 5000)
         {
-            lines.push_back(this->state.currentLine);
+        lines.push_back(this->state.currentLine);
         }
         else
         {
@@ -95,11 +102,26 @@ void AsmParser::ObjDumpParser::eol()
 
 void AsmParser::ObjDumpParser::label()
 {
+    if (this->state.text.empty())
+    {
+        this->state.inLabel = false;
+        return;
+    }
+
+    auto label = AssemblyTextParserUtils::getLabelFromObjdumpLabel(this->state.text);
+    if (label)
+    {
+        this->state.text = label.value();
+    }
+
     this->state.ignoreUntilNextLabel = this->shouldIgnoreFunction(this->state.text);
     if (this->state.ignoreUntilNextLabel)
         return;
 
+    this->state.checkNextFileForLibraryCode = true;
+
     this->state.previousLabel = this->state.text;
+    this->state.currentLine.label = this->state.text;
 
     this->state.text = this->state.text + ":";
     this->state.currentLine.is_label = true;
@@ -171,25 +193,56 @@ void AsmParser::ObjDumpParser::actually_address()
         this->state.currentLine.address = addr;
     }
 
-    if (maybeNotHexAfterall) {
-        // then it must be a filename, right?
-        actually_filename();
-    } else {
+    if (maybeNotHexAfterall)
+    {
+        // it might be a label that we can ignore because its noise..
+        this->state.skipRestOfTheLine = true;
+        this->state.inAddress = false;
+    }
+    else
+    {
         this->state.inAddress = false;
         this->state.inOpcodes = true;
     }
 }
 
+void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
+{
+    if (this->state.checkNextFileForLibraryCode)
+    {
+        this->state.checkNextFileForLibraryCode = false;
+
+        if (AssemblyTextParserUtils::isProbablyLibraryFile(filename))
+        {
+            if (this->lines.size() > 0)
+            {
+                // undo previous line if that was a label (it's a label in a library file)
+                const auto lastLine = this->lines.back();
+                if (lastLine.is_label)
+                {
+                    std::erase_if(this->labels,
+                                  [lastLine](auto &label)
+                                  {
+                                      return label.first == lastLine.label;
+                                  });
+                    this->lines.pop_back();
+                }
+            }
+
+            this->state.commonReset();
+            this->state.ignoreUntilNextLabel = true;
+        }
+    }
+}
+
 void AsmParser::ObjDumpParser::actually_filename()
 {
-    if (!this->state.ignoreUntilNextLabel)
-    {
-        this->state.currentFilename = this->state.text;
-    }
-
+    this->state.currentFilename = this->state.text;
     this->state.inAddress = false;
     this->state.inOpcodes = false;
     this->state.skipRestOfTheLine = true;
+
+    this->do_file_check(this->state.currentFilename);
 }
 
 void AsmParser::ObjDumpParser::address()
@@ -234,7 +287,6 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
         }
         else if (!this->state.skipRestOfTheLine)
         {
-
             if (this->state.inAddress)
             {
                 if (c == '/')
@@ -272,26 +324,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             }
             else if (this->state.inLabel)
             {
-                if (c == ':')
-                {
-                    this->label();
-                    continue;
-                }
-                else if (c == ' ')
-                {
-                    // not really a label it seems
-                    this->state.inLabel = false;
-                }
-                else if (c == '<')
-                {
-                    // skip
-                    continue;
-                }
-                else if (c == '>')
-                {
-                    // skip
-                    continue;
-                }
+                // go on until eol
             }
             else if (this->state.inOpcodes)
             {
@@ -343,7 +376,9 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 if (c == ':')
                 {
                     this->state.currentSourceRef = asm_source{ .file = this->state.text, .line = 0, .column = 0 };
+                    this->state.currentFilename = this->state.currentSourceRef.file;
                     this->state.text.clear();
+                    this->do_file_check(this->state.currentSourceRef.file);
                     continue;
                 }
             }
