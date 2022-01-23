@@ -1,11 +1,16 @@
 #include "regexwrappers.hpp"
 #include "regexes.hpp"
 #include "utils.hpp"
+#include <charconv>
 #include <fmt/core.h>
 
 inline int svtoi(const std::string_view sv)
 {
-    return std::atoi(sv.data());
+    int value{};
+    auto [ptr, ec] = std::from_chars(sv.begin(), sv.end(), value);
+    if (ec != std::errc() || ptr != sv.end())
+        return 0;
+    return value;
 }
 
 AsmParser::regexed_sourceref AsmParser::AssemblyTextParserUtils::getSourceRef(const std::string_view line)
