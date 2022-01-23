@@ -181,12 +181,17 @@ void AsmParser::ObjDumpParser::actually_address()
         int8_t bitsdone = 0;
         for (auto c = this->state.text.rbegin(); c != this->state.text.rend(); c++)
         {
-            if (!is_hex(*c)) {
+            if (!is_hex(*c))
+            {
                 maybeNotHexAfterall = true;
                 break;
             }
 
-            addr += hex2int(*c) << bitsdone;
+            auto hint = hex2int(*c);
+            if (hint != 0)
+            {
+                addr += hint << bitsdone;
+            }
             bitsdone += 4;
         }
 
