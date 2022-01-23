@@ -284,8 +284,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 }
                 else if (c == ' ')
                 {
-                    // not really a label it seems
-                    this->state.inLabel = false;
+                    // could be a demangled label
                 }
                 else if (c == '<')
                 {
