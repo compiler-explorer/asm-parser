@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include <chrono>
 
 bool AsmParser::is_hex(const char c)
 {
@@ -46,4 +47,19 @@ size_t AsmParser::ustrlen(const std::string_view s)
     }
 
     return ulen;
+}
+
+static std::chrono::time_point<std::chrono::steady_clock> global_timer_started{};
+
+void AsmParser::global_start_timer()
+{
+    global_timer_started = std::chrono::steady_clock::now();
+}
+
+int64_t AsmParser::global_current_running_time()
+{
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> diff = end - global_timer_started;
+    auto rounded_diff = std::chrono::round<std::chrono::milliseconds>(diff);
+    return rounded_diff.count();
 }

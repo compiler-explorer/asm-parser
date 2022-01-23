@@ -7,6 +7,8 @@
 #include "objdump/parser.hpp"
 #include "types/filter.hpp"
 
+#include "utils/utils.hpp"
+
 struct AsmParserConfiguration
 {
     AsmParser::Filter filter{};
@@ -44,6 +46,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.compatmode = false;
         else if (streq(argv[i], "-library_functions"))
             config.filter.library_functions = true;
+        else if (streq(argv[i], "-dont_mask_filenames"))
+            config.filter.dont_mask_filenames = true;
         else if (streq(argv[i], "-debugdump"))
             config.doDebugDump = true;
         else if (streq(argv[i], "-stdin"))
@@ -64,6 +68,7 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
 int main(int argc, const char **argv)
 {
     setlocale(LC_ALL, "en_US.utf8");
+    AsmParser::global_start_timer();
 
     const auto config = getConfigurationFromCommandline(argc, argv);
 
