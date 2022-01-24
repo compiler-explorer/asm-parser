@@ -67,7 +67,9 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
 
 int main(int argc, const char **argv)
 {
-    setlocale(LC_ALL, "en_US.utf8");
+    std::locale loc("en_US.UTF-8");
+    std::locale::global(loc);
+
     AsmParser::global_start_timer();
 
     const auto config = getConfigurationFromCommandline(argc, argv);
