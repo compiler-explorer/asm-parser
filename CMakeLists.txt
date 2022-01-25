@@ -27,7 +27,7 @@ conan_cmake_run(
         catch2/2.13.7
         approvaltests.cpp/10.12.0
         fmt/8.0.1
-        ctre/3.4.1
+        ctre/3.5
         BASIC_SETUP
         BUILD missing)
 
