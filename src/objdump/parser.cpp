@@ -134,14 +134,17 @@ void AsmParser::ObjDumpParser::labelref()
     if (!this->state.ignoreUntilNextLabel)
     {
         this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
-        try {
+        try
+        {
             this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
 
             if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name))
             {
                 this->state.currentLine.labels.push_back(this->state.currentLabelReference);
             }
-        } catch(...) {
+        }
+        catch (...)
+        {
             // ignore erroneous nonsense
             this->state.currentLabelReference.name = "";
         }
@@ -226,10 +229,10 @@ void AsmParser::ObjDumpParser::undo_last_line_if_label()
     if (lastLine.is_label)
     {
         std::erase_if(this->labels,
-                        [lastLine](auto &label)
-                        {
-                            return label.first == lastLine.label;
-                        });
+                      [lastLine](auto &label)
+                      {
+                          return label.first == lastLine.label;
+                      });
         this->lines.pop_back();
     }
 }
@@ -244,8 +247,7 @@ void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
         {
             if (this->lines.size() > 0)
             {
-                // undo previous line if that was a label (it's a label in a library file)
-                undo_last_line_if_label()
+                undo_last_line_if_label();
             }
 
             this->state.commonReset();
