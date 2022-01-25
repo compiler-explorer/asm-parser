@@ -86,7 +86,7 @@ void AsmParser::ObjDumpParser::eol()
 
         if (lines.size() < 5000)
         {
-        lines.push_back(this->state.currentLine);
+            lines.push_back(this->state.currentLine);
         }
         else
         {
@@ -195,6 +195,10 @@ void AsmParser::ObjDumpParser::actually_address()
             auto hint = hex2int(*c);
             if (hint != 0)
             {
+                // note: the if works for cases in 64 bit objdumps where label lines are formatted like this "0000000000408000 <_init>:"
+                //  because it most likely won't get to the last/first hex chunk this way.
+                //  Otherwise makes gcc think it's gonna be bigger than a int64_t and complain about potential overflows.
+                //  (or maybe some other bit of the code is wrong??)
                 addr += hint << bitsdone;
             }
             bitsdone += 4;
