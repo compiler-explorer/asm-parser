@@ -50,6 +50,7 @@ class ObjDumpParser : public IParser
     void actually_address();
     void actually_filename();
     void do_file_check(std::string_view filename);
+    void undo_last_line_if_label();
 
     bool shouldIgnoreFunction(const std::string_view name) const;
     void eol();

@@ -220,6 +220,20 @@ void AsmParser::ObjDumpParser::actually_address()
     }
 }
 
+void AsmParser::ObjDumpParser::undo_last_line_if_label()
+{
+    const auto lastLine = this->lines.back();
+    if (lastLine.is_label)
+    {
+        std::erase_if(this->labels,
+                        [lastLine](auto &label)
+                        {
+                            return label.first == lastLine.label;
+                        });
+        this->lines.pop_back();
+    }
+}
+
 void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
 {
     if (this->state.checkNextFileForLibraryCode)
@@ -231,16 +245,7 @@ void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
             if (this->lines.size() > 0)
             {
                 // undo previous line if that was a label (it's a label in a library file)
-                const auto lastLine = this->lines.back();
-                if (lastLine.is_label)
-                {
-                    std::erase_if(this->labels,
-                                  [lastLine](auto &label)
-                                  {
-                                      return label.first == lastLine.label;
-                                  });
-                    this->lines.pop_back();
-                }
+                undo_last_line_if_label()
             }
 
             this->state.commonReset();
