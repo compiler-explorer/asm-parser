@@ -36,7 +36,6 @@ class AssemblyTextParserUtils
     static bool hasOpcode(const std::string_view line, bool inNvccCode);
 
     static bool isExampleOrStdin(const std::string_view filename);
-    static bool isProbablyLibraryFile(std::string_view filename);
 
     static bool isJustComments(const std::string_view line);
     static bool isJustNvccComments(const std::string_view line);

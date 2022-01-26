@@ -3,6 +3,7 @@
 #include "../types/filter.hpp"
 #include "../types/line.hpp"
 #include "../types/parser.hpp"
+#include "../utils/library_detection.hpp"
 #include <iosfwd>
 #include <string_view>
 #include <unordered_map>
@@ -43,6 +44,7 @@ class ObjDumpParser : public IParser
     private:
     const Filter filter;
     ObjDumpParserState state{};
+    LibraryDetection lib_detection;
     std::vector<asm_line> lines;
     std::vector<asm_labelpair_t> labels;
 

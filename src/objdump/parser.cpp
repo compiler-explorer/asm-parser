@@ -243,7 +243,8 @@ void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
     {
         this->state.checkNextFileForLibraryCode = false;
 
-        if (AssemblyTextParserUtils::isProbablyLibraryFile(filename))
+
+        if (this->lib_detection.file_in_library(filename))
         {
             if (this->lines.size() > 0)
             {

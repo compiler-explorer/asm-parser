@@ -290,12 +290,6 @@ bool AsmParser::AssemblyTextParserUtils::isExampleOrStdin(const std::string_view
     return false;
 }
 
-bool AsmParser::AssemblyTextParserUtils::isProbablyLibraryFile(std::string_view filename)
-{
-    return filename.starts_with("/opt/compiler-explorer/") || filename.starts_with("/usr/include") ||
-           filename.starts_with("/usr/local/include");
-}
-
 std::optional<AsmParser::asm_stabn> AsmParser::AssemblyTextParserUtils::getSourceInfoFromStabs(const std::string_view line)
 {
     const auto match = Regexes::sourceStab(line);
