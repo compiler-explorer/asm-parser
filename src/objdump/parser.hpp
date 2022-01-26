@@ -3,6 +3,7 @@
 #include "../types/filter.hpp"
 #include "../types/line.hpp"
 #include "../types/parser.hpp"
+#include "../utils/library_detection.hpp"
 #include <iosfwd>
 #include <string_view>
 #include <unordered_map>
@@ -25,6 +26,7 @@ class ObjDumpParserState
     bool skipRestOfTheLine{};
     bool stopParsing{};
     bool ignoreUntilNextLabel{};
+    bool checkNextFileForLibraryCode{};
 
     asm_label currentLabelReference{};
     asm_source currentSourceRef{};
@@ -42,12 +44,15 @@ class ObjDumpParser : public IParser
     private:
     const Filter filter;
     ObjDumpParserState state{};
+    LibraryDetection lib_detection;
     std::vector<asm_line> lines;
     std::vector<asm_labelpair_t> labels;
 
     // todo: bad names
     void actually_address();
     void actually_filename();
+    void do_file_check(std::string_view filename);
+    void undo_last_line_if_label();
 
     bool shouldIgnoreFunction(const std::string_view name) const;
     void eol();

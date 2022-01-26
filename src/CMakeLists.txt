@@ -2,6 +2,7 @@ add_library(asm-parser-lib STATIC
     utils/utils.cpp
     utils/jsonwriter.cpp
     utils/regexwrappers.cpp
+    utils/library_detection.cpp
     objdump/parser.cpp
     assembly/parser.cpp
 )

@@ -1,7 +1,7 @@
 #include "jsonwriter.hpp"
+#include "utils.hpp"
 #include <algorithm>
 #include <ostream>
-#include "utils.hpp"
 
 AsmParser::JsonWriter::JsonWriter(std::ostream &out,
                                   const std::vector<std::unique_ptr<asm_line_v>> &lines,
@@ -179,10 +179,13 @@ void AsmParser::JsonWriter::writeSource(const asm_line_v *line)
             {
                 this->writeKvNull("file", jsonopt::trailingcomma);
             }
-            else if (line->source.file.starts_with("/app/")) {
+            else if (line->source.file.starts_with("/app/"))
+            {
                 const auto withoutapp = std::string_view(line->source.file.begin() + 5, line->source.file.end());
                 this->writeKv("file", withoutapp, jsonopt::trailingcomma);
-            } else {
+            }
+            else
+            {
                 this->writeKv("file", line->source.file, jsonopt::trailingcomma);
             }
         }
@@ -379,7 +382,7 @@ void AsmParser::JsonWriter::JsonWriter::write()
         }
     }
     this->out << "},";
-    
+
     this->writeKv("parsingTime", global_current_running_time(), jsonopt::none);
 
     this->out << "}";
