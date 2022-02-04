@@ -16,6 +16,7 @@ struct AsmParserConfiguration
     bool useStdin{};
     bool isConfigured{};
     bool doDebugDump{};
+    bool outputText{};
 };
 
 bool streq(const std::string_view a, const std::string_view b)
@@ -50,6 +51,8 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.filter.dont_mask_filenames = true;
         else if (streq(argv[i], "-debugdump"))
             config.doDebugDump = true;
+        else if (streq(argv[i], "-outputtext"))
+            config.outputText = true;
         else if (streq(argv[i], "-stdin"))
         {
             config.useStdin = true;
@@ -91,7 +94,12 @@ int main(int argc, const char **argv)
         {
             AsmParser::ObjDumpParser parser(config.filter);
             parser.fromStream(fs);
-            parser.outputJson(std::cout);
+
+            if (config.outputText) {
+                parser.outputText(std::cout);
+            } else {
+                parser.outputJson(std::cout);
+            }
         }
         else
         {
@@ -102,7 +110,12 @@ int main(int argc, const char **argv)
                 fdebug.open("./asm-parser-debugdump.json", std::fstream::out);
                 parser.outputDebugJson(fdebug);
             }
-            parser.outputJson(std::cout);
+    
+            if (config.outputText) {
+                parser.outputText(std::cout);
+            } else {
+                parser.outputJson(std::cout);
+            }
         }
     }
     else
@@ -111,13 +124,23 @@ int main(int argc, const char **argv)
         {
             AsmParser::ObjDumpParser parser(config.filter);
             parser.fromStream(std::cin);
-            parser.outputJson(std::cout);
+
+            if (config.outputText) {
+                parser.outputText(std::cout);
+            } else {
+                parser.outputJson(std::cout);
+            }
         }
         else
         {
             AsmParser::AssemblyTextParser parser(config.filter);
             parser.fromStream(std::cin);
-            parser.outputJson(std::cout);
+
+            if (config.outputText) {
+                parser.outputText(std::cout);
+            } else {
+                parser.outputJson(std::cout);
+            }
         }
     }
 
