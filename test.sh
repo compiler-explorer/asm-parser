@@ -4,7 +4,7 @@ PATH=$PATH:/opt/compiler-explorer/cmake/bin
 
 export CXX=/opt/compiler-explorer/gcc-11.2.0/bin/g++
 export CC=/opt/compiler-explorer/gcc-11.2.0/bin/gcc
-export CXXFLAGS="-I$PWD/ctre/include"
+# export CXXFLAGS="-I$PWD/ctre/include"
 # export LD_LIBRARY_PATH=/opt/compiler-explorer/gcc-11.2.0/lib64
 
 # export CXX=/opt/compiler-explorer/clang-12.0.0/bin/clang++
