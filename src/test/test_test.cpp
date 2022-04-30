@@ -1,5 +1,3 @@
-#define APPROVALS_CATCH
-#include "ApprovalTests.hpp"
 #include <catch2/catch.hpp>
 
 #include "../utils/regexwrappers.hpp"
