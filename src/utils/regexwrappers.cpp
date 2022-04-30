@@ -1,26 +1,22 @@
 #include "regexwrappers.hpp"
 #include "regexes.hpp"
 #include "utils.hpp"
+#include <charconv>
 #include <fmt/core.h>
-
-inline int svtoi(const std::string_view sv)
-{
-    return std::atoi(sv.data());
-}
 
 AsmParser::regexed_sourceref AsmParser::AssemblyTextParserUtils::getSourceRef(const std::string_view line)
 {
     if (const auto match = AsmParser::Regexes::sourceTag(line))
     {
-        const auto file_index = svtoi(match.get<1>().to_view());
-        const auto line_index = svtoi(match.get<2>().to_view());
+        const auto file_index = match.get<1>().to_number();
+        const auto line_index = match.get<2>().to_number();
 
         int column = 0;
 
         const auto matchWithColumn = AsmParser::Regexes::sourceTagWithColumn(line);
         if (matchWithColumn)
         {
-            column = svtoi(matchWithColumn.get<3>().to_view());
+            column = matchWithColumn.get<3>().to_number();
         }
 
         return { file_index, line_index, column };
@@ -33,7 +29,7 @@ std::optional<AsmParser::asm_file_def> AsmParser::AssemblyTextParserUtils::getFi
 {
     if (const auto match = Regexes::fileFind(line))
     {
-        const auto file_index = svtoi(match.get<1>().to_view());
+        const auto file_index = match.get<1>().to_number();
         const auto file_name = match.get<2>().to_view();
 
         const auto file_name_rest = match.get<4>().to_view();
@@ -291,10 +287,10 @@ std::optional<AsmParser::asm_stabn> AsmParser::AssemblyTextParserUtils::getSourc
     if (!match)
         return std::nullopt;
 
-    const auto type = svtoi(match.get<1>().to_view());
+    const auto type = match.get<1>().to_number();
     if (type == 68)
     {
-        const auto line_num = svtoi(match.get<2>().to_view());
+        const auto line_num = match.get<2>().to_number();
 
         return asm_stabn{ type, line_num };
     }
@@ -309,7 +305,7 @@ std::optional<AsmParser::asm_source_v> AsmParser::AssemblyTextParserUtils::get65
     if (const auto match = Regexes::source6502Dbg(line))
     {
         const auto file = match.get<1>().to_view();
-        const auto iline = svtoi(match.get<2>().to_view());
+        const auto iline = match.get<2>().to_number();
 
         // todo check if stdin?
         return asm_source_v{
@@ -329,7 +325,7 @@ std::optional<AsmParser::asm_source_l> AsmParser::AssemblyTextParserUtils::getD2
 {
     if (const auto match = Regexes::sourceD2Tag(line))
     {
-        const auto line_num = svtoi(match.get<1>().to_view());
+        const auto line_num = match.get<1>().to_number();
 
         return asm_source_l{ .line = line_num };
     }
@@ -427,6 +423,16 @@ std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabel(con
     if (const auto match = Regexes::labelDef(line))
     {
         return match.get<1>().to_view();
+    }
+
+    return std::nullopt;
+}
+
+std::optional<std::string_view> AsmParser::AssemblyTextParserUtils::getLabelFromObjdumpLabel(std::string_view line)
+{
+    if (line.starts_with("<") && line.ends_with(">:"))
+    {
+        return std::string_view{ line.begin() + 1, line.end() - 2 };
     }
 
     return std::nullopt;

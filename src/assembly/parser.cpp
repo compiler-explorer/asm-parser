@@ -761,7 +761,7 @@ void AsmParser::AssemblyTextParser::removeUnused()
             {
                 try
                 {
-                    const auto file = files.at(line->source.file_idx);
+                    const auto &file = files.at(line->source.file_idx);
 
                     const auto match_stdin = AssemblyTextParserUtils::isExampleOrStdin(file);
                     if (match_stdin)
