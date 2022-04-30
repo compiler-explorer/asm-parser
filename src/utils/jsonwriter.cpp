@@ -2,10 +2,12 @@
 #include "utils.hpp"
 #include <algorithm>
 #include <ostream>
+#include <utility>
+#include "utils.hpp"
 
 AsmParser::JsonWriter::JsonWriter(std::ostream &out,
                                   const std::vector<std::unique_ptr<asm_line_v>> &lines,
-                                  const std::vector<asm_labelpair> &labels,
+                                  std::vector<asm_labelpair> labels,
                                   const Filter filter)
 : filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
 {
@@ -394,11 +396,11 @@ void AsmParser::JsonWriter::JsonWriter::write()
 AsmParser::DebugJsonWriter::DebugJsonWriter(std::ostream &out,
                                             const std::vector<std::unique_ptr<asm_line_v>> &lines,
                                             const std::vector<asm_labelpair> &labels,
-                                            const Filter filter,
-                                            const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels,
-                                            const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_weak_labels,
-                                            const std::unordered_map<std::string_view, std::string_view> aliased_labels,
-                                            const std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels)
+                                            const Filter &filter,
+                                            std::unordered_map<std::string_view, std::unordered_set<std::string_view>>  used_labels,
+                                            std::unordered_map<std::string_view, std::unordered_set<std::string_view>>  used_weak_labels,
+                                            std::unordered_map<std::string_view, std::string_view>  aliased_labels,
+                                            std::unordered_map<std::string_view, std::unordered_set<std::string_view>>  used_data_labels)
 : AsmParser::JsonWriter::JsonWriter(out, lines, labels, filter), used_labels(used_labels),
   used_weak_labels(used_weak_labels), aliased_labels(aliased_labels), used_data_labels(used_data_labels)
 {

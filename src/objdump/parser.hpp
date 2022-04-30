@@ -54,7 +54,7 @@ class ObjDumpParser : public IParser
     void do_file_check(std::string_view filename);
     void undo_last_line_if_label();
 
-    bool shouldIgnoreFunction(const std::string_view name) const;
+    bool shouldIgnoreFunction(std::string_view name) const;
     void eol();
     void address();
     void opcodes();
@@ -62,7 +62,7 @@ class ObjDumpParser : public IParser
     void labelref();
 
     public:
-    ObjDumpParser(const Filter filter);
+    explicit ObjDumpParser(const Filter &filter);
 
     void fromStream(std::istream &in) override;
 
@@ -72,4 +72,4 @@ class ObjDumpParser : public IParser
     void outputDebugJson(std::ostream &out) const override;
 };
 
-}; // namespace AsmParser
+} // namespace AsmParser

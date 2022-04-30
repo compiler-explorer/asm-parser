@@ -19,60 +19,60 @@ struct regexed_sourceref
 class AssemblyTextParserUtils
 {
     public:
-    static regexed_sourceref getSourceRef(const std::string_view line);
-    static std::optional<AsmParser::asm_file_def> getFileDef(const std::string_view line);
-    static bool is_probably_label(const std::string_view line);
-    static std::string fixLabelIndentation(const std::string_view line);
-    static std::string_view getLineWithoutComment(const std::string_view line);
-    static std::string_view getLineWithoutCommentAndStripFirstWord(const std::string_view line);
+    static regexed_sourceref getSourceRef(std::string_view line);
+    static std::optional<AsmParser::asm_file_def> getFileDef(std::string_view line);
+    static bool is_probably_label(std::string_view line);
+    static std::string fixLabelIndentation(std::string_view line);
+    static std::string_view getLineWithoutComment(std::string_view line);
+    static std::string_view getLineWithoutCommentAndStripFirstWord(std::string_view line);
 
-    static std::string expandTabs(const std::string_view line);
+    static std::string expandTabs(std::string_view line);
 
-    static std::string squashHorizontalWhitespace(const std::string_view line, bool atStart = true);
-    static std::string squashHorizontalWhitespaceWithQuotes(const std::string_view line, bool atStart);
+    static std::string squashHorizontalWhitespace(std::string_view line, bool atStart = true);
+    static std::string squashHorizontalWhitespaceWithQuotes(std::string_view line, bool atStart);
 
-    static std::vector<AsmParser::asm_label_v> getUsedLabelsInLine(const std::string_view line);
+    static std::vector<AsmParser::asm_label_v> getUsedLabelsInLine(std::string_view line);
 
-    static bool hasOpcode(const std::string_view line, bool inNvccCode);
+    static bool hasOpcode(std::string_view line, bool inNvccCode);
 
-    static bool isExampleOrStdin(const std::string_view filename);
+    static bool isExampleOrStdin(std::string_view filename);
 
-    static bool isJustComments(const std::string_view line);
-    static bool isJustNvccComments(const std::string_view line);
+    static bool isJustComments(std::string_view line);
+    static bool isJustNvccComments(std::string_view line);
 
-    static std::optional<AsmParser::asm_stabn> getSourceInfoFromStabs(const std::string_view line);
-    static std::optional<AsmParser::asm_source_v> get6502DbgInfo(const std::string_view line);
+    static std::optional<AsmParser::asm_stabn> getSourceInfoFromStabs(std::string_view line);
+    static std::optional<AsmParser::asm_source_v> get6502DbgInfo(std::string_view line);
 
-    static std::optional<AsmParser::asm_source_f> getD2FileInfo(const std::string_view line);
-    static std::optional<AsmParser::asm_source_l> getD2LineInfo(const std::string_view line);
+    static std::optional<AsmParser::asm_source_f> getD2FileInfo(std::string_view line);
+    static std::optional<AsmParser::asm_source_l> getD2LineInfo(std::string_view line);
 
-    static std::optional<std::string_view> getLabel(const std::string_view line);
-    static std::optional<std::string_view> getAssignmentDef(const std::string_view line);
-    static std::optional<std::string_view> getLabelAssignment(const std::string_view line);
-    static std::optional<std::string_view> getCudaLabel(const std::string_view line);
-    static std::optional<std::string_view> getFunctionTypeDefinedLabel(const std::string_view line);
-    static std::optional<std::string_view> getWeakDefinedLabel(const std::string_view line);
-    static std::optional<std::string_view> getGlobalDefinedLabel(const std::string_view line);
-    static std::optional<std::string_view> getSectionNameDef(const std::string_view line);
+    static std::optional<std::string_view> getLabel(std::string_view line);
+    static std::optional<std::string_view> getAssignmentDef(std::string_view line);
+    static std::optional<std::string_view> getLabelAssignment(std::string_view line);
+    static std::optional<std::string_view> getCudaLabel(std::string_view line);
+    static std::optional<std::string_view> getFunctionTypeDefinedLabel(std::string_view line);
+    static std::optional<std::string_view> getWeakDefinedLabel(std::string_view line);
+    static std::optional<std::string_view> getGlobalDefinedLabel(std::string_view line);
+    static std::optional<std::string_view> getSectionNameDef(std::string_view line);
 
     static std::optional<std::string_view> getLabelFromObjdumpLabel(std::string_view line);
 
-    static bool startCommentBlock(const std::string_view line);
-    static bool endCommentBlock(const std::string_view line);
+    static bool startCommentBlock(std::string_view line);
+    static bool endCommentBlock(std::string_view line);
 
-    static bool startAppBlock(const std::string_view line);
-    static bool endAppBlock(const std::string_view line);
-    static bool startAsmNesting(const std::string_view line);
-    static bool endAsmNesting(const std::string_view line);
+    static bool startAppBlock(std::string_view line);
+    static bool endAppBlock(std::string_view line);
+    static bool startAsmNesting(std::string_view line);
+    static bool endAsmNesting(std::string_view line);
 
-    static bool startProcBlock(const std::string_view line);
-    static bool endBlock(const std::string_view line);
-    static bool endProcBlock(const std::string_view line);
+    static bool startProcBlock(std::string_view line);
+    static bool endBlock(std::string_view line);
+    static bool endProcBlock(std::string_view line);
 
-    static bool isCudaEndDef(const std::string_view line);
-    static bool isDataDefn(const std::string_view line);
-    static bool isDirective(const std::string_view line);
-    static bool isInstOpcode(const std::string_view line);
+    static bool isCudaEndDef(std::string_view line);
+    static bool isDataDefn(std::string_view line);
+    static bool isDirective(std::string_view line);
+    static bool isInstOpcode(std::string_view line);
 };
 
-}; // namespace AsmParser
+} // namespace AsmParser

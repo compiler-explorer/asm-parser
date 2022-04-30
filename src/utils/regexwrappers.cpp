@@ -268,9 +268,9 @@ bool AsmParser::AssemblyTextParserUtils::hasOpcode(const std::string_view line, 
         return false;
 
     if (inNvccCode)
-        return !!Regexes::hasNvccOpcodeRe(lineWithoutComment);
+        return Regexes::hasNvccOpcodeRe(lineWithoutComment);
 
-    return !!Regexes::hasOpcodeRe(lineWithoutComment);
+    return Regexes::hasOpcodeRe(lineWithoutComment);
 }
 
 bool AsmParser::AssemblyTextParserUtils::isExampleOrStdin(const std::string_view filename)
@@ -290,9 +290,9 @@ std::optional<AsmParser::asm_stabn> AsmParser::AssemblyTextParserUtils::getSourc
     const auto type = match.get<1>().to_number();
     if (type == 68)
     {
-        const auto line = match.get<2>().to_number();
+        const auto line_num = match.get<2>().to_number();
 
-        return asm_stabn{ type, line };
+        return asm_stabn{ type, line_num };
     }
     else
     {
@@ -325,9 +325,9 @@ std::optional<AsmParser::asm_source_l> AsmParser::AssemblyTextParserUtils::getD2
 {
     if (const auto match = Regexes::sourceD2Tag(line))
     {
-        const auto line = match.get<1>().to_number();
+        const auto line_num = match.get<1>().to_number();
 
-        return asm_source_l{ .line = line };
+        return asm_source_l{ .line = line_num };
     }
 
     return std::nullopt;
