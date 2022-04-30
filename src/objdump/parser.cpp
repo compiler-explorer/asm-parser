@@ -27,23 +27,6 @@ AsmParser::ObjDumpParser::ObjDumpParser(const Filter &filter) : filter(filter)
 {
 }
 
-bool AsmParser::ObjDumpParser::shouldIgnoreFunction(const std::string_view name) const
-{
-    if (auto match = ctre::match<"^(__[^_]*|_(init|start|fini)|(de)?register_tm_clones|call_gmon_start|"
-                                 "frame_dummy|\\.plt.*|_dl_relocate_static_pie)$">(name))
-    {
-        return true;
-    }
-    else if (this->filter.plt)
-    {
-        return (name.ends_with("@plt") || name.ends_with("@plt>"));
-    }
-    else
-    {
-        return false;
-    }
-}
-
 void AsmParser::ObjDumpParser::eol()
 {
     if (this->state.inLabel)
@@ -114,7 +97,7 @@ void AsmParser::ObjDumpParser::label()
         this->state.text = label.value();
     }
 
-    this->state.ignoreUntilNextLabel = this->shouldIgnoreFunction(this->state.text);
+    this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
     if (this->state.ignoreUntilNextLabel)
         return;
 
@@ -138,7 +121,7 @@ void AsmParser::ObjDumpParser::labelref()
         {
             this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
 
-            if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name))
+            if (!AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
             {
                 this->state.currentLine.labels.push_back(this->state.currentLabelReference);
             }

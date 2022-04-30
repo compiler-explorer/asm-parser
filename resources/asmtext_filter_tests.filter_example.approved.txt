@@ -1,0 +1,15 @@
+_Z6squarei:
+ push   rbp
+ mov    rbp,rsp
+ mov    DWORD PTR [rbp-0x4],edi
+ mov    eax,DWORD PTR [rbp-0x4]
+ imul   eax,eax
+ pop    rbp
+ ret    
+main:
+ push   rbp
+ mov    rbp,rsp
+ mov    eax,0x0
+ pop    rbp
+ ret    
+

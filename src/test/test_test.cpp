@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
 
+#include "../types/filter.hpp"
 #include "../utils/regexwrappers.hpp"
 
 TEST_CASE("Test text assembly utilities", "[asm]")
@@ -193,6 +194,14 @@ TEST_CASE("Labels", "[asm]")
     REQUIRE(AsmParser::AssemblyTextParserUtils::getLabelAssignment(".Lset0 = .Lpubnames_end1-.Lpubnames_begin1") ==
             ".Lset0");
     REQUIRE(AsmParser::AssemblyTextParserUtils::getLabelAssignment("$LFB0 = .") == "$LFB0");
+    REQUIRE(AsmParser::AssemblyTextParserUtils::getLabel("__do_global_dtors_aux:") == "__do_global_dtors_aux");
+}
+
+TEST_CASE("Objdump filtering", "[asm]")
+{
+    AsmParser::Filter filter;
+
+    REQUIRE(AsmParser::AssemblyTextParserUtils::shouldIgnoreFunction("__do_global_dtors_aux", filter) == true);
 }
 
 TEST_CASE("6502 debugging", "[asm]")

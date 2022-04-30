@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../types/filter.hpp"
 #include "../types/line.hpp"
 #include <optional>
 #include <string>
@@ -73,6 +74,8 @@ class AssemblyTextParserUtils
     static bool isDataDefn(std::string_view line);
     static bool isDirective(std::string_view line);
     static bool isInstOpcode(std::string_view line);
+
+    static bool shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter);
 };
 
 } // namespace AsmParser

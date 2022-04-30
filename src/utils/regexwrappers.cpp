@@ -650,3 +650,19 @@ std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespaceWithQu
 
     return squashHorizontalWhitespace(line);
 }
+
+bool AsmParser::AssemblyTextParserUtils::shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter)
+{
+    if (auto match = Regexes::binaryIgnoreFunction(name))
+    {
+        return true;
+    }
+    else if (filter.plt)
+    {
+        return (name.ends_with("@plt") || name.ends_with("@plt>"));
+    }
+    else
+    {
+        return false;
+    }
+}

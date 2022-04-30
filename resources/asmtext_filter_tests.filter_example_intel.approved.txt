@@ -1,0 +1,2515 @@
+_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev:
+ push   r12
+ push   rbp
+ push   rbx
+ mov    r12,QWORD PTR [rdi+0x8]
+ mov    rbx,rdi
+ mov    rbp,QWORD PTR [rdi]
+ cmp    r12,rbp
+ je     226b <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev+0x2b>
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     2265 <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev+0x25>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x20
+ jmp    224e <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev+0xe>
+ mov    rdi,QWORD PTR [rbx]
+ test   rdi,rdi
+ je     227c <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev+0x3c>
+ pop    rbx
+ pop    rbp
+ pop    r12
+ jmp    20f0 <_ZdlPv@plt>
+ pop    rbx
+ pop    rbp
+ pop    r12
+ ret    
+ nop
+_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev:
+ push   r12
+ push   rbp
+ push   rbx
+ mov    r12,QWORD PTR [rdi+0x8]
+ mov    rbx,rdi
+ mov    rbp,QWORD PTR [rdi]
+ cmp    r12,rbp
+ je     22ad <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev+0x2b>
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     22a7 <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev+0x25>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x30
+ jmp    2290 <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev+0xe>
+ mov    rdi,QWORD PTR [rbx]
+ test   rdi,rdi
+ je     22be <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev+0x3c>
+ pop    rbx
+ pop    rbp
+ pop    r12
+ jmp    20f0 <_ZdlPv@plt>
+ pop    rbx
+ pop    rbp
+ pop    r12
+ ret    
+ nop
+_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold:
+ nop
+ mov    rbx,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [r15+0x38]
+ test   rdi,rdi
+ je     22db <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x17>
+ call   20f0 <_ZdlPv@plt>
+ lea    rdi,[r15+0x20]
+ call   2282 <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev>
+ mov    rdi,QWORD PTR [r15]
+ cmp    QWORD PTR [rsp+0x48],rdi
+ je     22f3 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x2f>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,rbx
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    QWORD PTR [rsp+0x28],0x0
+ je     23c2 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xfe>
+ mov    rdi,QWORD PTR [rsp+0x28]
+ call   20f0 <_ZdlPv@plt>
+ call   2190 <__cxa_rethrow@plt>
+ call   2060 <__cxa_begin_catch@plt>
+ mov    rbx,QWORD PTR [rsp+0x40]
+ cmp    r12,rbx
+ jne    232a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x66>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rdi,QWORD PTR [rbx]
+ lea    rax,[rbx+0x10]
+ cmp    rdi,rax
+ je     233b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x77>
+ call   20f0 <_ZdlPv@plt>
+ add    rbx,0x20
+ jmp    2320 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x5c>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [rsp+0x60]
+ cmp    rdi,r12
+ je     2358 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x94>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,rbp
+ call   21f0 <_Unwind_Resume@plt>
+ mov    rax,QWORD PTR [rsp+0x18]
+ lea    rdi,[rax+0x38]
+ call   2240 <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev>
+ mov    rax,QWORD PTR [rsp+0x18]
+ lea    rdi,[rax+0x20]
+ call   2282 <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev>
+ mov    rax,QWORD PTR [rsp+0x18]
+ mov    rdi,QWORD PTR [rax]
+ cmp    QWORD PTR [rsp+0x28],rdi
+ je     2390 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xcc>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,rbp
+ call   21f0 <_Unwind_Resume@plt>
+ lea    rdi,[r15+0x38]
+ call   2240 <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev>
+ jmp    22db <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x17>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    QWORD PTR [rsp+0x18],0x0
+ je     23df <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x11b>
+ mov    rdi,QWORD PTR [rsp+0x18]
+ call   20f0 <_ZdlPv@plt>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rdi,r15
+ call   38a0 <_ZN9AsmParser8asm_lineD1Ev>
+ jmp    2311 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x4d>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,rbp
+ call   21f0 <_Unwind_Resume@plt>
+ mov    rdi,QWORD PTR [r13+0x0]
+ cmp    QWORD PTR [rsp+0x38],rdi
+ je     23bd <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xf9>
+ call   20f0 <_ZdlPv@plt>
+ jmp    23bd <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xf9>
+ call   2060 <__cxa_begin_catch@plt>
+ mov    QWORD PTR [rbx+0x118],r13
+ call   2190 <__cxa_rethrow@plt>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,rbp
+ call   2060 <__cxa_begin_catch@plt>
+ mov    rdi,QWORD PTR [r12+0x8]
+ cmp    QWORD PTR [rsp+0x10],rdi
+ je     2423 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x15f>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ call   2190 <__cxa_rethrow@plt>
+ call   2060 <__cxa_begin_catch@plt>
+ mov    rbx,QWORD PTR [rsp+0x40]
+ cmp    r12,rbx
+ jne    248e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x1ca>
+ call   2190 <__cxa_rethrow@plt>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    r15,r13
+ jne    2453 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x18f>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rdi,QWORD PTR [r15]
+ lea    rax,[r15+0x10]
+ cmp    rdi,rax
+ je     2464 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x1a0>
+ call   20f0 <_ZdlPv@plt>
+ add    r15,0x20
+ jmp    2449 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x185>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rax,QWORD PTR [rsp+0x18]
+ mov    rdi,QWORD PTR [rax+0x38]
+ test   rdi,rdi
+ je     236e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xaa>
+ call   20f0 <_ZdlPv@plt>
+ jmp    236e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xaa>
+ mov    rdi,QWORD PTR [rbx]
+ lea    rax,[rbx+0x10]
+ cmp    rdi,rax
+ je     249f <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x1db>
+ call   20f0 <_ZdlPv@plt>
+ add    rbx,0x30
+ jmp    243a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x176>
+ call   2060 <__cxa_begin_catch@plt>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,rbp
+ call   21f0 <_Unwind_Resume@plt>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,rbp
+ call   21f0 <_Unwind_Resume@plt>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    r15,r13
+ jne    2505 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x241>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rbx,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [r15+0x20]
+ test   rdi,rdi
+ je     22e4 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x20>
+ call   20f0 <_ZdlPv@plt>
+ jmp    22e4 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x20>
+ mov    rdi,QWORD PTR [r15]
+ lea    rax,[r15+0x10]
+ cmp    rdi,rax
+ je     2516 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x252>
+ call   20f0 <_ZdlPv@plt>
+ add    r15,0x30
+ jmp    24dc <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x218>
+ mov    rbp,rax
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rax,QWORD PTR [rsp+0x18]
+ mov    rdi,QWORD PTR [rax+0x20]
+ test   rdi,rdi
+ je     237c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xb8>
+ call   20f0 <_ZdlPv@plt>
+ jmp    237c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xb8>
+_sub_I_65535_0.6213:
+ push   rbp
+ lea    rdi,[rip+0x5ad1]        # 8019 <_ZStL8__ioinit.lto_priv.1>
+ call   21a0 <_ZNSt8ios_base4InitC1Ev@plt>
+ mov    rbp,QWORD PTR [rip+0x5aa4]        # 7ff8 <_ZNSt8ios_base4InitD1Ev@GLIBCXX_3.4>
+ lea    rdx,[rip+0x5aad]        # 8008 <__dso_handle>
+ lea    rsi,[rip+0x5ab7]        # 8019 <_ZStL8__ioinit.lto_priv.1>
+ mov    rdi,rbp
+ call   20e0 <__cxa_atexit@plt>
+ lea    rdi,[rip+0x5aa9]        # 801a <_ZStL8__ioinit.lto_priv.0>
+ call   21a0 <_ZNSt8ios_base4InitC1Ev@plt>
+ mov    rdi,rbp
+ pop    rbp
+ lea    rdx,[rip+0x5a87]        # 8008 <__dso_handle>
+ lea    rsi,[rip+0x5a92]        # 801a <_ZStL8__ioinit.lto_priv.0>
+ jmp    20e0 <__cxa_atexit@plt>
+ nop    DWORD PTR [rax]
+main:
+ push   r15
+ push   r14
+ push   r13
+ push   r12
+ push   rbp
+ push   rbx
+ sub    rsp,0x468
+ mov    rax,QWORD PTR fs:0x28
+ mov    QWORD PTR [rsp+0x458],rax
+ xor    eax,eax
+ cmp    edi,0x1
+ jle    2e47 <main+0x8b7>
+ mov    rsi,QWORD PTR [rsi+0x8]
+ lea    rax,[rsp+0x50]
+ mov    QWORD PTR [rsp+0x38],rax
+ mov    QWORD PTR [rsp+0x40],rax
+ test   rsi,rsi
+ je     3310 <main+0xd80>
+ or     rcx,0xffffffffffffffff
+ xor    eax,eax
+ mov    rdi,rsi
+ repnz scas al,BYTE PTR es:[rdi]
+ not    rcx
+ lea    rdx,[rsi+rcx*1-0x1]
+ lea    rbp,[rsp+0x40]
+ lea    rbx,[rsp+0x240]
+ mov    rdi,rbp
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rdi,rbx
+ mov    QWORD PTR [rsp+0x30],rbx
+ call   2150 <_ZNSt13basic_fstreamIcSt11char_traitsIcEEC1Ev@plt>
+ mov    edx,0x8
+ mov    rsi,rbp
+ mov    rdi,rbx
+ call   2170 <_ZNSt13basic_fstreamIcSt11char_traitsIcEE4openERKNSt7__cxx1112basic_stringIcS1_SaIcEEESt13_Ios_Openmode@plt>
+ xor    eax,eax
+ mov    ecx,0x12
+ pxor   xmm0,xmm0
+ mov    rsi,rbx
+ lea    rdi,[rsp+0x160]
+ rep stos DWORD PTR es:[rdi],eax
+ lea    rax,[rsp+0x120]
+ lea    rdi,[rsp+0x110]
+ mov    QWORD PTR [rsp+0x118],0x0
+ mov    QWORD PTR [rsp+0x110],rax
+ lea    rax,[rsp+0x1b8]
+ mov    QWORD PTR [rsp+0x1a8],rax
+ lea    rax,[rsp+0x1d8]
+ mov    QWORD PTR [rsp+0x1c8],rax
+ lea    rax,[rsp+0x230]
+ mov    QWORD PTR [rsp+0x20],rdi
+ mov    BYTE PTR [rsp+0x120],0x0
+ mov    QWORD PTR [rsp+0x1b0],0x0
+ mov    BYTE PTR [rsp+0x1b8],0x0
+ mov    QWORD PTR [rsp+0x1d0],0x0
+ mov    BYTE PTR [rsp+0x1d8],0x0
+ mov    QWORD PTR [rsp+0x1f8],0x0
+ mov    QWORD PTR [rsp+0x200],rax
+ mov    QWORD PTR [rsp+0x208],0x1
+ mov    QWORD PTR [rsp+0x210],0x0
+ mov    QWORD PTR [rsp+0x218],0x0
+ mov    DWORD PTR [rsp+0x220],0x3f800000
+ mov    QWORD PTR [rsp+0x228],0x0
+ mov    QWORD PTR [rsp+0x230],0x0
+ movaps XMMWORD PTR [rsp+0x130],xmm0
+ movaps XMMWORD PTR [rsp+0x140],xmm0
+ movaps XMMWORD PTR [rsp+0x150],xmm0
+ movups XMMWORD PTR [rsp+0x1e8],xmm0
+ call   3b90 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi>
+ mov    rbp,QWORD PTR [rip+0x588a]        # 7fc8 <_ZSt4cout@GLIBCXX_3.4>
+ mov    edx,0x2
+ lea    rsi,[rip+0x38e8]        # 6032 <_IO_stdin_used+0x32>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rax,QWORD PTR [rsp+0x1f0]
+ mov    rbx,QWORD PTR [rsp+0x1e8]
+ mov    QWORD PTR [rsp+0x18],rax
+ cmp    rbx,rax
+ je     2a9c <main+0x50c>
+ lea    rax,[rsp+0x80]
+ mov    QWORD PTR [rsp+0x10],rax
+ lea    rax,[rsp+0x90]
+ mov    QWORD PTR [rsp+0x8],rax
+ nop    WORD PTR [rax+rax*1+0x0]
+ mov    rax,QWORD PTR [rsp+0x8]
+ mov    rdx,QWORD PTR [rbx+0x8]
+ mov    rdi,QWORD PTR [rsp+0x10]
+ mov    QWORD PTR [rsp+0x80],rax
+ mov    rsi,QWORD PTR [rbx]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    r12,QWORD PTR [rbx+0x28]
+ sub    r12,QWORD PTR [rbx+0x20]
+ pxor   xmm1,xmm1
+ xor    r14d,r14d
+ mov    rax,r12
+ movaps XMMWORD PTR [rsp+0xa0],xmm1
+ movabs rcx,0xaaaaaaaaaaaaaaab
+ mov    QWORD PTR [rsp+0xb0],0x0
+ sar    rax,0x4
+ imul   rax,rcx
+ test   rax,rax
+ je     280c <main+0x27c>
+ movabs rcx,0x2aaaaaaaaaaaaaa
+ cmp    rax,rcx
+ ja     331e <main+0xd8e>
+ mov    rdi,r12
+ call   2110 <_Znwm@plt>
+ mov    r14,rax
+ movq   xmm0,r14
+ add    r12,r14
+ mov    r13,r14
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [rsp+0xb0],r12
+ movaps XMMWORD PTR [rsp+0xa0],xmm0
+ mov    r15,QWORD PTR [rbx+0x28]
+ mov    r12,QWORD PTR [rbx+0x20]
+ cmp    r15,r12
+ je     287b <main+0x2eb>
+ nop    DWORD PTR [rax+rax*1+0x0]
+ lea    rax,[r13+0x10]
+ mov    rdx,QWORD PTR [r12+0x8]
+ mov    rdi,r13
+ mov    QWORD PTR [r13+0x0],rax
+ mov    rsi,QWORD PTR [r12]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rax,QWORD PTR [r12+0x20]
+ add    r12,0x30
+ add    r13,0x30
+ mov    QWORD PTR [r13-0x10],rax
+ mov    eax,DWORD PTR [r12-0x8]
+ mov    DWORD PTR [r13-0x8],eax
+ cmp    r15,r12
+ jne    2840 <main+0x2b0>
+ mov    r12,QWORD PTR [rbx+0x40]
+ sub    r12,QWORD PTR [rbx+0x38]
+ pxor   xmm2,xmm2
+ mov    QWORD PTR [rsp+0xa8],r13
+ mov    rax,r12
+ movups XMMWORD PTR [rsp+0xb8],xmm2
+ mov    QWORD PTR [rsp+0xc8],0x0
+ sar    rax,0x5
+ je     2c18 <main+0x688>
+ movabs rcx,0x3ffffffffffffff
+ cmp    rax,rcx
+ ja     3319 <main+0xd89>
+ mov    rdi,r12
+ call   2110 <_Znwm@plt>
+ mov    r13,rax
+ movq   xmm0,r13
+ add    r12,r13
+ mov    r14,r13
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [rsp+0xc8],r12
+ movups XMMWORD PTR [rsp+0xb8],xmm0
+ mov    r15,QWORD PTR [rbx+0x40]
+ mov    r12,QWORD PTR [rbx+0x38]
+ cmp    r15,r12
+ je     2928 <main+0x398>
+ nop    WORD PTR [rax+rax*1+0x0]
+ lea    rax,[r14+0x10]
+ mov    rdx,QWORD PTR [r12+0x8]
+ mov    rdi,r14
+ mov    QWORD PTR [r14],rax
+ mov    rsi,QWORD PTR [r12]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ add    r12,0x20
+ add    r14,0x20
+ cmp    r15,r12
+ jne    2900 <main+0x370>
+ mov    BYTE PTR [rsp+0xf8],0x0
+ cmp    BYTE PTR [rbx+0x78],0x0
+ mov    QWORD PTR [rsp+0xc0],r14
+ jne    2e08 <main+0x878>
+ movdqu xmm3,XMMWORD PTR [rbx+0x80]
+ mov    edx,0x2
+ lea    rsi,[rip+0x36e2]        # 6038 <_IO_stdin_used+0x38>
+ mov    rdi,rbp
+ movaps XMMWORD PTR [rsp+0x100],xmm3
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ cmp    BYTE PTR [rsp+0x108],0x0
+ jne    2db8 <main+0x828>
+ cmp    QWORD PTR [rsp+0x88],0x0
+ jne    2d58 <main+0x7c8>
+ mov    rax,QWORD PTR [rsp+0xc0]
+ cmp    QWORD PTR [rsp+0xb8],rax
+ jne    2c88 <main+0x6f8>
+ mov    edx,0x3
+ lea    rsi,[rip+0x36c9]        # 606e <_IO_stdin_used+0x6e>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ cmp    BYTE PTR [rsp+0xf8],0x0
+ je     29d9 <main+0x449>
+ mov    rdi,QWORD PTR [rsp+0xd0]
+ lea    rax,[rsp+0xe0]
+ mov    BYTE PTR [rsp+0xf8],0x0
+ cmp    rdi,rax
+ je     29d9 <main+0x449>
+ call   20f0 <_ZdlPv@plt>
+ mov    r13,QWORD PTR [rsp+0xc0]
+ mov    r12,QWORD PTR [rsp+0xb8]
+ cmp    r13,r12
+ je     2a10 <main+0x480>
+ xchg   ax,ax
+ mov    rdi,QWORD PTR [r12]
+ lea    rax,[r12+0x10]
+ cmp    rdi,rax
+ je     2c20 <main+0x690>
+ call   20f0 <_ZdlPv@plt>
+ add    r12,0x20
+ cmp    r12,r13
+ jne    29f0 <main+0x460>
+ mov    rdi,QWORD PTR [rsp+0xb8]
+ test   rdi,rdi
+ je     2a22 <main+0x492>
+ call   20f0 <_ZdlPv@plt>
+ mov    r13,QWORD PTR [rsp+0xa8]
+ mov    r12,QWORD PTR [rsp+0xa0]
+ cmp    r13,r12
+ je     2a60 <main+0x4d0>
+ nop    WORD PTR [rax+rax*1+0x0]
+ mov    rdi,QWORD PTR [r12]
+ lea    rax,[r12+0x10]
+ cmp    rdi,rax
+ je     2c38 <main+0x6a8>
+ call   20f0 <_ZdlPv@plt>
+ add    r12,0x30
+ cmp    r12,r13
+ jne    2a40 <main+0x4b0>
+ mov    rdi,QWORD PTR [rsp+0xa0]
+ test   rdi,rdi
+ je     2a72 <main+0x4e2>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rsp+0x80]
+ cmp    rdi,QWORD PTR [rsp+0x8]
+ je     2c50 <main+0x6c0>
+ call   20f0 <_ZdlPv@plt>
+ add    rbx,0x90
+ cmp    QWORD PTR [rsp+0x18],rbx
+ jne    2790 <main+0x200>
+ mov    edx,0x2
+ lea    rsi,[rip+0x358d]        # 6035 <_IO_stdin_used+0x35>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    edx,0xc
+ lea    rsi,[rip+0x35b6]        # 6072 <_IO_stdin_used+0x72>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ lea    rax,[rsp+0x80]
+ mov    rbx,QWORD PTR [rsp+0x210]
+ lea    r13,[rip+0x3578]        # 6053 <_IO_stdin_used+0x53>
+ mov    QWORD PTR [rsp+0x10],rax
+ lea    rax,[rsp+0x90]
+ mov    QWORD PTR [rsp+0x8],rax
+ test   rbx,rbx
+ je     2bb0 <main+0x620>
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+ mov    r15,QWORD PTR [rsp+0x8]
+ mov    rdx,QWORD PTR [rbx+0x10]
+ mov    rdi,QWORD PTR [rsp+0x10]
+ mov    QWORD PTR [rsp+0x80],r15
+ mov    rsi,QWORD PTR [rbx+0x8]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    eax,DWORD PTR [rbx+0x28]
+ mov    edx,0x1
+ mov    rsi,r13
+ mov    rdi,rbp
+ mov    DWORD PTR [rsp+0xa0],eax
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdx,QWORD PTR [rsp+0x88]
+ mov    rsi,QWORD PTR [rsp+0x80]
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    edx,0x3
+ lea    rsi,[rip+0x34ef]        # 604f <_IO_stdin_used+0x4f>
+ mov    rdi,rax
+ mov    r12,rax
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    esi,DWORD PTR [rsp+0xa0]
+ mov    rdi,r12
+ call   21e0 <_ZNSolsEi@plt>
+ mov    rdi,rax
+ mov    edx,0x2
+ lea    rsi,[rip+0x34cd]        # 6056 <_IO_stdin_used+0x56>
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdi,QWORD PTR [rsp+0x80]
+ cmp    rdi,r15
+ je     2c70 <main+0x6e0>
+ call   20f0 <_ZdlPv@plt>
+ mov    rbx,QWORD PTR [rbx]
+ test   rbx,rbx
+ jne    2b00 <main+0x570>
+ mov    edx,0x3
+ lea    rsi,[rip+0x34c3]        # 607f <_IO_stdin_used+0x7f>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdi,QWORD PTR [rsp+0x20]
+ call   3970 <_ZN9AsmParser13ObjDumpParserD1Ev>
+ mov    rdi,QWORD PTR [rsp+0x30]
+ call   2040 <_ZNSt13basic_fstreamIcSt11char_traitsIcEED1Ev@plt>
+ mov    rdi,QWORD PTR [rsp+0x40]
+ cmp    rdi,QWORD PTR [rsp+0x38]
+ je     2be9 <main+0x659>
+ call   20f0 <_ZdlPv@plt>
+ mov    rax,QWORD PTR [rsp+0x458]
+ xor    rax,QWORD PTR fs:0x28
+ jne    332d <main+0xd9d>
+ add    rsp,0x468
+ xor    eax,eax
+ pop    rbx
+ pop    rbp
+ pop    r12
+ pop    r13
+ pop    r14
+ pop    r15
+ ret    
+ nop    DWORD PTR [rax+0x0]
+ xor    r13d,r13d
+ jmp    28ce <main+0x33e>
+ add    r12,0x20
+ cmp    r13,r12
+ jne    29f0 <main+0x460>
+ jmp    2a10 <main+0x480>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    r12,0x30
+ cmp    r13,r12
+ jne    2a40 <main+0x4b0>
+ jmp    2a60 <main+0x4d0>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    rbx,0x90
+ cmp    QWORD PTR [rsp+0x18],rbx
+ jne    2790 <main+0x200>
+ jmp    2a9c <main+0x50c>
+ nop    WORD PTR [rax+rax*1+0x0]
+ mov    rbx,QWORD PTR [rbx]
+ test   rbx,rbx
+ jne    2b00 <main+0x570>
+ jmp    2bb0 <main+0x620>
+ nop    DWORD PTR [rax+0x0]
+ mov    edx,0xd
+ lea    rsi,[rip+0x33c5]        # 6059 <_IO_stdin_used+0x59>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rax,QWORD PTR [rsp+0xc0]
+ lea    r15,[rsp+0x60]
+ mov    r12,QWORD PTR [rsp+0xb8]
+ lea    r13,[rsp+0x70]
+ lea    r14,[rip+0x3396]        # 6053 <_IO_stdin_used+0x53>
+ mov    QWORD PTR [rsp+0x28],rax
+ cmp    r12,rax
+ je     2d39 <main+0x7a9>
+ nop    WORD PTR [rax+rax*1+0x0]
+ mov    QWORD PTR [rsp+0x60],r13
+ mov    rdx,QWORD PTR [r12+0x8]
+ mov    rdi,r15
+ mov    rsi,QWORD PTR [r12]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    edx,0x1
+ mov    rsi,r14
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdx,QWORD PTR [rsp+0x68]
+ mov    rsi,QWORD PTR [rsp+0x60]
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdi,rax
+ mov    edx,0x3
+ lea    rsi,[rip+0x3350]        # 606a <_IO_stdin_used+0x6a>
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdi,QWORD PTR [rsp+0x60]
+ cmp    rdi,r13
+ je     2d2e <main+0x79e>
+ call   20f0 <_ZdlPv@plt>
+ add    r12,0x20
+ cmp    QWORD PTR [rsp+0x28],r12
+ jne    2cd0 <main+0x740>
+ mov    edx,0x2
+ lea    rsi,[rip+0x3322]        # 6067 <_IO_stdin_used+0x67>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ jmp    2999 <main+0x409>
+ nop    WORD PTR [rax+rax*1+0x0]
+ mov    edx,0x9
+ lea    rsi,[rip+0x32e5]        # 6049 <_IO_stdin_used+0x49>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    edx,0x1
+ lea    rsi,[rip+0x32db]        # 6053 <_IO_stdin_used+0x53>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdx,QWORD PTR [rsp+0x88]
+ mov    rsi,QWORD PTR [rsp+0x80]
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdi,rax
+ mov    edx,0x3
+ lea    rsi,[rip+0x32ae]        # 6055 <_IO_stdin_used+0x55>
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ jmp    2983 <main+0x3f3>
+ nop    DWORD PTR [rax+0x0]
+ mov    edx,0xd
+ lea    rsi,[rip+0x3277]        # 603b <_IO_stdin_used+0x3b>
+ mov    rdi,rbp
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ cmp    BYTE PTR [rsp+0x108],0x0
+ je     34af <main+0xf1f>
+ mov    rsi,QWORD PTR [rsp+0x100]
+ mov    rdi,rbp
+ call   2100 <_ZNSo9_M_insertIlEERSoT_@plt>
+ mov    rdi,rax
+ mov    edx,0x2
+ lea    rsi,[rip+0x325d]        # 6056 <_IO_stdin_used+0x56>
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ jmp    2974 <main+0x3e4>
+ nop    DWORD PTR [rax+rax*1+0x0]
+ lea    rax,[rsp+0xe0]
+ mov    rdx,QWORD PTR [rbx+0x58]
+ lea    rdi,[rsp+0xd0]
+ mov    QWORD PTR [rsp+0xd0],rax
+ mov    rsi,QWORD PTR [rbx+0x50]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    eax,DWORD PTR [rbx+0x70]
+ mov    BYTE PTR [rsp+0xf8],0x1
+ mov    DWORD PTR [rsp+0xf0],eax
+ jmp    2942 <main+0x3b2>
+ xor    eax,eax
+ mov    ecx,0x12
+ pxor   xmm0,xmm0
+ mov    rsi,QWORD PTR [rip+0x517f]        # 7fd8 <_ZSt3cin@GLIBCXX_3.4>
+ lea    rdi,[rsp+0x290]
+ rep stos DWORD PTR es:[rdi],eax
+ lea    rax,[rsp+0x250]
+ lea    rdi,[rsp+0x240]
+ mov    QWORD PTR [rsp+0x248],0x0
+ mov    QWORD PTR [rsp+0x240],rax
+ lea    rax,[rsp+0x2e8]
+ mov    QWORD PTR [rsp+0x2d8],rax
+ lea    rax,[rsp+0x308]
+ mov    QWORD PTR [rsp+0x2f8],rax
+ lea    rax,[rsp+0x360]
+ mov    QWORD PTR [rsp+0x30],rdi
+ mov    BYTE PTR [rsp+0x250],0x0
+ mov    QWORD PTR [rsp+0x2e0],0x0
+ mov    BYTE PTR [rsp+0x2e8],0x0
+ mov    QWORD PTR [rsp+0x300],0x0
+ mov    BYTE PTR [rsp+0x308],0x0
+ mov    QWORD PTR [rsp+0x328],0x0
+ mov    QWORD PTR [rsp+0x330],rax
+ mov    QWORD PTR [rsp+0x338],0x1
+ mov    QWORD PTR [rsp+0x340],0x0
+ mov    QWORD PTR [rsp+0x348],0x0
+ mov    DWORD PTR [rsp+0x350],0x3f800000
+ mov    QWORD PTR [rsp+0x358],0x0
+ mov    QWORD PTR [rsp+0x360],0x0
+ movaps XMMWORD PTR [rsp+0x260],xmm0
+ movaps XMMWORD PTR [rsp+0x270],xmm0
+ movaps XMMWORD PTR [rsp+0x280],xmm0
+ movups XMMWORD PTR [rsp+0x318],xmm0
+ call   3b90 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi>
+ mov    rbx,QWORD PTR [rsp+0x318]
+ mov    r13,QWORD PTR [rsp+0x320]
+ cmp    rbx,r13
+ je     3271 <main+0xce1>
+ lea    rax,[rsp+0x110]
+ mov    QWORD PTR [rsp+0x20],rax
+ lea    rax,[rsp+0x120]
+ mov    QWORD PTR [rsp+0x8],rax
+ nop    WORD PTR [rax+rax*1+0x0]
+ mov    rax,QWORD PTR [rsp+0x8]
+ mov    rdx,QWORD PTR [rbx+0x8]
+ mov    rdi,QWORD PTR [rsp+0x20]
+ mov    QWORD PTR [rsp+0x110],rax
+ mov    rsi,QWORD PTR [rbx]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rbp,QWORD PTR [rbx+0x28]
+ sub    rbp,QWORD PTR [rbx+0x20]
+ pxor   xmm4,xmm4
+ xor    r14d,r14d
+ mov    rax,rbp
+ movaps XMMWORD PTR [rsp+0x130],xmm4
+ movabs rcx,0xaaaaaaaaaaaaaaab
+ mov    QWORD PTR [rsp+0x140],0x0
+ sar    rax,0x4
+ imul   rax,rcx
+ test   rax,rax
+ je     301c <main+0xa8c>
+ movabs rcx,0x2aaaaaaaaaaaaaa
+ cmp    rax,rcx
+ ja     3328 <main+0xd98>
+ mov    rdi,rbp
+ call   2110 <_Znwm@plt>
+ mov    r14,rax
+ movq   xmm0,r14
+ add    rbp,r14
+ mov    r12,r14
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [rsp+0x140],rbp
+ movaps XMMWORD PTR [rsp+0x130],xmm0
+ mov    r15,QWORD PTR [rbx+0x28]
+ mov    rbp,QWORD PTR [rbx+0x20]
+ cmp    r15,rbp
+ je     308a <main+0xafa>
+ nop    DWORD PTR [rax+rax*1+0x0]
+ lea    rax,[r12+0x10]
+ mov    rdx,QWORD PTR [rbp+0x8]
+ mov    rdi,r12
+ mov    QWORD PTR [r12],rax
+ mov    rsi,QWORD PTR [rbp+0x0]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rax,QWORD PTR [rbp+0x20]
+ add    rbp,0x30
+ add    r12,0x30
+ mov    QWORD PTR [r12-0x10],rax
+ mov    eax,DWORD PTR [rbp-0x8]
+ mov    DWORD PTR [r12-0x8],eax
+ cmp    r15,rbp
+ jne    3050 <main+0xac0>
+ mov    rbp,QWORD PTR [rbx+0x40]
+ sub    rbp,QWORD PTR [rbx+0x38]
+ pxor   xmm5,xmm5
+ mov    QWORD PTR [rsp+0x138],r12
+ mov    rax,rbp
+ movups XMMWORD PTR [rsp+0x148],xmm5
+ mov    QWORD PTR [rsp+0x158],0x0
+ sar    rax,0x5
+ je     3308 <main+0xd78>
+ movabs rcx,0x3ffffffffffffff
+ cmp    rax,rcx
+ ja     3323 <main+0xd93>
+ mov    rdi,rbp
+ call   2110 <_Znwm@plt>
+ mov    r14,rax
+ movq   xmm0,r14
+ add    rbp,r14
+ mov    r12,r14
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [rsp+0x158],rbp
+ movups XMMWORD PTR [rsp+0x148],xmm0
+ mov    r15,QWORD PTR [rbx+0x40]
+ mov    rbp,QWORD PTR [rbx+0x38]
+ cmp    r15,rbp
+ je     3139 <main+0xba9>
+ nop    DWORD PTR [rax+0x0]
+ lea    rax,[r12+0x10]
+ mov    rdx,QWORD PTR [rbp+0x8]
+ mov    rdi,r12
+ mov    QWORD PTR [r12],rax
+ mov    rsi,QWORD PTR [rbp+0x0]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ add    rbp,0x20
+ add    r12,0x20
+ cmp    r15,rbp
+ jne    3110 <main+0xb80>
+ mov    BYTE PTR [rsp+0x188],0x0
+ cmp    BYTE PTR [rbx+0x78],0x0
+ mov    QWORD PTR [rsp+0x150],r12
+ jne    32b0 <main+0xd20>
+ movdqu xmm6,XMMWORD PTR [rbx+0x80]
+ mov    rdx,QWORD PTR [rsp+0x118]
+ mov    rsi,QWORD PTR [rsp+0x110]
+ mov    rdi,QWORD PTR [rip+0x4e56]        # 7fc8 <_ZSt4cout@GLIBCXX_3.4>
+ movaps XMMWORD PTR [rsp+0x190],xmm6
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ mov    rdi,rax
+ mov    edx,0x1
+ lea    rsi,[rip+0x2ec9]        # 6057 <_IO_stdin_used+0x57>
+ call   2140 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+ cmp    BYTE PTR [rsp+0x188],0x0
+ je     31bf <main+0xc2f>
+ mov    rdi,QWORD PTR [rsp+0x160]
+ lea    rax,[rsp+0x170]
+ mov    BYTE PTR [rsp+0x188],0x0
+ cmp    rdi,rax
+ je     31bf <main+0xc2f>
+ call   20f0 <_ZdlPv@plt>
+ mov    r12,QWORD PTR [rsp+0x150]
+ mov    rbp,QWORD PTR [rsp+0x148]
+ cmp    r12,rbp
+ je     31f7 <main+0xc67>
+ nop    DWORD PTR [rax+0x0]
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     32f0 <main+0xd60>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x20
+ cmp    rbp,r12
+ jne    31d8 <main+0xc48>
+ mov    rdi,QWORD PTR [rsp+0x148]
+ test   rdi,rdi
+ je     3209 <main+0xc79>
+ call   20f0 <_ZdlPv@plt>
+ mov    r12,QWORD PTR [rsp+0x138]
+ mov    rbp,QWORD PTR [rsp+0x130]
+ cmp    r12,rbp
+ je     323b <main+0xcab>
+ xchg   ax,ax
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     3298 <main+0xd08>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x30
+ cmp    rbp,r12
+ jne    3220 <main+0xc90>
+ mov    rdi,QWORD PTR [rsp+0x130]
+ test   rdi,rdi
+ je     324d <main+0xcbd>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rsp+0x110]
+ cmp    rdi,QWORD PTR [rsp+0x8]
+ je     3280 <main+0xcf0>
+ call   20f0 <_ZdlPv@plt>
+ add    rbx,0x90
+ cmp    r13,rbx
+ jne    2fa0 <main+0xa10>
+ mov    rdi,QWORD PTR [rsp+0x30]
+ call   3970 <_ZN9AsmParser13ObjDumpParserD1Ev>
+ jmp    2be9 <main+0x659>
+ add    rbx,0x90
+ cmp    r13,rbx
+ jne    2fa0 <main+0xa10>
+ jmp    3271 <main+0xce1>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    rbp,0x30
+ cmp    r12,rbp
+ jne    3220 <main+0xc90>
+ jmp    323b <main+0xcab>
+ nop    WORD PTR [rax+rax*1+0x0]
+ lea    rax,[rsp+0x170]
+ mov    rdx,QWORD PTR [rbx+0x58]
+ lea    rdi,[rsp+0x160]
+ mov    QWORD PTR [rsp+0x160],rax
+ mov    rsi,QWORD PTR [rbx+0x50]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    eax,DWORD PTR [rbx+0x70]
+ mov    BYTE PTR [rsp+0x188],0x1
+ mov    DWORD PTR [rsp+0x180],eax
+ jmp    3153 <main+0xbc3>
+ nop
+ add    rbp,0x20
+ cmp    r12,rbp
+ jne    31d8 <main+0xc48>
+ jmp    31f7 <main+0xc67>
+ nop    WORD PTR [rax+rax*1+0x0]
+ xor    r14d,r14d
+ jmp    30dd <main+0xb4d>
+ or     rdx,0xffffffffffffffff
+ jmp    25ec <main+0x5c>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2130 <__stack_chk_fail@plt>
+ mov    rbx,rax
+ jmp    3358 <main+0xdc8>
+ mov    rdi,rax
+ jmp    337b <main+0xdeb>
+ mov    rbx,rax
+ jmp    338a <main+0xdfa>
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [rsp+0x148]
+ test   rdi,rdi
+ je     3358 <main+0xdc8>
+ call   20f0 <_ZdlPv@plt>
+ lea    rdi,[rsp+0x130]
+ call   2282 <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev>
+ mov    rdi,QWORD PTR [rsp+0x110]
+ cmp    rdi,QWORD PTR [rsp+0x8]
+ je     3394 <main+0xe04>
+ call   20f0 <_ZdlPv@plt>
+ jmp    3394 <main+0xe04>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    r12,r14
+ jne    33a6 <main+0xe16>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rdi,QWORD PTR [rsp+0x20]
+ call   38a0 <_ZN9AsmParser8asm_lineD1Ev>
+ mov    rdi,QWORD PTR [rsp+0x30]
+ call   3970 <_ZN9AsmParser13ObjDumpParserD1Ev>
+ mov    rdi,rbx
+ call   21f0 <_Unwind_Resume@plt>
+ mov    rdi,QWORD PTR [r14]
+ lea    rax,[r14+0x10]
+ cmp    rdi,rax
+ je     33b7 <main+0xe27>
+ call   20f0 <_ZdlPv@plt>
+ add    r14,0x20
+ jmp    3380 <main+0xdf0>
+ mov    rbx,rax
+ jmp    3341 <main+0xdb1>
+ mov    rbx,rax
+ jmp    3528 <main+0xf98>
+ mov    rbx,rax
+ jmp    3460 <main+0xed0>
+ mov    rdi,rax
+ jmp    34fa <main+0xf6a>
+ mov    rbx,rax
+ jmp    3394 <main+0xe04>
+ mov    rbx,rax
+ jmp    340f <main+0xe7f>
+ mov    rbx,rax
+ jmp    3405 <main+0xe75>
+ mov    rdi,QWORD PTR [rsp+0x60]
+ cmp    rdi,r13
+ je     33fb <main+0xe6b>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rsp+0x10]
+ call   38a0 <_ZN9AsmParser8asm_lineD1Ev>
+ mov    rdi,QWORD PTR [rsp+0x20]
+ call   3970 <_ZN9AsmParser13ObjDumpParserD1Ev>
+ mov    rdi,QWORD PTR [rsp+0x30]
+ mov    rbp,rbx
+ call   2040 <_ZNSt13basic_fstreamIcSt11char_traitsIcEED1Ev@plt>
+ mov    rdi,QWORD PTR [rsp+0x40]
+ cmp    rdi,QWORD PTR [rsp+0x38]
+ je     342d <main+0xe9d>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,rbp
+ call   21f0 <_Unwind_Resume@plt>
+ mov    rbp,rax
+ jmp    341c <main+0xe8c>
+ mov    rbx,rax
+ jmp    33fb <main+0xe6b>
+ mov    rbx,rax
+ jmp    346d <main+0xedd>
+ mov    rdi,rax
+ jmp    3483 <main+0xef3>
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [rsp+0xb8]
+ test   rdi,rdi
+ je     3460 <main+0xed0>
+ call   20f0 <_ZdlPv@plt>
+ lea    rdi,[rsp+0xa0]
+ call   2282 <_ZNSt6vectorIN9AsmParser9asm_labelESaIS1_EED1Ev>
+ mov    rdi,QWORD PTR [rsp+0x80]
+ cmp    rdi,QWORD PTR [rsp+0x8]
+ je     3405 <main+0xe75>
+ call   20f0 <_ZdlPv@plt>
+ jmp    3405 <main+0xe75>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    r14,r13
+ jne    3492 <main+0xf02>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rdi,QWORD PTR [r13+0x0]
+ lea    rax,[r13+0x10]
+ cmp    rdi,rax
+ je     34a4 <main+0xf14>
+ call   20f0 <_ZdlPv@plt>
+ add    r13,0x20
+ jmp    3488 <main+0xef8>
+ mov    rbx,rax
+ jmp    3449 <main+0xeb9>
+ mov    edi,0x8
+ call   2080 <__cxa_allocate_exception@plt>
+ lea    rdx,[rip+0x3d0]        # 3890 <_ZNSt19bad_optional_accessD1Ev>
+ lea    rsi,[rip+0x47b9]        # 7c80 <_ZTVN10__cxxabiv120__si_class_type_infoE@CXXABI_1.3>
+ mov    rdi,rax
+ lea    rax,[rip+0x4797]        # 7c68 <_ZTVSt19bad_optional_access+0x10>
+ mov    QWORD PTR [rdi],rax
+ call   21d0 <__cxa_throw@plt>
+ mov    rdi,rax
+ jmp    34e6 <main+0xf56>
+ mov    rbx,rax
+ jmp    3365 <main+0xdd5>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    r14,r13
+ jne    3509 <main+0xf79>
+ call   2190 <__cxa_rethrow@plt>
+ jmp    343f <main+0xeaf>
+ call   2060 <__cxa_begin_catch@plt>
+ cmp    r14,r12
+ jne    354f <main+0xfbf>
+ call   2190 <__cxa_rethrow@plt>
+ mov    rdi,QWORD PTR [r14]
+ lea    rax,[r14+0x10]
+ cmp    rdi,rax
+ je     351a <main+0xf8a>
+ call   20f0 <_ZdlPv@plt>
+ add    r14,0x30
+ jmp    34eb <main+0xf5b>
+ mov    rbx,rax
+ jmp    33ec <main+0xe5c>
+ lea    rdi,[rsp+0x148]
+ call   2240 <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev>
+ jmp    3358 <main+0xdc8>
+ mov    rbx,rax
+ lea    rdi,[rsp+0xb8]
+ call   2240 <_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev>
+ jmp    3460 <main+0xed0>
+ mov    rdi,QWORD PTR [r14]
+ lea    rax,[r14+0x10]
+ cmp    rdi,rax
+ je     3560 <main+0xfd0>
+ call   20f0 <_ZdlPv@plt>
+ add    r14,0x30
+ jmp    34ff <main+0xf6f>
+ mov    rbx,rax
+ jmp    3570 <main+0xfe0>
+ mov    rbx,rax
+ jmp    3590 <main+0x1000>
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [rsp+0xa0]
+ test   rdi,rdi
+ je     346d <main+0xedd>
+ call   20f0 <_ZdlPv@plt>
+ jmp    346d <main+0xedd>
+ call   21c0 <__cxa_end_catch@plt>
+ mov    rdi,QWORD PTR [rsp+0x130]
+ test   rdi,rdi
+ je     3365 <main+0xdd5>
+ call   20f0 <_ZdlPv@plt>
+ jmp    3365 <main+0xdd5>
+_ZNSt22_Optional_payload_baseIN9AsmParser10asm_sourceEEC2EbOS2_:
+ cmp    BYTE PTR [rdx+0x28],0x0
+ mov    BYTE PTR [rdi+0x28],0x0
+ je     36e9 <_ZNSt22_Optional_payload_baseIN9AsmParser10asm_sourceEEC2EbOS2_+0x49>
+ lea    rax,[rdi+0x10]
+ mov    QWORD PTR [rdi],rax
+ mov    rcx,QWORD PTR [rdx]
+ lea    rax,[rdx+0x10]
+ cmp    rcx,rax
+ je     36f0 <_ZNSt22_Optional_payload_baseIN9AsmParser10asm_sourceEEC2EbOS2_+0x50>
+ mov    QWORD PTR [rdi],rcx
+ mov    rcx,QWORD PTR [rdx+0x10]
+ mov    QWORD PTR [rdi+0x10],rcx
+ mov    rcx,QWORD PTR [rdx+0x8]
+ mov    QWORD PTR [rdx],rax
+ mov    eax,DWORD PTR [rdx+0x20]
+ mov    QWORD PTR [rdx+0x8],0x0
+ mov    QWORD PTR [rdi+0x8],rcx
+ mov    DWORD PTR [rdi+0x20],eax
+ mov    BYTE PTR [rdx+0x10],0x0
+ mov    BYTE PTR [rdi+0x28],0x1
+ ret    
+ nop    WORD PTR [rax+rax*1+0x0]
+ movdqu xmm0,XMMWORD PTR [rdx+0x10]
+ movups XMMWORD PTR [rdi+0x10],xmm0
+ jmp    36c8 <_ZNSt22_Optional_payload_baseIN9AsmParser10asm_sourceEEC2EbOS2_+0x28>
+ nop
+ nop    DWORD PTR [rax+0x0]
+_ZN9AsmParser13ObjDumpParser7addressEv:
+ mov    r9,QWORD PTR [rdi+0xb8]
+ mov    rsi,QWORD PTR [rdi+0xc0]
+ xor    r8d,r8d
+ add    rsi,r9
+ cmp    rsi,r9
+ je     374d <_ZN9AsmParser13ObjDumpParser7addressEv+0x4d>
+ xor    ecx,ecx
+ nop    DWORD PTR [rax+rax*1+0x0]
+ movzx  eax,BYTE PTR [rsi-0x1]
+ lea    r10d,[rax-0x61]
+ lea    edx,[rax-0x30]
+ cmp    r10b,0x5
+ jbe    3770 <_ZN9AsmParser13ObjDumpParser7addressEv+0x70>
+ cmp    dl,0x9
+ ja     374d <_ZN9AsmParser13ObjDumpParser7addressEv+0x4d>
+ movsx  edx,dl
+ sub    rsi,0x1
+ shl    edx,cl
+ add    ecx,0x4
+ movsxd rdx,edx
+ add    r8,rdx
+ cmp    r9,rsi
+ jne    3720 <_ZN9AsmParser13ObjDumpParser7addressEv+0x20>
+ mov    QWORD PTR [rdi+0x80],r8
+ mov    BYTE PTR [rdi+0x88],0x1
+ mov    QWORD PTR [rdi+0xc0],0x0
+ mov    BYTE PTR [r9],0x0
+ ret    
+ nop    DWORD PTR [rax+rax*1+0x0]
+ cmp    dl,0x9
+ jbe    3736 <_ZN9AsmParser13ObjDumpParser7addressEv+0x36>
+ sub    eax,0x57
+ sub    rsi,0x1
+ movsx  eax,al
+ shl    eax,cl
+ add    ecx,0x4
+ cdqe   
+ add    r8,rax
+ cmp    r9,rsi
+ jne    3720 <_ZN9AsmParser13ObjDumpParser7addressEv+0x20>
+ jmp    374d <_ZN9AsmParser13ObjDumpParser7addressEv+0x4d>
+_ZNKSt19bad_optional_access4whatEv:
+ lea    rax,[rip+0x286d]        # 6004 <_IO_stdin_used+0x4>
+ ret    
+ nop    DWORD PTR [rax+rax*1+0x0]
+_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0:
+ push   r12
+ mov    r12,rdx
+ push   rbp
+ mov    rbp,rsi
+ push   rbx
+ mov    rbx,rdi
+ sub    rsp,0x10
+ mov    rax,QWORD PTR fs:0x28
+ mov    QWORD PTR [rsp+0x8],rax
+ xor    eax,eax
+ test   rdx,rdx
+ je     37cb <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0x2b>
+ test   rsi,rsi
+ je     3844 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0xa4>
+ sub    r12,rbp
+ mov    QWORD PTR [rsp],r12
+ cmp    r12,0xf
+ ja     3819 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0x79>
+ mov    rdx,QWORD PTR [rbx]
+ mov    rdi,rdx
+ cmp    r12,0x1
+ jne    3812 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0x72>
+ movzx  eax,BYTE PTR [rbp+0x0]
+ mov    BYTE PTR [rdx],al
+ mov    rdx,QWORD PTR [rbx]
+ mov    rax,QWORD PTR [rsp]
+ mov    QWORD PTR [rbx+0x8],rax
+ mov    BYTE PTR [rdx+rax*1],0x0
+ mov    rax,QWORD PTR [rsp+0x8]
+ xor    rax,QWORD PTR fs:0x28
+ jne    3850 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0xb0>
+ add    rsp,0x10
+ pop    rbx
+ pop    rbp
+ pop    r12
+ ret    
+ test   r12,r12
+ je     37ed <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0x4d>
+ jmp    3834 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0x94>
+ mov    rdi,rbx
+ mov    rsi,rsp
+ xor    edx,edx
+ call   2200 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm@plt>
+ mov    QWORD PTR [rbx],rax
+ mov    rdi,rax
+ mov    rax,QWORD PTR [rsp]
+ mov    QWORD PTR [rbx+0x10],rax
+ mov    rdx,r12
+ mov    rsi,rbp
+ call   20d0 <memcpy@plt>
+ mov    rdx,QWORD PTR [rbx]
+ jmp    37ed <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0+0x4d>
+ lea    rdi,[rip+0x283d]        # 6088 <_IO_stdin_used+0x88>
+ call   20c0 <_ZSt19__throw_logic_errorPKc@plt>
+ call   2130 <__stack_chk_fail@plt>
+ nop
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+_ZNSt19bad_optional_accessD0Ev:
+ lea    rax,[rip+0x4401]        # 7c68 <_ZTVSt19bad_optional_access+0x10>
+ push   rbp
+ mov    rbp,rdi
+ mov    QWORD PTR [rdi],rax
+ call   2220 <_ZNSt9exceptionD2Ev@plt>
+ mov    rdi,rbp
+ mov    esi,0x8
+ pop    rbp
+ jmp    2120 <_ZdlPvm@plt>
+ nop
+ data16 nop WORD PTR cs:[rax+rax*1+0x0]
+ nop    DWORD PTR [rax]
+_ZNSt19bad_optional_accessD1Ev:
+ lea    rax,[rip+0x43d1]        # 7c68 <_ZTVSt19bad_optional_access+0x10>
+ mov    QWORD PTR [rdi],rax
+ jmp    2220 <_ZNSt9exceptionD2Ev@plt>
+ nop
+_ZN9AsmParser8asm_lineD1Ev:
+ push   r12
+ push   rbp
+ push   rbx
+ cmp    BYTE PTR [rdi+0x78],0x0
+ mov    rbx,rdi
+ je     38c3 <_ZN9AsmParser8asm_lineD1Ev+0x23>
+ mov    BYTE PTR [rdi+0x78],0x0
+ mov    rdi,QWORD PTR [rdi+0x50]
+ lea    rax,[rbx+0x60]
+ cmp    rdi,rax
+ je     38c3 <_ZN9AsmParser8asm_lineD1Ev+0x23>
+ call   20f0 <_ZdlPv@plt>
+ mov    r12,QWORD PTR [rbx+0x40]
+ mov    rbp,QWORD PTR [rbx+0x38]
+ cmp    r12,rbp
+ je     38eb <_ZN9AsmParser8asm_lineD1Ev+0x4b>
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     3950 <_ZN9AsmParser8asm_lineD1Ev+0xb0>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x20
+ cmp    rbp,r12
+ jne    38d0 <_ZN9AsmParser8asm_lineD1Ev+0x30>
+ mov    rdi,QWORD PTR [rbx+0x38]
+ test   rdi,rdi
+ je     38f9 <_ZN9AsmParser8asm_lineD1Ev+0x59>
+ call   20f0 <_ZdlPv@plt>
+ mov    r12,QWORD PTR [rbx+0x28]
+ mov    rbp,QWORD PTR [rbx+0x20]
+ cmp    r12,rbp
+ je     392b <_ZN9AsmParser8asm_lineD1Ev+0x8b>
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     3960 <_ZN9AsmParser8asm_lineD1Ev+0xc0>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x30
+ cmp    r12,rbp
+ jne    3910 <_ZN9AsmParser8asm_lineD1Ev+0x70>
+ mov    rdi,QWORD PTR [rbx+0x20]
+ test   rdi,rdi
+ je     3939 <_ZN9AsmParser8asm_lineD1Ev+0x99>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbx]
+ add    rbx,0x10
+ cmp    rdi,rbx
+ je     396b <_ZN9AsmParser8asm_lineD1Ev+0xcb>
+ pop    rbx
+ pop    rbp
+ pop    r12
+ jmp    20f0 <_ZdlPv@plt>
+ xchg   ax,ax
+ add    rbp,0x20
+ cmp    r12,rbp
+ jne    38d0 <_ZN9AsmParser8asm_lineD1Ev+0x30>
+ jmp    38eb <_ZN9AsmParser8asm_lineD1Ev+0x4b>
+ nop
+ add    rbp,0x30
+ cmp    r12,rbp
+ jne    3910 <_ZN9AsmParser8asm_lineD1Ev+0x70>
+ jmp    392b <_ZN9AsmParser8asm_lineD1Ev+0x8b>
+ pop    rbx
+ pop    rbp
+ pop    r12
+ ret    
+_ZN9AsmParser13ObjDumpParserD1Ev:
+ push   r14
+ push   r13
+ push   r12
+ push   rbp
+ mov    rbp,rdi
+ push   rbx
+ mov    r12,QWORD PTR [rdi+0x100]
+ test   r12,r12
+ jne    39a5 <_ZN9AsmParser13ObjDumpParserD1Ev+0x35>
+ jmp    39c5 <_ZN9AsmParser13ObjDumpParserD1Ev+0x55>
+ nop    DWORD PTR [rax+0x0]
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ test   rbx,rbx
+ je     39c5 <_ZN9AsmParser13ObjDumpParserD1Ev+0x55>
+ mov    r12,rbx
+ mov    rdi,QWORD PTR [r12+0x8]
+ lea    rax,[r12+0x18]
+ mov    rbx,QWORD PTR [r12]
+ cmp    rdi,rax
+ jne    3990 <_ZN9AsmParser13ObjDumpParserD1Ev+0x20>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ test   rbx,rbx
+ jne    39a2 <_ZN9AsmParser13ObjDumpParserD1Ev+0x32>
+ mov    rax,QWORD PTR [rbp+0xf8]
+ mov    rdi,QWORD PTR [rbp+0xf0]
+ xor    esi,esi
+ lea    rdx,[rax*8+0x0]
+ call   20b0 <memset@plt>
+ mov    rdi,QWORD PTR [rbp+0xf0]
+ lea    rax,[rbp+0x120]
+ mov    QWORD PTR [rbp+0x108],0x0
+ mov    QWORD PTR [rbp+0x100],0x0
+ cmp    rdi,rax
+ je     3a10 <_ZN9AsmParser13ObjDumpParserD1Ev+0xa0>
+ call   20f0 <_ZdlPv@plt>
+ mov    r13,QWORD PTR [rbp+0xe0]
+ mov    rbx,QWORD PTR [rbp+0xd8]
+ cmp    r13,rbx
+ je     3af2 <_ZN9AsmParser13ObjDumpParserD1Ev+0x182>
+ nop    WORD PTR [rax+rax*1+0x0]
+ cmp    BYTE PTR [rbx+0x78],0x0
+ je     3a4c <_ZN9AsmParser13ObjDumpParserD1Ev+0xdc>
+ mov    rdi,QWORD PTR [rbx+0x50]
+ lea    rax,[rbx+0x60]
+ mov    BYTE PTR [rbx+0x78],0x0
+ cmp    rdi,rax
+ je     3a4c <_ZN9AsmParser13ObjDumpParserD1Ev+0xdc>
+ call   20f0 <_ZdlPv@plt>
+ mov    r14,QWORD PTR [rbx+0x40]
+ mov    r12,QWORD PTR [rbx+0x38]
+ cmp    r14,r12
+ je     3a84 <_ZN9AsmParser13ObjDumpParserD1Ev+0x114>
+ nop    DWORD PTR [rax+0x0]
+ mov    rdi,QWORD PTR [r12]
+ lea    rax,[r12+0x10]
+ cmp    rdi,rax
+ je     3b78 <_ZN9AsmParser13ObjDumpParserD1Ev+0x208>
+ call   20f0 <_ZdlPv@plt>
+ add    r12,0x20
+ cmp    r12,r14
+ jne    3a60 <_ZN9AsmParser13ObjDumpParserD1Ev+0xf0>
+ mov    r12,QWORD PTR [rbx+0x38]
+ test   r12,r12
+ je     3a91 <_ZN9AsmParser13ObjDumpParserD1Ev+0x121>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ mov    r14,QWORD PTR [rbx+0x28]
+ mov    r12,QWORD PTR [rbx+0x20]
+ cmp    r14,r12
+ je     3ac4 <_ZN9AsmParser13ObjDumpParserD1Ev+0x154>
+ xchg   ax,ax
+ mov    rdi,QWORD PTR [r12]
+ lea    rax,[r12+0x10]
+ cmp    rdi,rax
+ je     3b60 <_ZN9AsmParser13ObjDumpParserD1Ev+0x1f0>
+ call   20f0 <_ZdlPv@plt>
+ add    r12,0x30
+ cmp    r14,r12
+ jne    3aa0 <_ZN9AsmParser13ObjDumpParserD1Ev+0x130>
+ mov    r12,QWORD PTR [rbx+0x20]
+ test   r12,r12
+ je     3ad1 <_ZN9AsmParser13ObjDumpParserD1Ev+0x161>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbx]
+ lea    rax,[rbx+0x10]
+ cmp    rdi,rax
+ je     3b48 <_ZN9AsmParser13ObjDumpParserD1Ev+0x1d8>
+ call   20f0 <_ZdlPv@plt>
+ add    rbx,0x90
+ cmp    rbx,r13
+ jne    3a30 <_ZN9AsmParser13ObjDumpParserD1Ev+0xc0>
+ mov    rdi,QWORD PTR [rbp+0xd8]
+ test   rdi,rdi
+ je     3b03 <_ZN9AsmParser13ObjDumpParserD1Ev+0x193>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbp+0xb8]
+ lea    rax,[rbp+0xc8]
+ cmp    rdi,rax
+ je     3b1b <_ZN9AsmParser13ObjDumpParserD1Ev+0x1ab>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbp+0x98]
+ lea    rax,[rbp+0xa8]
+ cmp    rdi,rax
+ je     3b33 <_ZN9AsmParser13ObjDumpParserD1Ev+0x1c3>
+ call   20f0 <_ZdlPv@plt>
+ pop    rbx
+ mov    rdi,rbp
+ pop    rbp
+ pop    r12
+ pop    r13
+ pop    r14
+ jmp    38a0 <_ZN9AsmParser8asm_lineD1Ev>
+ nop    DWORD PTR [rax+rax*1+0x0]
+ add    rbx,0x90
+ cmp    r13,rbx
+ jne    3a30 <_ZN9AsmParser13ObjDumpParserD1Ev+0xc0>
+ jmp    3af2 <_ZN9AsmParser13ObjDumpParserD1Ev+0x182>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    r12,0x30
+ cmp    r14,r12
+ jne    3aa0 <_ZN9AsmParser13ObjDumpParserD1Ev+0x130>
+ jmp    3ac0 <_ZN9AsmParser13ObjDumpParserD1Ev+0x150>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    r12,0x20
+ cmp    r14,r12
+ jne    3a60 <_ZN9AsmParser13ObjDumpParserD1Ev+0xf0>
+ jmp    3a80 <_ZN9AsmParser13ObjDumpParserD1Ev+0x110>
+ nop    WORD PTR [rax+rax*1+0x0]
+_ZN9AsmParser13ObjDumpParser10fromStreamERSi:
+ push   r15
+ push   r14
+ push   r13
+ push   r12
+ push   rbp
+ push   rbx
+ mov    rbx,rdi
+ sub    rsp,0x108
+ mov    QWORD PTR [rsp+0x8],rsi
+ lea    rbp,[rsp+0x5f]
+ mov    rax,QWORD PTR fs:0x28
+ mov    QWORD PTR [rsp+0xf8],rax
+ xor    eax,eax
+ lea    rax,[rdi+0x100]
+ mov    BYTE PTR [rdi+0x92],0x1
+ mov    QWORD PTR [rsp+0x20],rax
+ nop    DWORD PTR [rax+0x0]
+ mov    rdi,QWORD PTR [rsp+0x8]
+ mov    rsi,rbp
+ call   2180 <_ZNSi3getERc@plt>
+ mov    rdx,QWORD PTR [rax]
+ mov    rdx,QWORD PTR [rdx-0x18]
+ test   BYTE PTR [rax+rdx*1+0x20],0x5
+ jne    3e10 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x280>
+ movzx  r12d,BYTE PTR [rsp+0x5f]
+ cmp    r12b,0xd
+ je     3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ cmp    r12b,0xa
+ je     3e39 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x2a9>
+ cmp    BYTE PTR [rbx+0x92],0x0
+ je     3c88 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf8>
+ cmp    r12b,0x3a
+ je     41da <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x64a>
+ cmp    r12b,0x20
+ je     41aa <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x61a>
+ cmp    r12b,0x9
+ je     41aa <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x61a>
+ mov    r14,QWORD PTR [rbx+0xc0]
+ mov    rax,QWORD PTR [rbx+0xb8]
+ lea    rdi,[rbx+0xb8]
+ lea    rdx,[rbx+0xc8]
+ lea    r13,[r14+0x1]
+ cmp    rax,rdx
+ je     3cca <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x13a>
+ mov    rdx,QWORD PTR [rbx+0xc8]
+ cmp    r13,rdx
+ ja     3cd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x148>
+ mov    BYTE PTR [rax+r14*1],r12b
+ mov    rax,QWORD PTR [rbx+0xb8]
+ mov    QWORD PTR [rbx+0xc0],r13
+ mov    BYTE PTR [rax+r13*1],0x0
+ jmp    3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ nop    DWORD PTR [rax+0x0]
+ cmp    BYTE PTR [rbx+0x93],0x0
+ je     3d00 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x170>
+ lea    rdi,[rbx+0xb8]
+ cmp    r12b,0x3a
+ je     4491 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x901>
+ cmp    r12b,0x20
+ je     41c0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x630>
+ mov    r14,QWORD PTR [rbx+0xc0]
+ mov    rax,QWORD PTR [rbx+0xb8]
+ lea    rdx,[rbx+0xc8]
+ lea    r13,[r14+0x1]
+ cmp    rax,rdx
+ jne    3c59 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xc9>
+ mov    edx,0xf
+ cmp    r13,rdx
+ jbe    3c65 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xd5>
+ nop    DWORD PTR [rax+0x0]
+ mov    r8d,0x1
+ xor    ecx,ecx
+ xor    edx,edx
+ mov    rsi,r14
+ call   2210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm@plt>
+ mov    rax,QWORD PTR [rbx+0xb8]
+ jmp    3c65 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xd5>
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+ cmp    BYTE PTR [rbx+0x94],0x0
+ je     3c34 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa4>
+ cmp    r12b,0x20
+ je     3d1d <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x18d>
+ cmp    r12b,0x9
+ jne    41f5 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x665>
+ mov    r14,QWORD PTR [rbx+0xc0]
+ test   r14,r14
+ je     3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ mov    rax,QWORD PTR [rbx+0xb8]
+ cmp    BYTE PTR [rax+r14*1-0x1],0x20
+ jne    3c42 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb2>
+ lea    r12,[rsp+0x70]
+ mov    r15,rax
+ lea    rax,[rax+r14*1]
+ mov    QWORD PTR [rsp+0x68],0x0
+ mov    QWORD PTR [rsp+0x60],r12
+ mov    BYTE PTR [rsp+0x70],0x0
+ mov    QWORD PTR [rsp+0x10],rax
+ jmp    3dab <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x21b>
+ lea    rax,[r13+0x1]
+ mov    QWORD PTR [rsp+0x18],rax
+ cmp    QWORD PTR [rsp+0x60],r12
+ je     4d02 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1172>
+ mov    rax,QWORD PTR [rsp+0x70]
+ cmp    QWORD PTR [rsp+0x18],rax
+ ja     4c31 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x10a1>
+ mov    rax,QWORD PTR [rsp+0x60]
+ mov    BYTE PTR [rax+r13*1],r14b
+ lea    rax,[r13+0x1]
+ mov    QWORD PTR [rsp+0x68],rax
+ mov    rax,QWORD PTR [rsp+0x60]
+ mov    BYTE PTR [rax+r13*1+0x1],0x0
+ add    r15,0x1
+ cmp    r15,QWORD PTR [rsp+0x10]
+ je     4c4d <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x10bd>
+ movzx  r14d,BYTE PTR [r15]
+ mov    r13,QWORD PTR [rsp+0x68]
+ cmp    r14b,0x20
+ jne    3d66 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1d6>
+ test   r13,r13
+ je     3da7 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x217>
+ mov    r14,QWORD PTR [rbx+0x40]
+ cmp    r14,QWORD PTR [rbx+0x48]
+ je     4d55 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x11c5>
+ lea    rax,[r14+0x10]
+ mov    rdx,QWORD PTR [rsp+0x68]
+ mov    rdi,r14
+ mov    QWORD PTR [r14],rax
+ mov    rsi,QWORD PTR [rsp+0x60]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ add    QWORD PTR [rbx+0x40],0x20
+ mov    QWORD PTR [rsp+0x68],0x0
+ mov    rax,QWORD PTR [rsp+0x60]
+ mov    BYTE PTR [rax],0x0
+ jmp    3da7 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x217>
+ nop    DWORD PTR [rax+0x0]
+ mov    rax,QWORD PTR [rsp+0xf8]
+ xor    rax,QWORD PTR fs:0x28
+ jne    4f0c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x137c>
+ add    rsp,0x108
+ pop    rbx
+ pop    rbp
+ pop    r12
+ pop    r13
+ pop    r14
+ pop    r15
+ ret    
+ lea    rax,[rbx+0xb8]
+ mov    rdi,rbx
+ mov    rsi,rax
+ mov    QWORD PTR [rsp+0x10],rax
+ call   20a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_@plt>
+ cmp    QWORD PTR [rbx+0x8],0x0
+ jne    4222 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x692>
+ xor    eax,eax
+ pxor   xmm0,xmm0
+ lea    r12,[rsp+0x70]
+ mov    ecx,0x10
+ lea    rdi,[rsp+0xb0]
+ mov    QWORD PTR [rbx+0x8],0x0
+ rep stos DWORD PTR es:[rdi],eax
+ mov    rax,QWORD PTR [rbx]
+ movaps XMMWORD PTR [rsp+0x80],xmm0
+ movaps XMMWORD PTR [rsp+0x90],xmm0
+ mov    QWORD PTR [rsp+0x60],r12
+ mov    BYTE PTR [rsp+0x70],0x0
+ movaps XMMWORD PTR [rsp+0xa0],xmm0
+ mov    BYTE PTR [rax],0x0
+ mov    rax,QWORD PTR [rsp+0x60]
+ mov    QWORD PTR [rsp+0x68],0x0
+ mov    BYTE PTR [rax],0x0
+ mov    r14,QWORD PTR [rbx+0x20]
+ movdqa xmm1,XMMWORD PTR [rsp+0x80]
+ mov    r13,QWORD PTR [rbx+0x28]
+ movaps XMMWORD PTR [rsp+0x80],xmm0
+ mov    rax,QWORD PTR [rsp+0x90]
+ mov    r15,r14
+ mov    QWORD PTR [rsp+0x90],0x0
+ movaps XMMWORD PTR [rbx+0x20],xmm1
+ mov    QWORD PTR [rbx+0x30],rax
+ cmp    r14,r13
+ je     3f16 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x386>
+ nop    DWORD PTR [rax+rax*1+0x0]
+ mov    rdi,QWORD PTR [r15]
+ lea    rax,[r15+0x10]
+ cmp    rdi,rax
+ je     40d8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x548>
+ call   20f0 <_ZdlPv@plt>
+ add    r15,0x30
+ cmp    r15,r13
+ jne    3ef8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x368>
+ test   r14,r14
+ je     3f23 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x393>
+ mov    rdi,r14
+ call   20f0 <_ZdlPv@plt>
+ mov    r14,QWORD PTR [rbx+0x38]
+ mov    rax,QWORD PTR [rsp+0xa8]
+ pxor   xmm0,xmm0
+ mov    QWORD PTR [rsp+0xa8],0x0
+ movdqu xmm2,XMMWORD PTR [rsp+0x98]
+ mov    r13,QWORD PTR [rbx+0x40]
+ movups XMMWORD PTR [rsp+0x98],xmm0
+ mov    QWORD PTR [rbx+0x48],rax
+ mov    r15,r14
+ movups XMMWORD PTR [rbx+0x38],xmm2
+ cmp    r14,r13
+ je     3f86 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x3f6>
+ nop    DWORD PTR [rax+0x0]
+ mov    rdi,QWORD PTR [r15]
+ lea    rax,[r15+0x10]
+ cmp    rdi,rax
+ je     40f0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x560>
+ call   20f0 <_ZdlPv@plt>
+ add    r15,0x20
+ cmp    r15,r13
+ jne    3f68 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x3d8>
+ test   r14,r14
+ je     3f93 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x403>
+ mov    rdi,r14
+ call   20f0 <_ZdlPv@plt>
+ cmp    BYTE PTR [rbx+0x78],0x0
+ movzx  eax,BYTE PTR [rsp+0xd8]
+ je     4102 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x572>
+ mov    rdi,QWORD PTR [rbx+0x50]
+ lea    rdx,[rbx+0x60]
+ test   al,al
+ jne    43f4 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x864>
+ mov    BYTE PTR [rbx+0x78],0x0
+ cmp    rdi,rdx
+ je     3fc3 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x433>
+ call   20f0 <_ZdlPv@plt>
+ movdqa xmm3,XMMWORD PTR [rsp+0xe0]
+ cmp    BYTE PTR [rsp+0xd8],0x0
+ movaps XMMWORD PTR [rbx+0x80],xmm3
+ je     3fff <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x46f>
+ mov    rdi,QWORD PTR [rsp+0xb0]
+ lea    rax,[rsp+0xc0]
+ mov    BYTE PTR [rsp+0xd8],0x0
+ cmp    rdi,rax
+ je     3fff <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x46f>
+ call   20f0 <_ZdlPv@plt>
+ mov    r13,QWORD PTR [rsp+0xa0]
+ mov    r14,QWORD PTR [rsp+0x98]
+ cmp    r13,r14
+ je     4036 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4a6>
+ nop    DWORD PTR [rax+0x0]
+ mov    rdi,QWORD PTR [r14]
+ lea    rax,[r14+0x10]
+ cmp    rdi,rax
+ je     4198 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x608>
+ call   20f0 <_ZdlPv@plt>
+ add    r14,0x20
+ cmp    r14,r13
+ jne    4018 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x488>
+ mov    rdi,QWORD PTR [rsp+0x98]
+ test   rdi,rdi
+ je     4048 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4b8>
+ call   20f0 <_ZdlPv@plt>
+ mov    r13,QWORD PTR [rsp+0x88]
+ mov    r14,QWORD PTR [rsp+0x80]
+ cmp    r13,r14
+ je     407e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4ee>
+ nop    DWORD PTR [rax]
+ mov    rdi,QWORD PTR [r14]
+ lea    rax,[r14+0x10]
+ cmp    rdi,rax
+ je     4180 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x5f0>
+ call   20f0 <_ZdlPv@plt>
+ add    r14,0x30
+ cmp    r14,r13
+ jne    4060 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4d0>
+ mov    rdi,QWORD PTR [rsp+0x80]
+ test   rdi,rdi
+ je     4090 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x500>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rsp+0x60]
+ cmp    rdi,r12
+ je     409f <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x50f>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdx,QWORD PTR [rbx+0xc0]
+ mov    rdi,QWORD PTR [rsp+0x10]
+ xor    r8d,r8d
+ xor    esi,esi
+ lea    rcx,[rip+0x1fa1]        # 6058 <_IO_stdin_used+0x58>
+ call   21b0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEmmPKcm@plt>
+ mov    BYTE PTR [rbx+0x94],0x0
+ mov    DWORD PTR [rbx+0x90],0x10000
+ jmp    3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    r15,0x30
+ cmp    r13,r15
+ jne    3ef8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x368>
+ jmp    3f16 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x386>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    r15,0x20
+ cmp    r13,r15
+ jne    3f68 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x3d8>
+ jmp    3f86 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x3f6>
+ test   al,al
+ je     3fc3 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x433>
+ lea    rax,[rbx+0x60]
+ mov    rdx,QWORD PTR [rsp+0xb0]
+ mov    QWORD PTR [rbx+0x50],rax
+ lea    rax,[rsp+0xc0]
+ cmp    rdx,rax
+ je     447f <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x8ef>
+ mov    QWORD PTR [rbx+0x50],rdx
+ mov    rdx,QWORD PTR [rsp+0xc0]
+ mov    QWORD PTR [rbx+0x60],rdx
+ mov    rdx,QWORD PTR [rsp+0xb8]
+ mov    QWORD PTR [rsp+0xb0],rax
+ mov    eax,DWORD PTR [rsp+0xd0]
+ mov    BYTE PTR [rsp+0xc0],0x0
+ mov    QWORD PTR [rbx+0x58],rdx
+ mov    QWORD PTR [rsp+0xb8],0x0
+ mov    DWORD PTR [rbx+0x70],eax
+ mov    BYTE PTR [rbx+0x78],0x1
+ jmp    3fc3 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x433>
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+ add    r14,0x30
+ cmp    r13,r14
+ jne    4060 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4d0>
+ jmp    407e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4ee>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    r14,0x20
+ cmp    r13,r14
+ jne    4018 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x488>
+ jmp    4036 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x4a6>
+ mov    rdi,rbx
+ call   3700 <_ZN9AsmParser13ObjDumpParser7addressEv>
+ mov    WORD PTR [rbx+0x92],0x100
+ jmp    3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ mov    BYTE PTR [rbx+0x93],0x0
+ mov    r14,QWORD PTR [rbx+0xc0]
+ mov    rax,QWORD PTR [rbx+0xb8]
+ jmp    3c49 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb9>
+ mov    rdi,rbx
+ call   3700 <_ZN9AsmParser13ObjDumpParser7addressEv>
+ mov    BYTE PTR [rbx+0x92],0x0
+ mov    BYTE PTR [rbx+0x94],0x1
+ jmp    3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ lea    eax,[r12-0x61]
+ lea    rdi,[rbx+0xb8]
+ cmp    al,0x5
+ jbe    3cac <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x11c>
+ lea    eax,[r12-0x30]
+ cmp    al,0x9
+ jbe    3cac <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x11c>
+ mov    BYTE PTR [rbx+0x94],0x0
+ jmp    3cac <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x11c>
+ mov    r15,QWORD PTR [rbx+0xe0]
+ mov    QWORD PTR [rsp+0x18],r15
+ cmp    r15,QWORD PTR [rbx+0xe8]
+ je     4740 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xbb0>
+ lea    rax,[r15+0x10]
+ mov    rdx,QWORD PTR [rbx+0x8]
+ mov    rdi,r15
+ mov    QWORD PTR [r15],rax
+ mov    rsi,QWORD PTR [rbx]
+ mov    QWORD PTR [rsp+0x28],rax
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    r12,QWORD PTR [rbx+0x28]
+ sub    r12,QWORD PTR [rbx+0x20]
+ movabs rdx,0xaaaaaaaaaaaaaaab
+ mov    rax,r12
+ pxor   xmm0,xmm0
+ mov    QWORD PTR [r15+0x30],0x0
+ sar    rax,0x4
+ movups XMMWORD PTR [r15+0x20],xmm0
+ imul   rax,rdx
+ test   rax,rax
+ je     4c21 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1091>
+ movabs rdx,0x2aaaaaaaaaaaaaa
+ cmp    rax,rdx
+ ja     4f07 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1377>
+ mov    rdi,r12
+ call   2110 <_Znwm@plt>
+ mov    r15,rax
+ mov    rax,QWORD PTR [rsp+0x18]
+ movq   xmm0,r15
+ add    r12,r15
+ mov    r13,r15
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [rax+0x30],r12
+ movups XMMWORD PTR [rax+0x20],xmm0
+ mov    r14,QWORD PTR [rbx+0x28]
+ mov    r12,QWORD PTR [rbx+0x20]
+ cmp    r14,r12
+ je     431b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x78b>
+ nop    WORD PTR [rax+rax*1+0x0]
+ lea    rax,[r13+0x10]
+ mov    rdx,QWORD PTR [r12+0x8]
+ mov    rdi,r13
+ mov    QWORD PTR [r13+0x0],rax
+ mov    rsi,QWORD PTR [r12]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rax,QWORD PTR [r12+0x20]
+ add    r12,0x30
+ add    r13,0x30
+ mov    QWORD PTR [r13-0x10],rax
+ mov    eax,DWORD PTR [r12-0x8]
+ mov    DWORD PTR [r13-0x8],eax
+ cmp    r14,r12
+ jne    42e0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x750>
+ mov    rax,QWORD PTR [rsp+0x18]
+ mov    r12,QWORD PTR [rbx+0x40]
+ pxor   xmm0,xmm0
+ sub    r12,QWORD PTR [rbx+0x38]
+ mov    QWORD PTR [rax+0x28],r13
+ mov    QWORD PTR [rax+0x48],0x0
+ movups XMMWORD PTR [rax+0x38],xmm0
+ mov    rax,r12
+ sar    rax,0x5
+ je     4c29 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1099>
+ movabs rcx,0x3ffffffffffffff
+ cmp    rax,rcx
+ ja     4ef6 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1366>
+ mov    rdi,r12
+ call   2110 <_Znwm@plt>
+ mov    r15,rax
+ mov    rax,QWORD PTR [rsp+0x18]
+ movq   xmm0,r15
+ add    r12,r15
+ mov    r13,r15
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [rax+0x48],r12
+ movups XMMWORD PTR [rax+0x38],xmm0
+ mov    r14,QWORD PTR [rbx+0x40]
+ mov    r12,QWORD PTR [rbx+0x38]
+ cmp    r14,r12
+ je     43b9 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x829>
+ lea    rax,[r13+0x10]
+ mov    rdx,QWORD PTR [r12+0x8]
+ mov    rdi,r13
+ mov    QWORD PTR [r13+0x0],rax
+ mov    rsi,QWORD PTR [r12]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ add    r12,0x20
+ add    r13,0x20
+ cmp    r14,r12
+ jne    4390 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x800>
+ mov    rax,QWORD PTR [rsp+0x18]
+ cmp    BYTE PTR [rbx+0x78],0x0
+ mov    QWORD PTR [rax+0x40],r13
+ mov    BYTE PTR [rax+0x78],0x0
+ jne    4bef <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x105f>
+ mov    rax,QWORD PTR [rsp+0x18]
+ movdqa xmm5,XMMWORD PTR [rbx+0x80]
+ movups XMMWORD PTR [rax+0x80],xmm5
+ add    QWORD PTR [rbx+0xe0],0x90
+ jmp    3e5b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x2cb>
+ mov    rsi,QWORD PTR [rsp+0xb0]
+ lea    rax,[rsp+0xc0]
+ mov    r8,QWORD PTR [rsp+0xb8]
+ cmp    rsi,rax
+ je     4c7a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x10ea>
+ mov    rcx,QWORD PTR [rsp+0xc0]
+ cmp    rdi,rdx
+ je     4afd <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf6d>
+ movq   xmm0,r8
+ movq   xmm5,rcx
+ mov    rdx,QWORD PTR [rbx+0x60]
+ mov    QWORD PTR [rbx+0x50],rsi
+ punpcklqdq xmm0,xmm5
+ movups XMMWORD PTR [rbx+0x58],xmm0
+ test   rdi,rdi
+ je     4b13 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf83>
+ mov    QWORD PTR [rsp+0xb0],rdi
+ mov    QWORD PTR [rsp+0xc0],rdx
+ mov    rax,QWORD PTR [rsp+0xb0]
+ mov    QWORD PTR [rsp+0xb8],0x0
+ mov    BYTE PTR [rax],0x0
+ mov    eax,DWORD PTR [rsp+0xd0]
+ mov    DWORD PTR [rbx+0x70],eax
+ jmp    3fc3 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x433>
+ movdqa xmm7,XMMWORD PTR [rsp+0xc0]
+ movaps XMMWORD PTR [rbx+0x60],xmm7
+ jmp    413b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x5ab>
+ lea    r8,[rbx+0x98]
+ mov    rsi,rdi
+ mov    rdi,r8
+ call   20a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_@plt>
+ mov    r13,QWORD PTR [rbx+0xe0]
+ mov    edi,0x38
+ sub    r13,QWORD PTR [rbx+0xd8]
+ movabs rax,0x8e38e38e38e38e39
+ sar    r13,0x4
+ imul   r13,rax
+ call   2110 <_Znwm@plt>
+ mov    rsi,QWORD PTR [rbx+0x98]
+ mov    rdx,QWORD PTR [rbx+0xa0]
+ mov    QWORD PTR [rax],0x0
+ mov    r12,rax
+ lea    rdi,[rax+0x8]
+ lea    rax,[rax+0x18]
+ mov    QWORD PTR [r12+0x8],rax
+ add    rdx,rsi
+ mov    QWORD PTR [rsp+0x10],rax
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    DWORD PTR [r12+0x28],r13d
+ mov    rsi,QWORD PTR [r12+0x10]
+ mov    edx,0xc70f6907
+ mov    rdi,QWORD PTR [r12+0x8]
+ call   2030 <_ZSt11_Hash_bytesPKvmm@plt>
+ mov    r9,QWORD PTR [rbx+0xf8]
+ xor    edx,edx
+ mov    r14,rax
+ div    r9
+ mov    rax,QWORD PTR [rbx+0xf0]
+ mov    r15,QWORD PTR [rax+rdx*8]
+ mov    rcx,rdx
+ mov    r8,rdx
+ test   r15,r15
+ je     45ef <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa5f>
+ mov    r13,QWORD PTR [r15]
+ cmp    r14,QWORD PTR [r13+0x30]
+ je     4571 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x9e1>
+ mov    rsi,QWORD PTR [r13+0x0]
+ test   rsi,rsi
+ je     45ef <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa5f>
+ mov    rax,QWORD PTR [rsi+0x30]
+ xor    edx,edx
+ mov    r15,r13
+ div    r9
+ cmp    rcx,rdx
+ jne    45ef <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa5f>
+ mov    r13,rsi
+ jmp    4544 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x9b4>
+ mov    rdx,QWORD PTR [r12+0x10]
+ cmp    rdx,QWORD PTR [r13+0x10]
+ jne    454a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x9ba>
+ mov    QWORD PTR [rsp+0x18],rcx
+ mov    rdi,QWORD PTR [r12+0x8]
+ test   rdx,rdx
+ je     45bb <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa2b>
+ mov    rsi,QWORD PTR [r13+0x8]
+ mov    QWORD PTR [rsp+0x38],r8
+ mov    QWORD PTR [rsp+0x30],r9
+ mov    QWORD PTR [rsp+0x28],rdi
+ call   2070 <memcmp@plt>
+ mov    rdi,QWORD PTR [rsp+0x28]
+ mov    r9,QWORD PTR [rsp+0x30]
+ test   eax,eax
+ mov    r8,QWORD PTR [rsp+0x38]
+ mov    rcx,QWORD PTR [rsp+0x18]
+ jne    454a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x9ba>
+ cmp    QWORD PTR [r15],0x0
+ je     45ef <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa5f>
+ cmp    QWORD PTR [rsp+0x10],rdi
+ je     45cd <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa3d>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,r12
+ call   20f0 <_ZdlPv@plt>
+ mov    rax,QWORD PTR [rbx+0xb8]
+ mov    QWORD PTR [rbx+0xc0],0x0
+ mov    BYTE PTR [rax],0x0
+ jmp    3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ mov    rdx,QWORD PTR [rbx+0x108]
+ mov    ecx,0x1
+ mov    rsi,r9
+ mov    QWORD PTR [rsp+0x18],r8
+ lea    rdi,[rbx+0x110]
+ mov    r13,QWORD PTR [rbx+0x118]
+ call   2160 <_ZNKSt8__detail20_Prime_rehash_policy14_M_need_rehashEmmm@plt>
+ mov    r8,QWORD PTR [rsp+0x18]
+ test   al,al
+ mov    r15,rdx
+ je     470a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb7a>
+ cmp    rdx,0x1
+ je     4ecb <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x133b>
+ movabs rax,0xfffffffffffffff
+ cmp    rdx,rax
+ ja     4ef1 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1361>
+ lea    rax,[rdx*8+0x0]
+ mov    rdi,rax
+ mov    QWORD PTR [rsp+0x18],rax
+ call   2110 <_Znwm@plt>
+ mov    rdx,QWORD PTR [rsp+0x18]
+ xor    esi,esi
+ mov    rdi,rax
+ mov    r13,rax
+ call   20b0 <memset@plt>
+ lea    r8,[rbx+0x120]
+ mov    rcx,QWORD PTR [rbx+0x100]
+ mov    r9,QWORD PTR [rsp+0x20]
+ xor    esi,esi
+ mov    QWORD PTR [rbx+0x100],0x0
+ jmp    46a1 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb11>
+ mov    rdx,QWORD PTR [r10]
+ mov    QWORD PTR [rcx],rdx
+ mov    rax,QWORD PTR [rax]
+ mov    rdx,rsi
+ mov    QWORD PTR [rax],rcx
+ mov    rsi,rdx
+ mov    rcx,rdi
+ test   rcx,rcx
+ je     46e0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb50>
+ mov    rax,QWORD PTR [rcx+0x30]
+ xor    edx,edx
+ mov    rdi,QWORD PTR [rcx]
+ div    r15
+ lea    rax,[r13+rdx*8+0x0]
+ mov    r10,QWORD PTR [rax]
+ test   r10,r10
+ jne    468c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xafc>
+ mov    r10,QWORD PTR [rbx+0x100]
+ mov    QWORD PTR [rcx],r10
+ mov    QWORD PTR [rbx+0x100],rcx
+ mov    QWORD PTR [rax],r9
+ cmp    QWORD PTR [rcx],0x0
+ je     469b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb0b>
+ mov    QWORD PTR [r13+rsi*8+0x0],rcx
+ jmp    469b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb0b>
+ mov    rdi,QWORD PTR [rbx+0xf0]
+ cmp    rdi,r8
+ je     46f1 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xb61>
+ call   20f0 <_ZdlPv@plt>
+ mov    rax,r14
+ xor    edx,edx
+ mov    QWORD PTR [rbx+0xf8],r15
+ div    r15
+ mov    QWORD PTR [rbx+0xf0],r13
+ mov    r8,rdx
+ mov    rsi,QWORD PTR [rbx+0xf0]
+ mov    QWORD PTR [r12+0x30],r14
+ lea    rcx,[rsi+r8*8]
+ mov    rax,QWORD PTR [rcx]
+ test   rax,rax
+ je     4ccd <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x113d>
+ mov    rax,QWORD PTR [rax]
+ mov    QWORD PTR [r12],rax
+ mov    rax,QWORD PTR [rcx]
+ mov    QWORD PTR [rax],r12
+ add    QWORD PTR [rbx+0x108],0x1
+ jmp    45d5 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xa45>
+ mov    rax,QWORD PTR [rbx+0xd8]
+ mov    r15,QWORD PTR [rsp+0x18]
+ movabs rcx,0x8e38e38e38e38e39
+ movabs rdx,0xe38e38e38e38e3
+ sub    r15,rax
+ mov    QWORD PTR [rsp+0x38],rax
+ mov    rax,r15
+ sar    rax,0x4
+ imul   rax,rcx
+ cmp    rax,rdx
+ je     4ee5 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1355>
+ test   rax,rax
+ je     4b20 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf90>
+ lea    rcx,[rax+rax*1]
+ mov    QWORD PTR [rsp+0x30],rcx
+ cmp    rax,rcx
+ jbe    4caa <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x111a>
+ mov    QWORD PTR [rsp+0x30],rdx
+ imul   rdi,QWORD PTR [rsp+0x30],0x90
+ call   2110 <_Znwm@plt>
+ mov    QWORD PTR [rsp+0x28],rax
+ add    r15,QWORD PTR [rsp+0x28]
+ mov    rsi,QWORD PTR [rbx]
+ lea    rax,[r15+0x10]
+ mov    rdx,QWORD PTR [rbx+0x8]
+ mov    rdi,r15
+ mov    QWORD PTR [r15],rax
+ add    rdx,rsi
+ mov    QWORD PTR [rsp+0x48],rax
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    r14,QWORD PTR [rbx+0x28]
+ pxor   xmm0,xmm0
+ movabs rdx,0xaaaaaaaaaaaaaaab
+ mov    QWORD PTR [r15+0x30],0x0
+ movups XMMWORD PTR [r15+0x20],xmm0
+ mov    r12,r14
+ sub    r12,QWORD PTR [rbx+0x20]
+ mov    rax,r12
+ sar    rax,0x4
+ imul   rax,rdx
+ test   rax,rax
+ je     4d39 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x11a9>
+ movabs rdx,0x2aaaaaaaaaaaaaa
+ cmp    rax,rdx
+ ja     4f11 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1381>
+ mov    rdi,r12
+ call   2110 <_Znwm@plt>
+ mov    QWORD PTR [rsp+0x40],rax
+ mov    r14,QWORD PTR [rbx+0x28]
+ mov    rax,QWORD PTR [rsp+0x40]
+ mov    r13,QWORD PTR [rbx+0x20]
+ movq   xmm0,rax
+ add    r12,rax
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [r15+0x30],r12
+ mov    r12,rax
+ movups XMMWORD PTR [r15+0x20],xmm0
+ jmp    4889 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xcf9>
+ lea    rax,[r12+0x10]
+ mov    rdx,QWORD PTR [r13+0x8]
+ mov    rdi,r12
+ mov    QWORD PTR [r12],rax
+ mov    rsi,QWORD PTR [r13+0x0]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rax,QWORD PTR [r13+0x20]
+ add    r12,0x30
+ add    r13,0x30
+ mov    QWORD PTR [r12-0x10],rax
+ mov    eax,DWORD PTR [r13-0x8]
+ mov    DWORD PTR [r12-0x8],eax
+ cmp    r14,r13
+ jne    4853 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xcc3>
+ mov    r14,QWORD PTR [rbx+0x40]
+ mov    QWORD PTR [r15+0x28],r12
+ pxor   xmm0,xmm0
+ mov    QWORD PTR [r15+0x48],0x0
+ mov    r12,r14
+ sub    r12,QWORD PTR [rbx+0x38]
+ movups XMMWORD PTR [r15+0x38],xmm0
+ mov    rax,r12
+ sar    rax,0x5
+ je     4d47 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x11b7>
+ movabs rcx,0x3ffffffffffffff
+ cmp    rax,rcx
+ ja     4f16 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1386>
+ mov    rdi,r12
+ call   2110 <_Znwm@plt>
+ mov    QWORD PTR [rsp+0x40],rax
+ mov    r14,QWORD PTR [rbx+0x40]
+ mov    rax,QWORD PTR [rsp+0x40]
+ mov    r13,QWORD PTR [rbx+0x38]
+ movq   xmm0,rax
+ add    r12,rax
+ punpcklqdq xmm0,xmm0
+ mov    QWORD PTR [r15+0x48],r12
+ mov    r12,rax
+ movups XMMWORD PTR [r15+0x38],xmm0
+ jmp    4926 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xd96>
+ lea    rax,[r12+0x10]
+ mov    rdx,QWORD PTR [r13+0x8]
+ mov    rdi,r12
+ mov    QWORD PTR [r12],rax
+ mov    rsi,QWORD PTR [r13+0x0]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ add    r12,0x20
+ add    r13,0x20
+ cmp    r13,r14
+ jne    4902 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xd72>
+ cmp    BYTE PTR [rbx+0x78],0x0
+ mov    QWORD PTR [r15+0x40],r12
+ mov    BYTE PTR [r15+0x78],0x0
+ jne    4d0c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x117c>
+ mov    r14,QWORD PTR [rsp+0x38]
+ mov    r12,QWORD PTR [rsp+0x28]
+ mov    QWORD PTR [rsp+0x48],rbp
+ movdqa xmm7,XMMWORD PTR [rbx+0x80]
+ mov    QWORD PTR [rsp+0x40],rbx
+ mov    rbx,r14
+ mov    r14,QWORD PTR [rsp+0x18]
+ movups XMMWORD PTR [r15+0x80],xmm7
+ cmp    r14,rbx
+ je     4b6a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xfda>
+ lea    rax,[r12+0x10]
+ lea    r15,[rbx+0x10]
+ mov    QWORD PTR [r12],rax
+ mov    rax,QWORD PTR [rbx]
+ cmp    rax,r15
+ je     4b5a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xfca>
+ mov    QWORD PTR [r12],rax
+ mov    rax,QWORD PTR [rbx+0x10]
+ mov    QWORD PTR [r12+0x10],rax
+ mov    rax,QWORD PTR [rbx+0x8]
+ movzx  esi,BYTE PTR [rbx+0x78]
+ lea    rdx,[rbx+0x50]
+ lea    rdi,[r12+0x50]
+ mov    QWORD PTR [r12+0x8],rax
+ mov    rax,QWORD PTR [rbx+0x20]
+ mov    QWORD PTR [rbx],r15
+ mov    QWORD PTR [rbx+0x8],0x0
+ mov    BYTE PTR [rbx+0x10],0x0
+ mov    QWORD PTR [r12+0x20],rax
+ mov    rax,QWORD PTR [rbx+0x28]
+ mov    QWORD PTR [r12+0x28],rax
+ mov    rax,QWORD PTR [rbx+0x30]
+ mov    QWORD PTR [r12+0x30],rax
+ mov    rax,QWORD PTR [rbx+0x38]
+ mov    QWORD PTR [rbx+0x30],0x0
+ mov    QWORD PTR [rbx+0x28],0x0
+ mov    QWORD PTR [rbx+0x20],0x0
+ mov    QWORD PTR [r12+0x38],rax
+ mov    rax,QWORD PTR [rbx+0x40]
+ mov    QWORD PTR [r12+0x40],rax
+ mov    rax,QWORD PTR [rbx+0x48]
+ mov    QWORD PTR [r12+0x48],rax
+ mov    QWORD PTR [rbx+0x48],0x0
+ mov    QWORD PTR [rbx+0x40],0x0
+ mov    QWORD PTR [rbx+0x38],0x0
+ call   36a0 <_ZNSt22_Optional_payload_baseIN9AsmParser10asm_sourceEEC2EbOS2_>
+ movdqu xmm4,XMMWORD PTR [rbx+0x80]
+ movups XMMWORD PTR [r12+0x80],xmm4
+ cmp    BYTE PTR [rbx+0x78],0x0
+ je     4a56 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xec6>
+ mov    rdi,QWORD PTR [rbx+0x50]
+ lea    rax,[rbx+0x60]
+ mov    BYTE PTR [rbx+0x78],0x0
+ cmp    rdi,rax
+ je     4a56 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xec6>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbx+0x38]
+ mov    r13,QWORD PTR [rbx+0x40]
+ mov    rbp,rdi
+ cmp    r13,rdi
+ je     4a93 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf03>
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     4b30 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xfa0>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x20
+ cmp    r13,rbp
+ jne    4a70 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xee0>
+ mov    rdi,QWORD PTR [rbx+0x38]
+ test   rdi,rdi
+ je     4a9d <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf0d>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbx+0x20]
+ mov    r13,QWORD PTR [rbx+0x28]
+ mov    rbp,rdi
+ cmp    r13,rdi
+ je     4ad3 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf43>
+ nop    DWORD PTR [rax]
+ mov    rdi,QWORD PTR [rbp+0x0]
+ lea    rax,[rbp+0x10]
+ cmp    rdi,rax
+ je     4b48 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xfb8>
+ call   20f0 <_ZdlPv@plt>
+ add    rbp,0x30
+ cmp    r13,rbp
+ jne    4ab0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf20>
+ mov    rdi,QWORD PTR [rbx+0x20]
+ test   rdi,rdi
+ je     4add <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf4d>
+ call   20f0 <_ZdlPv@plt>
+ mov    rdi,QWORD PTR [rbx]
+ cmp    rdi,r15
+ je     4aea <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf5a>
+ call   20f0 <_ZdlPv@plt>
+ add    rbx,0x90
+ add    r12,0x90
+ jmp    496a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xdda>
+ movq   xmm0,r8
+ movq   xmm6,rcx
+ mov    QWORD PTR [rbx+0x50],rsi
+ punpcklqdq xmm0,xmm6
+ movups XMMWORD PTR [rbx+0x58],xmm0
+ mov    QWORD PTR [rsp+0xb0],rax
+ jmp    4459 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x8c9>
+ mov    QWORD PTR [rsp+0x30],0x1
+ jmp    479c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xc0c>
+ xchg   ax,ax
+ add    rbp,0x20
+ cmp    r13,rbp
+ jne    4a70 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xee0>
+ jmp    4a8f <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xeff>
+ nop    WORD PTR [rax+rax*1+0x0]
+ add    rbp,0x30
+ cmp    r13,rbp
+ jne    4ab0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf20>
+ jmp    4acf <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xf3f>
+ movdqu xmm6,XMMWORD PTR [rbx+0x10]
+ movups XMMWORD PTR [r12+0x10],xmm6
+ jmp    4999 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xe09>
+ mov    r12,QWORD PTR [rsp+0x18]
+ mov    rcx,QWORD PTR [rsp+0x38]
+ movabs rax,0xe38e38e38e38e39
+ mov    rbx,QWORD PTR [rsp+0x40]
+ mov    rbp,QWORD PTR [rsp+0x48]
+ sub    r12,rcx
+ shr    r12,0x4
+ imul   r12,rax
+ movabs rax,0xfffffffffffffff
+ and    r12,rax
+ add    r12,0x1
+ imul   r12,r12,0x90
+ add    r12,QWORD PTR [rsp+0x28]
+ test   rcx,rcx
+ je     4bbd <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x102d>
+ mov    rdi,rcx
+ call   20f0 <_ZdlPv@plt>
+ mov    rcx,QWORD PTR [rsp+0x28]
+ movq   xmm7,r12
+ imul   rax,QWORD PTR [rsp+0x30],0x90
+ movq   xmm0,rcx
+ punpcklqdq xmm0,xmm7
+ add    rax,rcx
+ mov    QWORD PTR [rbx+0xe8],rax
+ movups XMMWORD PTR [rbx+0xd8],xmm0
+ jmp    3e5b <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x2cb>
+ mov    r15,QWORD PTR [rsp+0x18]
+ mov    rdx,QWORD PTR [rbx+0x58]
+ lea    rax,[r15+0x60]
+ lea    rdi,[r15+0x50]
+ mov    QWORD PTR [r15+0x50],rax
+ mov    rsi,QWORD PTR [rbx+0x50]
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    eax,DWORD PTR [rbx+0x70]
+ mov    BYTE PTR [r15+0x78],0x1
+ mov    DWORD PTR [r15+0x70],eax
+ jmp    43d0 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x840>
+ xor    r15d,r15d
+ jmp    42ae <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x71e>
+ xor    r15d,r15d
+ jmp    4367 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x7d7>
+ lea    rdi,[rsp+0x60]
+ mov    r8d,0x1
+ xor    ecx,ecx
+ xor    edx,edx
+ mov    rsi,r13
+ call   2210 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm@plt>
+ jmp    3d8a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1fa>
+ mov    rax,QWORD PTR [rbx+0xb8]
+ mov    QWORD PTR [rbx+0xc0],0x0
+ mov    BYTE PTR [rax],0x0
+ mov    rdi,QWORD PTR [rsp+0x60]
+ cmp    rdi,r12
+ je     3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ call   20f0 <_ZdlPv@plt>
+ jmp    3bd8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x48>
+ test   r8,r8
+ je     4c95 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1105>
+ cmp    r8,0x1
+ je     4eb8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1328>
+ mov    rdx,r8
+ call   20d0 <memcpy@plt>
+ mov    rdi,QWORD PTR [rbx+0x50]
+ mov    rax,QWORD PTR [rsp+0xb8]
+ mov    QWORD PTR [rbx+0x58],rax
+ mov    BYTE PTR [rdi+rax*1],0x0
+ jmp    4459 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x8c9>
+ mov    QWORD PTR [rsp+0x28],0x0
+ test   rcx,rcx
+ je     47af <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xc1f>
+ cmp    rcx,rdx
+ cmovbe rdx,rcx
+ mov    QWORD PTR [rsp+0x30],rdx
+ jmp    479c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xc0c>
+ mov    rax,QWORD PTR [rbx+0x100]
+ mov    QWORD PTR [rbx+0x100],r12
+ mov    QWORD PTR [r12],rax
+ test   rax,rax
+ je     4cf5 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1165>
+ mov    rax,QWORD PTR [rax+0x30]
+ xor    edx,edx
+ div    QWORD PTR [rbx+0xf8]
+ mov    QWORD PTR [rsi+rdx*8],r12
+ mov    rax,QWORD PTR [rsp+0x20]
+ mov    QWORD PTR [rcx],rax
+ jmp    4733 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xba3>
+ mov    eax,0xf
+ jmp    3d7f <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1ef>
+ lea    rax,[r15+0x60]
+ mov    rsi,QWORD PTR [rbx+0x50]
+ mov    rdx,QWORD PTR [rbx+0x58]
+ lea    rdi,[r15+0x50]
+ mov    QWORD PTR [r15+0x50],rax
+ add    rdx,rsi
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    eax,DWORD PTR [rbx+0x70]
+ mov    BYTE PTR [r15+0x78],0x1
+ mov    DWORD PTR [r15+0x70],eax
+ jmp    493e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xdae>
+ mov    QWORD PTR [rsp+0x40],0x0
+ jmp    4830 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xca0>
+ mov    QWORD PTR [rsp+0x40],0x0
+ jmp    48df <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xd4f>
+ mov    rax,QWORD PTR [rbx+0x38]
+ mov    r13,r14
+ movabs rcx,0x3ffffffffffffff
+ sub    r13,rax
+ mov    QWORD PTR [rsp+0x30],rax
+ mov    rax,r13
+ sar    rax,0x5
+ cmp    rax,rcx
+ je     4efb <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x136b>
+ test   rax,rax
+ je     4eaa <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x131a>
+ lea    rcx,[rax+rax*1]
+ mov    QWORD PTR [rsp+0x28],rcx
+ cmp    rax,rcx
+ jbe    4e7a <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x12ea>
+ movabs rax,0x3ffffffffffffff
+ mov    QWORD PTR [rsp+0x28],rax
+ mov    rdi,QWORD PTR [rsp+0x28]
+ shl    rdi,0x5
+ call   2110 <_Znwm@plt>
+ mov    QWORD PTR [rsp+0x18],rax
+ add    r13,QWORD PTR [rsp+0x18]
+ mov    rsi,QWORD PTR [rsp+0x60]
+ lea    rcx,[r13+0x10]
+ mov    rdi,r13
+ mov    QWORD PTR [rsp+0x38],rcx
+ mov    QWORD PTR [r13+0x0],rcx
+ mov    rcx,QWORD PTR [rsp+0x68]
+ add    rcx,rsi
+ mov    rdx,rcx
+ call   37a0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPKcEEvT_S8_St20forward_iterator_tag.constprop.0>
+ mov    rdx,QWORD PTR [rsp+0x18]
+ mov    rax,QWORD PTR [rsp+0x30]
+ jmp    4e0c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x127c>
+ mov    QWORD PTR [rdx],rcx
+ mov    rcx,QWORD PTR [rax+0x10]
+ mov    QWORD PTR [rdx+0x10],rcx
+ mov    rcx,QWORD PTR [rax+0x8]
+ add    rdx,0x20
+ add    rax,0x20
+ mov    QWORD PTR [rdx-0x18],rcx
+ cmp    r14,rax
+ je     4e2f <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x129f>
+ lea    rcx,[rdx+0x10]
+ lea    rsi,[rax+0x10]
+ mov    QWORD PTR [rdx],rcx
+ mov    rcx,QWORD PTR [rax]
+ cmp    rcx,rsi
+ jne    4df1 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1261>
+ movdqu xmm6,XMMWORD PTR [rax+0x10]
+ movups XMMWORD PTR [rdx+0x10],xmm6
+ jmp    4dfc <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x126c>
+ mov    rax,QWORD PTR [rsp+0x30]
+ mov    rcx,QWORD PTR [rsp+0x18]
+ sub    r14,rax
+ lea    r13,[rcx+r14*1+0x20]
+ test   rax,rax
+ je     4e4e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x12be>
+ mov    rdi,rax
+ call   20f0 <_ZdlPv@plt>
+ mov    rcx,QWORD PTR [rsp+0x18]
+ mov    rax,QWORD PTR [rsp+0x28]
+ movq   xmm5,r13
+ movq   xmm0,rcx
+ shl    rax,0x5
+ punpcklqdq xmm0,xmm5
+ add    rax,rcx
+ mov    QWORD PTR [rbx+0x48],rax
+ movups XMMWORD PTR [rbx+0x38],xmm0
+ jmp    3df9 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x269>
+ mov    QWORD PTR [rsp+0x18],0x0
+ test   rcx,rcx
+ je     4dbb <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x122b>
+ mov    rax,rcx
+ movabs rcx,0x3ffffffffffffff
+ cmp    rax,rcx
+ cmovbe rcx,rax
+ mov    QWORD PTR [rsp+0x28],rcx
+ jmp    4da8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1218>
+ mov    QWORD PTR [rsp+0x28],0x1
+ jmp    4da8 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1218>
+ movzx  eax,BYTE PTR [rsp+0xc0]
+ mov    BYTE PTR [rdi],al
+ mov    rdi,QWORD PTR [rbx+0x50]
+ jmp    4c95 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0x1105>
+ lea    r8,[rbx+0x120]
+ mov    QWORD PTR [rbx+0x120],0x0
+ mov    r13,r8
+ jmp    4671 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi+0xae1>
+ lea    rdi,[rip+0x112c]        # 6018 <_IO_stdin_used+0x18>
+ call   2090 <_ZSt20__throw_length_errorPKc@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ lea    rdi,[rip+0x1116]        # 6018 <_IO_stdin_used+0x18>
+ call   2090 <_ZSt20__throw_length_errorPKc@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2130 <__stack_chk_fail@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ call   2050 <_ZSt17__throw_bad_allocv@plt>
+ mov    rbx,rax
+ jmp    22db <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x17>
+ mov    rbx,rax
+ jmp    22e4 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x20>
+ mov    rdi,rax
+ jmp    2316 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x52>
+ mov    rbp,rax
+ jmp    2349 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x85>
+ mov    rbp,rax
+ jmp    237c <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xb8>
+ mov    rbp,rax
+ jmp    2360 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x9c>
+ mov    rbx,rax
+ jmp    2398 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xd4>
+ mov    rdi,rax
+ jmp    23a6 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xe2>
+ mov    rdi,rax
+ jmp    22f6 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x32>
+ mov    rdi,rax
+ jmp    23f1 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x12d>
+ mov    rbp,rax
+ jmp    236e <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0xaa>
+ mov    rdi,rax
+ jmp    2430 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x16c>
+ mov    rdi,rax
+ jmp    2444 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x180>
+ mov    rdi,rax
+ jmp    24d7 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x213>
+ mov    rdi,rax
+ jmp    24a5 <_ZN9AsmParser13ObjDumpParser10fromStreamERSi.cold+0x1e1>
+ nop    WORD PTR cs:[rax+rax*1+0x0]
+ nop    DWORD PTR [rax]
+
