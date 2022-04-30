@@ -29,6 +29,7 @@ fi
 #   exit $?
 # fi
 
+echo "Building tests"
 echo cmake --build . --target asm-parser-test
 cmake --build . --target asm-parser-test
 if [ $? -ne 0 ]; then
@@ -37,11 +38,13 @@ fi
 
 patchelf --set-rpath /opt/compiler-explorer/gcc-11.2.0/lib64 bin/asm-parser-test
 
+echo "Running tests"
 bin/asm-parser-test
 if [ $? -ne 0 ]; then
   exit $?
 fi
 
+echo "Building parser"
 echo cmake --build . --target asm-parser
 cmake --build . --target asm-parser
 if [ $? -ne 0 ]; then
@@ -125,3 +128,16 @@ cd ..
 # echo clang-hellow
 # build/bin/asm-parser -directives -unused_labels -debugdump /opt/compiler-explorer/ce/test/filters-cases/clang-hellow.asm > /opt/compiler-explorer/ce/test/filters-cases/clang-hellow.asm.directives.labels.json
 # /opt/compiler-explorer/node/bin/node prettyjson.js /opt/compiler-explorer/ce/test/filters-cases/clang-hellow.asm.directives.labels.json
+
+
+# build/bin/asm-parser -directives -unused_labels -comment_only -debugdump resources/clang_trunk_debug.asm > resources/clang_trunk_debug.asm.json
+# build/bin/asm-parser -directives -unused_labels -comment_only -debugdump -outputtext resources/clang_trunk_debug.asm > resources/clang_trunk_debug.filtered.asm
+# /opt/compiler-explorer/node/bin/node prettyjson.js resources/clang_trunk_debug.asm.json
+
+# /opt/compiler-explorer/gcc-11.2.0/bin/g++ -g -o ./resources/example.obj -fdiagnostics-color=always ./resources/example.cpp -L. -Wl,-rpath,. -Wl,-rpath,/opt/compiler-explorer/gcc-11.2.0/lib64 -Wl,-rpath,/opt/compiler-explorer/gcc-11.2.0/lib32
+# /opt/compiler-explorer/gcc-11.2.0/bin/objdump -d ./resources/example.obj -l --insn-width=16 -M intel > ./resources/example.asm
+
+# build/bin/asm-parser -binary -library_code -debugdump resources/demangled_tiny.asm > resources/demangled_tiny.asm.json
+# /opt/compiler-explorer/node/bin/node prettyjson.js resources/demangled_tiny.asm.json
+
+sudo cp -f build/bin/asm-parser /usr/local/bin/asm-parser
