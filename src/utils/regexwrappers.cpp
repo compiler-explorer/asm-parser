@@ -1,6 +1,7 @@
 #include "regexwrappers.hpp"
 #include "regexes.hpp"
 #include "utils.hpp"
+#include <algorithm>
 #include <charconv>
 #include <fmt/core.h>
 
