@@ -6,8 +6,8 @@ auto directoryDisposer = ApprovalTests::Approvals::useApprovalsSubdirectory("../
 
 #include "../objdump/parser.hpp"
 #include "../types/filter.hpp"
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 
 TEST_CASE("HelloApprovals")
 {
@@ -22,7 +22,7 @@ TEST_CASE("filter_example")
     filter.library_functions = true;
     filter.unused_labels = true;
 
-    //std::cout << "cwd: " << std::filesystem::current_path() << "\n"; // we're in build/src/test
+    // std::cout << "cwd: " << std::filesystem::current_path() << "\n"; // we're in build/src/test
 
     AsmParser::ObjDumpParser parser(filter);
     std::fstream fs;
