@@ -12,32 +12,6 @@ AsmParser::JsonWriter::JsonWriter(std::ostream &out,
 {
 }
 
-void AsmParser::JsonWriter::writeKeyName(const char *key)
-{
-    this->out << "\"" << key << "\": ";
-}
-
-void AsmParser::JsonWriter::writeKeyName(const std::string_view key)
-{
-    this->out << "\"" << key << "\": ";
-}
-
-void AsmParser::JsonWriter::writeKvNull(const char *key, const jsonopt opts)
-{
-    if (opts == jsonopt::prefixwithcomma)
-        this->out << ", ";
-
-    this->writeKeyName(key);
-
-    this->out << "null";
-
-    if (opts == jsonopt::trailingcomma)
-        this->out << ", ";
-
-    if (this->prettyPrint)
-        this->out << "\n";
-}
-
 std::string escape(const std::string_view in)
 {
     std::string out;
@@ -62,6 +36,32 @@ std::string escape(const std::string_view in)
         }
     }
     return out;
+}
+
+void AsmParser::JsonWriter::writeKeyName(const char *key)
+{
+    this->out << "\"" << escape(key) << "\": ";
+}
+
+void AsmParser::JsonWriter::writeKeyName(const std::string_view key)
+{
+    this->out << "\"" << escape(key) << "\": ";
+}
+
+void AsmParser::JsonWriter::writeKvNull(const char *key, const jsonopt opts)
+{
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
+
+    this->writeKeyName(key);
+
+    this->out << "null";
+
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
+
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
 void AsmParser::JsonWriter::writeValue(const std::string &value, const jsonopt opts)
