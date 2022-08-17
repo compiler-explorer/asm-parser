@@ -40,7 +40,7 @@ std::string escape(const std::string_view in)
 
 void AsmParser::JsonWriter::writeKeyName(const char *key)
 {
-    this->out << "\"" << escape(key) << "\": ";
+    this->out << "\"" << key << "\": ";
 }
 
 void AsmParser::JsonWriter::writeKeyName(const std::string_view key)
