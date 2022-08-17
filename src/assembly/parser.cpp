@@ -9,6 +9,12 @@
 
 AsmParser::AssemblyTextParser::AssemblyTextParser(const Filter filter) : filter(filter)
 {
+    this->reproducible = false;
+}
+
+void AsmParser::AssemblyTextParser::setReproducible()
+{
+    this->reproducible = true;
 }
 
 bool str_contains(const std::string_view s, char c)

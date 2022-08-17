@@ -25,6 +25,7 @@ void AsmParser::ObjDumpParserState::commonReset()
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter &filter) : filter(filter)
 {
+    reproducible = false;
 }
 
 void AsmParser::ObjDumpParser::eol()
@@ -274,6 +275,11 @@ void AsmParser::ObjDumpParser::address()
     this->state.text.clear();
 }
 
+void AsmParser::ObjDumpParser::setReproducible()
+{
+    this->reproducible = true;
+}
+
 void AsmParser::ObjDumpParser::fromStream(std::istream &in)
 {
     char c;
@@ -441,6 +447,8 @@ void AsmParser::ObjDumpParser::outputJson(std::ostream &out) const
     }
 
     JsonWriter writer(out, linesv, labelsv, this->filter);
+    if (this->reproducible)
+        writer.setReproducible();
     writer.write();
 }
 

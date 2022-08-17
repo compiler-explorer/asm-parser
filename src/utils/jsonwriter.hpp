@@ -28,6 +28,7 @@ class JsonWriter
     const std::vector<asm_labelpair> labels;
 
     bool prettyPrint;
+    bool reproducible;
 
     void writeValue(const std::string_view value, const jsonopt opts);
     void writeValue(const std::string &value, const jsonopt opts);
@@ -46,6 +47,7 @@ class JsonWriter
     public:
     JsonWriter(std::ostream &out, const std::vector<std::unique_ptr<asm_line_v>> &lines, std::vector<asm_labelpair> labels, const Filter filter);
 
+    virtual void setReproducible();
     virtual void write();
 };
 

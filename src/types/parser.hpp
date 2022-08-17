@@ -8,6 +8,8 @@ namespace AsmParser
 class IParser
 {
     public:
+    virtual void setReproducible() = 0;
+
     virtual void fromStream(std::istream &in) = 0;
 
     virtual void outputJson(std::ostream &out) const = 0;

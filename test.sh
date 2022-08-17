@@ -39,7 +39,8 @@ fi
 patchelf --set-rpath /opt/compiler-explorer/gcc-11.2.0/lib64 bin/asm-parser-test
 
 echo "Running tests"
-bin/asm-parser-test
+cd bin
+./asm-parser-test
 if [ $? -ne 0 ]; then
   exit $?
 fi

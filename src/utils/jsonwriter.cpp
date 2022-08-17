@@ -10,32 +10,12 @@ AsmParser::JsonWriter::JsonWriter(std::ostream &out,
                                   const Filter filter)
 : filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
 {
+    this->reproducible = false;
 }
 
-void AsmParser::JsonWriter::writeKeyName(const char *key)
+void AsmParser::JsonWriter::setReproducible()
 {
-    this->out << "\"" << key << "\": ";
-}
-
-void AsmParser::JsonWriter::writeKeyName(const std::string_view key)
-{
-    this->out << "\"" << key << "\": ";
-}
-
-void AsmParser::JsonWriter::writeKvNull(const char *key, const jsonopt opts)
-{
-    if (opts == jsonopt::prefixwithcomma)
-        this->out << ", ";
-
-    this->writeKeyName(key);
-
-    this->out << "null";
-
-    if (opts == jsonopt::trailingcomma)
-        this->out << ", ";
-
-    if (this->prettyPrint)
-        this->out << "\n";
+    this->reproducible = true;
 }
 
 std::string escape(const std::string_view in)
@@ -62,6 +42,32 @@ std::string escape(const std::string_view in)
         }
     }
     return out;
+}
+
+void AsmParser::JsonWriter::writeKeyName(const char *key)
+{
+    this->out << "\"" << key << "\": ";
+}
+
+void AsmParser::JsonWriter::writeKeyName(const std::string_view key)
+{
+    this->out << "\"" << escape(key) << "\": ";
+}
+
+void AsmParser::JsonWriter::writeKvNull(const char *key, const jsonopt opts)
+{
+    if (opts == jsonopt::prefixwithcomma)
+        this->out << ", ";
+
+    this->writeKeyName(key);
+
+    this->out << "null";
+
+    if (opts == jsonopt::trailingcomma)
+        this->out << ", ";
+
+    if (this->prettyPrint)
+        this->out << "\n";
 }
 
 void AsmParser::JsonWriter::writeValue(const std::string &value, const jsonopt opts)
@@ -382,9 +388,10 @@ void AsmParser::JsonWriter::JsonWriter::write()
             this->writeKv(label.first, label.second, jsonopt::prefixwithcomma);
         }
     }
-    this->out << "},";
+    this->out << "}";
 
-    this->writeKv("parsingTime", global_current_running_time(), jsonopt::none);
+    if (!this->reproducible)
+        this->writeKv("parsingTime", global_current_running_time(), jsonopt::prefixwithcomma);
 
     this->out << "}";
     if (this->prettyPrint)
