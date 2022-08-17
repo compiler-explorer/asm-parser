@@ -10,6 +10,12 @@ AsmParser::JsonWriter::JsonWriter(std::ostream &out,
                                   const Filter filter)
 : filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
 {
+    this->reproducible = false;
+}
+
+void AsmParser::JsonWriter::setReproducible()
+{
+    this->reproducible = true;
 }
 
 std::string escape(const std::string_view in)
@@ -382,9 +388,10 @@ void AsmParser::JsonWriter::JsonWriter::write()
             this->writeKv(label.first, label.second, jsonopt::prefixwithcomma);
         }
     }
-    this->out << "},";
+    this->out << "}";
 
-    this->writeKv("parsingTime", global_current_running_time(), jsonopt::none);
+    if (!this->reproducible)
+        this->writeKv("parsingTime", global_current_running_time(), jsonopt::prefixwithcomma);
 
     this->out << "}";
     if (this->prettyPrint)

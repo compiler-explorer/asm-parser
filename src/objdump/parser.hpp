@@ -48,6 +48,8 @@ class ObjDumpParser : public IParser
     std::vector<asm_line> lines;
     std::vector<asm_labelpair_t> labels;
 
+    bool reproducible;
+
     // todo: bad names
     void actually_address();
     void actually_filename();
@@ -63,6 +65,8 @@ class ObjDumpParser : public IParser
 
     public:
     explicit ObjDumpParser(const Filter &filter);
+
+    void setReproducible() override;
 
     void fromStream(std::istream &in) override;
 

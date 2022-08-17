@@ -57,6 +57,8 @@ class AssemblyTextParser : public IParser
     std::unordered_map<std::string_view, std::unordered_set<std::string_view>> weakly_used_labels;
     std::unordered_map<std::string_view, std::string_view> aliased_labels;
 
+    bool reproducible;
+
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
 
@@ -93,6 +95,8 @@ class AssemblyTextParser : public IParser
 
     public:
     AssemblyTextParser(const Filter filter);
+
+    void setReproducible() override;
 
     void fromStream(std::istream &in) override;
 

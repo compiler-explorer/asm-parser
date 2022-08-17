@@ -22,11 +22,19 @@ TEST_CASE("filter_example")
     filter.library_functions = true;
     filter.unused_labels = true;
 
-    // std::cout << "cwd: " << std::filesystem::current_path() << "\n"; // we're in build/src/test
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/example.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/example.asm";
+    }
 
     AsmParser::ObjDumpParser parser(filter);
     std::fstream fs;
-    fs.open("../../../resources/example.asm", std::fstream::in);
+    fs.open(asmpath, std::fstream::in);
     REQUIRE(fs.is_open() == true);
 
     parser.fromStream(fs);
@@ -45,9 +53,19 @@ TEST_CASE("gcc12_bin_fmt_O2_flto")
     filter.library_functions = true;
     filter.unused_labels = true;
 
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/gcc12_bin_fmt_O2_flto.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/gcc12_bin_fmt_O2_flto.asm";
+    }
+
     AsmParser::ObjDumpParser parser(filter);
     std::fstream fs;
-    fs.open("../../../resources/gcc12_bin_fmt_O2_flto.asm", std::fstream::in);
+    fs.open(asmpath, std::fstream::in);
     REQUIRE(fs.is_open() == true);
 
     parser.fromStream(fs);
@@ -66,15 +84,58 @@ TEST_CASE("filter_example_intel")
     filter.library_functions = true;
     filter.unused_labels = true;
 
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/example_intel.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/example_intel.asm";
+    }
+
     AsmParser::ObjDumpParser parser(filter);
     std::fstream fs;
-    fs.open("../../../resources/example_intel.asm", std::fstream::in);
+    fs.open(asmpath, std::fstream::in);
     REQUIRE(fs.is_open() == true);
 
     parser.fromStream(fs);
 
     std::stringstream ss;
     parser.outputText(ss);
+
+    ApprovalTests::Approvals::verify(ss.str());
+}
+
+TEST_CASE("ce-bug-3963")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = true;
+    filter.library_functions = true;
+    filter.unused_labels = true;
+
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/ce-bug-3963.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/ce-bug-3963.asm";
+    }
+
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    std::fstream fs;
+    fs.open(asmpath, std::fstream::in);
+    REQUIRE(fs.is_open() == true);
+
+    parser.fromStream(fs);
+
+    std::stringstream ss;
+    parser.outputJson(ss);
 
     ApprovalTests::Approvals::verify(ss.str());
 }
