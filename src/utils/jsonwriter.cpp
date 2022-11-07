@@ -116,7 +116,7 @@ void AsmParser::JsonWriter::writeKv(const char *key, const std::string &value, c
     }
 }
 
-void AsmParser::JsonWriter::writeKv(const char *key, const int value, const jsonopt opts)
+void AsmParser::JsonWriter::writeKv(const char *key, const long value, const jsonopt opts)
 {
     if (opts == jsonopt::prefixwithcomma)
         this->out << ", ";
@@ -130,6 +130,11 @@ void AsmParser::JsonWriter::writeKv(const char *key, const int value, const json
 
     if (this->prettyPrint)
         this->out << "\n";
+}
+
+void AsmParser::JsonWriter::writeKv(const char *key, const int value, const jsonopt opts)
+{
+    this->writeKv(key, static_cast<long>(value), opts);
 }
 
 void AsmParser::JsonWriter::writeKv(const std::string_view key, const int value, const jsonopt opts)

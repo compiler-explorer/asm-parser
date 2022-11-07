@@ -117,7 +117,7 @@ void AsmParser::ObjDumpParser::labelref()
 {
     if (!this->state.ignoreUntilNextLabel)
     {
-        this->state.currentLabelReference.range.end_col = ustrlen(this->state.text);
+        this->state.currentLabelReference.range.end_col = static_cast<uint16_t>(ustrlen(this->state.text));
         try
         {
             this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
@@ -403,7 +403,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 {
                     this->state.inSomethingWithALabel = true;
                     this->state.currentLabelReference.range =
-                    asm_range{ .start_col = (uint16_t)(ustrlen(this->state.text) + 1), .end_col = (uint16_t)0 };
+                    asm_range{ .start_col = static_cast<uint16_t>(ustrlen(this->state.text) + 1), .end_col = static_cast<uint16_t>(0) };
                 }
                 else if (this->state.inSomethingWithALabel)
                 {

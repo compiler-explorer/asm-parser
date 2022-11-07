@@ -51,7 +51,7 @@ std::string AsmParser::AssemblyTextParserUtils::expandTabs(const std::string_vie
     const std::string spaces = "        ";
     expandedLine.reserve(line.length());
 
-    auto extraChars = 0;
+    long unsigned int extraChars = 0;
     for (auto c : line)
     {
         if (c == '\t')
@@ -217,9 +217,9 @@ std::vector<AsmParser::asm_label_v> AsmParser::AssemblyTextParserUtils::getUsedL
         return labelsInLine;
     }
 
-    int diffLen = line.length() - filteredLine.length() + 1;
+    long unsigned int diffLen = line.length() - filteredLine.length() + 1;
 
-    int startidx = 0;
+    long unsigned int startidx = 0;
     for (auto match : ctre::range<R"re(([$%]?)([.@A-Z_a-z][.\dA-Z_a-z]*))re">(filteredLine))
     {
         AsmParser::asm_label_v label{};
@@ -229,8 +229,8 @@ std::vector<AsmParser::asm_label_v> AsmParser::AssemblyTextParserUtils::getUsedL
         const auto loc = filteredLine.find(label.name, startidx);
         startidx += (loc - startidx) + len;
 
-        label.range.start_col = loc + diffLen;
-        label.range.end_col = loc + diffLen + ustrlen(label.name);
+        label.range.start_col = static_cast<uint16_t>(loc + diffLen);
+        label.range.end_col = static_cast<uint16_t>(loc + diffLen + ustrlen(label.name));
 
         labelsInLine.push_back(label);
 

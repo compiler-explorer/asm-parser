@@ -280,7 +280,7 @@ void AsmParser::AssemblyTextParser::handleLabelDefinition(const std::string_view
         this->state.currentLine->is_internal_label = this->isInternalLabel(this->state.currentLine->label);
 
         this->state.previousLabel = this->state.currentLine->label;
-        this->labels_defined[this->state.currentLine->label] = lines.size() + 1;
+        this->labels_defined[this->state.currentLine->label] = static_cast<int32_t>(lines.size() + 1);
 
         if (!this->state.currentLine->is_internal_label)
         {

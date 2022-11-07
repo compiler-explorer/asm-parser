@@ -36,6 +36,7 @@ class JsonWriter
     void writeKeyName(const std::string_view key);
     void writeKvNull(const char *key, const jsonopt opts);
     void writeKv(const std::string_view key, const std::string_view value, const jsonopt opts);
+    void writeKv(const char *key, const long value, const jsonopt opts);
     void writeKv(const std::string_view key, const int value, const jsonopt opts);
     void writeKv(const char *key, const std::string &value, const jsonopt opts);
     void writeKv(const char *key, const int value, const jsonopt opts);
