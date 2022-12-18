@@ -14,7 +14,7 @@ struct Regexes
     static constexpr auto labelFindMips = ctre::match<R"re([$.A-Z_a-z][\w$.]*)re">;
     static constexpr auto mipsLabelDefinition = ctre::match<R"re(^\$[\w$.]+:)re">;
 
-    static constexpr auto dataDefn = ctre::search<R"re(^\h*\.(string|asciz|ascii|[1248]?byte|short|half|[dx]?word|long|quad|value|zero))re">;
+    static constexpr auto dataDefn = ctre::search<R"re(^\h*\.(string|asciz|ascii|[1248]?byte|short|half|[dhx]?word|long|quad|octa|value|zero))re">;
     static constexpr auto fileFind = ctre::match<R"re(^\h*\.file\h+(\d+)\h+"([^"]+)"(\h+"([^"]+)")?.*)re">;
     static constexpr auto hasOpcodeRe = ctre::search<R"re(^\h*[A-Za-z])re">;
     // todo: stop using this static constexpr auto instructionRe = make_matcher<R"re(^\h*[A-Za-z]+)re">;
