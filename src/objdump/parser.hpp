@@ -23,6 +23,7 @@ class ObjDumpParserState
     bool inSectionStart{};
     bool inSectionName{};
     bool inSourceRef{};
+    bool inRelocation{};
     bool skipRestOfTheLine{};
     bool stopParsing{};
     bool ignoreUntilNextLabel{};

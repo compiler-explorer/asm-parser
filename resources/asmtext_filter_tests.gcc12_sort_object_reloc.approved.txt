@@ -1,0 +1,2086 @@
+cmp2to3(void const*, void const*, void*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x20,%rsp
+ mov    %rdi,-0x8(%rbp)
+ mov    %rsi,-0x10(%rbp)
+ mov    %rdx,-0x18(%rbp)
+ mov    -0x18(%rbp),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   *%rcx
+ leave
+ ret
+gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*)):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x170,%rsp
+ mov    %rdi,-0x158(%rbp)
+ mov    %rsi,-0x160(%rbp)
+ mov    %rdx,-0x168(%rbp)
+ mov    %rcx,-0x170(%rbp)
+ cmpq   $0x1,-0x160(%rbp)
+ jbe    170 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x146>
+ movq   $0x5,-0x8(%rbp)
+ mov    -0x168(%rbp),%rax
+ shr    $0x3f,%rax
+ mov    %al,-0x9(%rbp)
+ cmpb   $0x0,-0x9(%rbp)
+ je     8a <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x60>
+ movq   $0x3,-0x8(%rbp)
+ notq   -0x168(%rbp)
+ mov    -0x158(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x170(%rbp),%rax
+ mov    %rax,-0x50(%rbp)
+ mov    -0x18(%rbp),%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0x160(%rbp),%rax
+ mov    %rax,-0x40(%rbp)
+ mov    -0x168(%rbp),%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0x8(%rbp),%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x160(%rbp),%rax
+ shr    %rax
+ mov    %rax,%rdx
+ mov    -0x168(%rbp),%rax
+ imul   %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ cmpq   $0x100,-0x20(%rbp)
+ ja     f5 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0xcb>
+ lea    -0x150(%rbp),%rax
+ jmp    101 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0xd7>
+ mov    -0x20(%rbp),%rax
+ mov    %rax,%rdi
+ call   101 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0xd7>
+    R_X86_64_PLT32 xmalloc-0x4
+ mov    %rax,-0x28(%rbp)
+ mov    -0x28(%rbp),%rdi
+ mov    -0x18(%rbp),%rcx
+ mov    -0x160(%rbp),%rdx
+ lea    -0x50(%rbp),%rsi
+ mov    -0x18(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   357 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)>
+ lea    -0x150(%rbp),%rax
+ cmp    %rax,-0x28(%rbp)
+ je     140 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x116>
+ mov    -0x28(%rbp),%rax
+ mov    %rax,%rdi
+ call   140 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x116>
+    R_X86_64_PLT32 free-0x4
+ mov    -0x170(%rbp),%rcx
+ mov    -0x168(%rbp),%rdx
+ mov    -0x160(%rbp),%rsi
+ mov    -0x158(%rbp),%rax
+ mov    %rcx,%r8
+ lea    -0x166(%rip),%rcx        # 0 <cmp2to3(void const*, void const*, void*)>
+ mov    %rax,%rdi
+ call   16e <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x144>
+    R_X86_64_PLT32 qsort_chk(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)-0x4
+ jmp    171 <gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x147>
+ nop
+ leave
+ ret
+gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x190,%rsp
+ mov    %rdi,-0x168(%rbp)
+ mov    %rsi,-0x170(%rbp)
+ mov    %rdx,-0x178(%rbp)
+ mov    %rcx,-0x180(%rbp)
+ mov    %r8,-0x188(%rbp)
+ cmpq   $0x1,-0x170(%rbp)
+ jbe    2cb <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x158>
+ movq   $0x5,-0x8(%rbp)
+ mov    -0x178(%rbp),%rax
+ shr    $0x3f,%rax
+ mov    %al,-0x9(%rbp)
+ cmpb   $0x0,-0x9(%rbp)
+ je     1da <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x67>
+ movq   $0x3,-0x8(%rbp)
+ notq   -0x178(%rbp)
+ mov    -0x168(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x188(%rbp),%rax
+ mov    %rax,-0x60(%rbp)
+ mov    -0x180(%rbp),%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x18(%rbp),%rax
+ mov    %rax,-0x50(%rbp)
+ mov    -0x170(%rbp),%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0x178(%rbp),%rax
+ mov    %rax,-0x40(%rbp)
+ mov    -0x8(%rbp),%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0x170(%rbp),%rax
+ shr    %rax
+ mov    %rax,%rdx
+ mov    -0x178(%rbp),%rax
+ imul   %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ cmpq   $0x100,-0x20(%rbp)
+ ja     250 <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0xdd>
+ lea    -0x160(%rbp),%rax
+ jmp    25c <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0xe9>
+ mov    -0x20(%rbp),%rax
+ mov    %rax,%rdi
+ call   25c <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0xe9>
+    R_X86_64_PLT32 xmalloc-0x4
+ mov    %rax,-0x28(%rbp)
+ mov    -0x28(%rbp),%rdi
+ mov    -0x18(%rbp),%rcx
+ mov    -0x170(%rbp),%rdx
+ lea    -0x60(%rbp),%rsi
+ mov    -0x18(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   738 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)>
+ lea    -0x160(%rbp),%rax
+ cmp    %rax,-0x28(%rbp)
+ je     29b <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x128>
+ mov    -0x28(%rbp),%rax
+ mov    %rax,%rdi
+ call   29b <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x128>
+    R_X86_64_PLT32 free-0x4
+ mov    -0x188(%rbp),%rdi
+ mov    -0x180(%rbp),%rcx
+ mov    -0x178(%rbp),%rdx
+ mov    -0x170(%rbp),%rsi
+ mov    -0x168(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   2c9 <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x156>
+    R_X86_64_PLT32 qsort_chk(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)-0x4
+ jmp    2cc <gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x159>
+ nop
+ leave
+ ret
+gcc_stablesort(void*, unsigned long, unsigned long, int (*)(void const*, void const*)):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x20,%rsp
+ mov    %rdi,-0x8(%rbp)
+ mov    %rsi,-0x10(%rbp)
+ mov    %rdx,-0x18(%rbp)
+ mov    %rcx,-0x20(%rbp)
+ mov    -0x18(%rbp),%rax
+ not    %rax
+ mov    %rax,%rdi
+ mov    -0x20(%rbp),%rdx
+ mov    -0x10(%rbp),%rsi
+ mov    -0x8(%rbp),%rax
+ mov    %rdx,%rcx
+ mov    %rdi,%rdx
+ mov    %rax,%rdi
+ call   30a <gcc_stablesort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))+0x3c>
+    R_X86_64_PLT32 gcc_qsort(void*, unsigned long, unsigned long, int (*)(void const*, void const*))-0x4
+ nop
+ leave
+ ret
+gcc_stablesort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x30,%rsp
+ mov    %rdi,-0x8(%rbp)
+ mov    %rsi,-0x10(%rbp)
+ mov    %rdx,-0x18(%rbp)
+ mov    %rcx,-0x20(%rbp)
+ mov    %r8,-0x28(%rbp)
+ mov    -0x18(%rbp),%rax
+ not    %rax
+ mov    %rax,%rdi
+ mov    -0x28(%rbp),%rcx
+ mov    -0x20(%rbp),%rdx
+ mov    -0x10(%rbp),%rsi
+ mov    -0x8(%rbp),%rax
+ mov    %rcx,%r8
+ mov    %rdx,%rcx
+ mov    %rdi,%rdx
+ mov    %rax,%rdi
+ call   354 <gcc_stablesort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)+0x47>
+    R_X86_64_PLT32 gcc_sort_r(void*, unsigned long, unsigned long, int (*)(void const*, void const*, void*), void*)-0x4
+ nop
+ leave
+ ret
+void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0xa0,%rsp
+ mov    %rdi,-0x78(%rbp)
+ mov    %rsi,-0x80(%rbp)
+ mov    %rdx,-0x88(%rbp)
+ mov    %rcx,-0x90(%rbp)
+ mov    %r8,-0x98(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    -0x88(%rbp),%rax
+ setae  %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     3cf <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x78>
+ mov    -0x80(%rbp),%rax
+ mov    -0x90(%rbp),%rdx
+ mov    %rdx,0x8(%rax)
+ mov    -0x80(%rbp),%rax
+ mov    -0x88(%rbp),%rdx
+ mov    %rdx,0x10(%rax)
+ mov    -0x80(%rbp),%rdx
+ mov    -0x78(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   b19 <void netsort<sort_ctx>(char*, sort_ctx*)>
+ jmp    736 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x88(%rbp),%rax
+ shr    %rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x88(%rbp),%rax
+ sub    -0x18(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ mov    -0x18(%rbp),%rdx
+ imul   %rdx,%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x28(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x28(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x78(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ jne    437 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0xe0>
+ mov    -0x98(%rbp),%rax
+ jmp    43b <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0xe4>
+ mov    -0x78(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x98(%rbp),%rdi
+ mov    -0x8(%rbp),%rcx
+ mov    -0x20(%rbp),%rdx
+ mov    -0x80(%rbp),%rsi
+ mov    -0x30(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   357 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)>
+ mov    -0x30(%rbp),%rdi
+ mov    -0x10(%rbp),%rcx
+ mov    -0x18(%rbp),%rdx
+ mov    -0x80(%rbp),%rsi
+ mov    -0x78(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   357 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)>
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ sub    -0x90(%rbp),%rax
+ mov    %rax,%rcx
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ sub    %rax,%rcx
+ mov    -0x10(%rbp),%rax
+ add    %rax,%rcx
+ mov    -0x8(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   *%rdx
+ shr    $0x1f,%eax
+ movzbl %al,%eax
+ test   %rax,%rax
+ setne  %al
+ test   %al,%al
+ je     712 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3bb>
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ imul   -0x88(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x90(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x8,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     59e <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x247>
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   *%rcx
+ sar    $0x1f,%eax
+ cltq
+ mov    %rax,-0x60(%rbp)
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x68(%rbp)
+ mov    -0x68(%rbp),%rax
+ and    -0x60(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x68(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    (%rax),%rdx
+ mov    -0x90(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x90(%rbp)
+ mov    -0x60(%rbp),%rax
+ and    $0x8,%eax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ je     736 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x60(%rbp),%rax
+ not    %rax
+ and    $0x8,%eax
+ add    %rax,-0x10(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x38(%rbp),%rax
+ jne    503 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x1ac>
+ jmp    712 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3bb>
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x4,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     652 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x2fb>
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   *%rcx
+ sar    $0x1f,%eax
+ cltq
+ mov    %rax,-0x50(%rbp)
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x58(%rbp),%rax
+ and    -0x50(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x58(%rbp),%rax
+ mov    (%rax),%edx
+ mov    -0x90(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x90(%rbp)
+ mov    -0x50(%rbp),%rax
+ and    $0x4,%eax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ je     736 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x50(%rbp),%rax
+ not    %rax
+ and    $0x4,%eax
+ add    %rax,-0x10(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x38(%rbp),%rax
+ jne    5b9 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x262>
+ jmp    712 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3bb>
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   *%rcx
+ sar    $0x1f,%eax
+ cltq
+ mov    %rax,-0x40(%rbp)
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0x48(%rbp),%rax
+ and    -0x40(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rdx
+ mov    -0x48(%rbp),%rcx
+ mov    -0x90(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   6b5 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x35e>
+    R_X86_64_PLT32 memcpy-0x4
+ mov    %rax,-0x90(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x90(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rdx
+ mov    -0x40(%rbp),%rax
+ and    %rdx,%rax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ je     736 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x40(%rbp),%rax
+ not    %rax
+ mov    %rax,%rdx
+ mov    -0x80(%rbp),%rax
+ mov    0x18(%rax),%rax
+ and    %rdx,%rax
+ add    %rax,-0x10(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x38(%rbp),%rax
+ jne    652 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x2fb>
+ mov    -0x8(%rbp),%rax
+ sub    -0x90(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x90(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   736 <void mergesort<sort_ctx>(char*, sort_ctx*, unsigned long, char*, char*)+0x3df>
+    R_X86_64_PLT32 memcpy-0x4
+ leave
+ ret
+void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0xa0,%rsp
+ mov    %rdi,-0x78(%rbp)
+ mov    %rsi,-0x80(%rbp)
+ mov    %rdx,-0x88(%rbp)
+ mov    %rcx,-0x90(%rbp)
+ mov    %r8,-0x98(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x28(%rax),%rax
+ cmp    -0x88(%rbp),%rax
+ setae  %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     7b0 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x78>
+ mov    -0x80(%rbp),%rax
+ mov    -0x90(%rbp),%rdx
+ mov    %rdx,0x10(%rax)
+ mov    -0x80(%rbp),%rax
+ mov    -0x88(%rbp),%rdx
+ mov    %rdx,0x18(%rax)
+ mov    -0x80(%rbp),%rdx
+ mov    -0x78(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   e91 <void netsort<sort_r_ctx>(char*, sort_r_ctx*)>
+ jmp    b17 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x88(%rbp),%rax
+ shr    %rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x88(%rbp),%rax
+ sub    -0x18(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ mov    -0x18(%rbp),%rdx
+ imul   %rdx,%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x28(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x28(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x78(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ jne    818 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0xe0>
+ mov    -0x98(%rbp),%rax
+ jmp    81c <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0xe4>
+ mov    -0x78(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x98(%rbp),%rdi
+ mov    -0x8(%rbp),%rcx
+ mov    -0x20(%rbp),%rdx
+ mov    -0x80(%rbp),%rsi
+ mov    -0x30(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   738 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)>
+ mov    -0x30(%rbp),%rdi
+ mov    -0x10(%rbp),%rcx
+ mov    -0x18(%rbp),%rdx
+ mov    -0x80(%rbp),%rsi
+ mov    -0x78(%rbp),%rax
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   738 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)>
+ mov    -0x8(%rbp),%rax
+ sub    -0x90(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ sub    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rax,%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x80(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   894 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x15c>
+    R_X86_64_PLT32 sort_r_ctx::cmp(void const*, void const*)-0x4
+ shr    $0x1f,%eax
+ movzbl %al,%eax
+ test   %rax,%rax
+ setne  %al
+ test   %al,%al
+ je     af3 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3bb>
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ imul   -0x88(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x90(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    $0x8,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     97f <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x247>
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x80(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   8fb <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x1c3>
+    R_X86_64_PLT32 sort_r_ctx::cmp(void const*, void const*)-0x4
+ sar    $0x1f,%eax
+ cltq
+ mov    %rax,-0x60(%rbp)
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x68(%rbp)
+ mov    -0x68(%rbp),%rax
+ and    -0x60(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x68(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    (%rax),%rdx
+ mov    -0x90(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x90(%rbp)
+ mov    -0x60(%rbp),%rax
+ and    $0x8,%eax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ je     b17 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x60(%rbp),%rax
+ not    %rax
+ and    $0x8,%eax
+ add    %rax,-0x10(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x38(%rbp),%rax
+ jne    8e4 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x1ac>
+ jmp    af3 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3bb>
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    $0x4,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     a33 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x2fb>
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x80(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   9b1 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x279>
+    R_X86_64_PLT32 sort_r_ctx::cmp(void const*, void const*)-0x4
+ sar    $0x1f,%eax
+ cltq
+ mov    %rax,-0x50(%rbp)
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x58(%rbp),%rax
+ and    -0x50(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x58(%rbp),%rax
+ mov    (%rax),%edx
+ mov    -0x90(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x90(%rbp)
+ mov    -0x50(%rbp),%rax
+ and    $0x4,%eax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ je     b17 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x50(%rbp),%rax
+ not    %rax
+ and    $0x4,%eax
+ add    %rax,-0x10(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x38(%rbp),%rax
+ jne    99a <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x262>
+ jmp    af3 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3bb>
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x80(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   a4a <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x312>
+    R_X86_64_PLT32 sort_r_ctx::cmp(void const*, void const*)-0x4
+ sar    $0x1f,%eax
+ cltq
+ mov    %rax,-0x40(%rbp)
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0x48(%rbp),%rax
+ and    -0x40(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rdx
+ mov    -0x48(%rbp),%rcx
+ mov    -0x90(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   a96 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x35e>
+    R_X86_64_PLT32 memcpy-0x4
+ mov    %rax,-0x90(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x90(%rbp)
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rdx
+ mov    -0x40(%rbp),%rax
+ and    %rdx,%rax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x90(%rbp),%rax
+ je     b17 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3df>
+ mov    -0x40(%rbp),%rax
+ not    %rax
+ mov    %rax,%rdx
+ mov    -0x80(%rbp),%rax
+ mov    0x20(%rax),%rax
+ and    %rdx,%rax
+ add    %rax,-0x10(%rbp)
+ mov    -0x8(%rbp),%rax
+ cmp    -0x38(%rbp),%rax
+ jne    a33 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x2fb>
+ mov    -0x8(%rbp),%rax
+ sub    -0x90(%rbp),%rax
+ mov    %rax,%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x90(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   b17 <void mergesort<sort_r_ctx>(char*, sort_r_ctx*, unsigned long, char*, char*)+0x3df>
+    R_X86_64_PLT32 memcpy-0x4
+ leave
+ ret
+void netsort<sort_ctx>(char*, sort_ctx*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x90,%rsp
+ mov    %rdi,-0x88(%rbp)
+ mov    %rsi,-0x90(%rbp)
+ mov    -0x88(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x10(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x30(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x30(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x30(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     c25 <void netsort<sort_ctx>(char*, sort_ctx*)+0x10c>
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x18(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x38(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x38(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x38(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x10(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x40(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x40(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x40(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x3,%rax
+ ja     c56 <void netsort<sort_ctx>(char*, sort_ctx*)+0x13d>
+ mov    -0x18(%rbp),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rsi
+ mov    -0x90(%rbp),%rax
+ mov    %rax,%rdi
+ call   124e <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)>
+ jmp    e8f <void netsort<sort_ctx>(char*, sort_ctx*)+0x376>
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rdx
+ mov    -0x18(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rdx
+ mov    -0x20(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     d08 <void netsort<sort_ctx>(char*, sort_ctx*)+0x1ef>
+ mov    -0x90(%rbp),%rdx
+ mov    -0x20(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x48(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x48(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x28(%rbp),%rax
+ xor    -0x48(%rbp),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x18(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x50(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x50(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x28(%rbp),%rax
+ xor    -0x50(%rbp),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x18(%rbp),%rcx
+ mov    -0x20(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x58(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x58(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x58(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     dc4 <void netsort<sort_ctx>(char*, sort_ctx*)+0x2ab>
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x20(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x60(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x60(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x60(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x68(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x68(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x28(%rbp),%rax
+ xor    -0x68(%rbp),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x18(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x70(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x70(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x70(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x20(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x78(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x78(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x78(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x18(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1209 <long cmp1<sort_ctx>(char*, char*, sort_ctx*)>
+ mov    %rax,-0x80(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x80(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x80(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x28(%rbp),%r8
+ mov    -0x20(%rbp),%rdi
+ mov    -0x18(%rbp),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rsi
+ mov    -0x90(%rbp),%rax
+ mov    %r8,%r9
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   14dd <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)>
+ leave
+ ret
+void netsort<sort_r_ctx>(char*, sort_r_ctx*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x90,%rsp
+ mov    %rdi,-0x88(%rbp)
+ mov    %rsi,-0x90(%rbp)
+ mov    -0x88(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x20(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x20(%rax),%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x10(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x30(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x30(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x30(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     f9d <void netsort<sort_r_ctx>(char*, sort_r_ctx*)+0x10c>
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x18(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x38(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x38(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x38(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x10(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x40(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x40(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x40(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x3,%rax
+ ja     fce <void netsort<sort_r_ctx>(char*, sort_r_ctx*)+0x13d>
+ mov    -0x18(%rbp),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rsi
+ mov    -0x90(%rbp),%rax
+ mov    %rax,%rdi
+ call   196f <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)>
+ jmp    1207 <void netsort<sort_r_ctx>(char*, sort_r_ctx*)+0x376>
+ mov    -0x90(%rbp),%rax
+ mov    0x20(%rax),%rdx
+ mov    -0x18(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x20(%rax),%rdx
+ mov    -0x20(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1080 <void netsort<sort_r_ctx>(char*, sort_r_ctx*)+0x1ef>
+ mov    -0x90(%rbp),%rdx
+ mov    -0x20(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x48(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x48(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x28(%rbp),%rax
+ xor    -0x48(%rbp),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x18(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x50(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x50(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x28(%rbp),%rax
+ xor    -0x50(%rbp),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x18(%rbp),%rcx
+ mov    -0x20(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x58(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x58(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x58(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     113c <void netsort<sort_r_ctx>(char*, sort_r_ctx*)+0x2ab>
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x20(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x60(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x60(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x60(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x68(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x68(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x28(%rbp),%rax
+ xor    -0x68(%rbp),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x8(%rbp),%rcx
+ mov    -0x18(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x70(%rbp)
+ mov    -0x8(%rbp),%rax
+ xor    -0x70(%rbp),%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x70(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x20(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x78(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x78(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x20(%rbp),%rax
+ xor    -0x78(%rbp),%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x90(%rbp),%rdx
+ mov    -0x10(%rbp),%rcx
+ mov    -0x18(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   192a <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)>
+ mov    %rax,-0x80(%rbp)
+ mov    -0x10(%rbp),%rax
+ xor    -0x80(%rbp),%rax
+ mov    %rax,-0x10(%rbp)
+ mov    -0x18(%rbp),%rax
+ xor    -0x80(%rbp),%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x28(%rbp),%r8
+ mov    -0x20(%rbp),%rdi
+ mov    -0x18(%rbp),%rcx
+ mov    -0x10(%rbp),%rdx
+ mov    -0x8(%rbp),%rsi
+ mov    -0x90(%rbp),%rax
+ mov    %r8,%r9
+ mov    %rdi,%r8
+ mov    %rax,%rdi
+ call   1bfe <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)>
+ leave
+ ret
+long cmp1<sort_ctx>(char*, char*, sort_ctx*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x30,%rsp
+ mov    %rdi,-0x18(%rbp)
+ mov    %rsi,-0x20(%rbp)
+ mov    %rdx,-0x28(%rbp)
+ mov    -0x18(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x28(%rbp),%rax
+ mov    (%rax),%rcx
+ mov    -0x20(%rbp),%rdx
+ mov    -0x18(%rbp),%rax
+ mov    %rdx,%rsi
+ mov    %rax,%rdi
+ call   *%rcx
+ sar    $0x1f,%eax
+ cltq
+ and    -0x8(%rbp),%rax
+ leave
+ ret
+void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x8,%rsp
+ mov    %rdi,-0x68(%rbp)
+ mov    %rsi,-0x70(%rbp)
+ mov    %rdx,-0x78(%rbp)
+ mov    %rcx,-0x80(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x8,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     12e8 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x9a>
+ mov    -0x70(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0x78(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x40(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x8(%rax),%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     12c8 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x7a>
+ mov    -0x30(%rbp),%rax
+ lea    0x10(%rax),%rdx
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,(%rdx)
+ mov    -0x38(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x40(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ jmp    14da <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x28c>
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x4,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1360 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x112>
+ mov    -0x70(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x44(%rbp)
+ mov    -0x78(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x48(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x8(%rax),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1344 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0xf6>
+ mov    -0x28(%rbp),%rax
+ lea    0x8(%rax),%rdx
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,(%rdx)
+ mov    -0x44(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x48(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ jmp    14da <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x28c>
+ movq   $0x0,-0x8(%rbp)
+ movq   $0x8,-0x10(%rbp)
+ jmp    1412 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x1c4>
+ mov    -0x70(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x50(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x8(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     13e8 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x19a>
+ mov    -0x80(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ lea    (%rax,%rax,1),%rdx
+ mov    -0x20(%rbp),%rax
+ add    %rax,%rdx
+ mov    (%rcx),%rax
+ mov    %rax,(%rdx)
+ mov    -0x50(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x58(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x10(%rbp),%rax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rax,%rdx
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    %rdx,%rax
+ jae    1375 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x127>
+ jmp    14c8 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x27a>
+ mov    -0x70(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x59(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x5a(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x8(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     14a3 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x255>
+ mov    -0x80(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ lea    (%rax,%rax,1),%rdx
+ mov    -0x18(%rbp),%rax
+ add    %rax,%rdx
+ movzbl (%rcx),%eax
+ mov    %al,(%rdx)
+ movzbl -0x59(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x5a(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ addq   $0x1,-0x8(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    %rax,-0x8(%rbp)
+ jb     1433 <void reorder23<sort_ctx>(sort_ctx*, char*, char*, char*)+0x1e5>
+ nop
+ leave
+ ret
+void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x48,%rsp
+ mov    %rdi,-0x98(%rbp)
+ mov    %rsi,-0xa0(%rbp)
+ mov    %rdx,-0xa8(%rbp)
+ mov    %rcx,-0xb0(%rbp)
+ mov    %r8,-0xb8(%rbp)
+ mov    %r9,-0xc0(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x8,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     15e3 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x106>
+ mov    -0xa0(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0xa8(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x40(%rbp)
+ mov    -0xb0(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0xb8(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x50(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x8(%rax),%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     15a3 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0xc6>
+ mov    -0x30(%rbp),%rax
+ lea    0x20(%rax),%rdx
+ mov    -0xc0(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,(%rdx)
+ mov    -0x38(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x40(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x48(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x50(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ jmp    1927 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x44a>
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x4,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     16a5 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x1c8>
+ mov    -0xa0(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x54(%rbp)
+ mov    -0xa8(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x58(%rbp)
+ mov    -0xb0(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x5c(%rbp)
+ mov    -0xb8(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x60(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x8(%rax),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     166d <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x190>
+ mov    -0x28(%rbp),%rax
+ lea    0x10(%rax),%rdx
+ mov    -0xc0(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,(%rdx)
+ mov    -0x54(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x58(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x5c(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x60(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ jmp    1927 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x44a>
+ movq   $0x0,-0x8(%rbp)
+ movq   $0x8,-0x10(%rbp)
+ jmp    17ce <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x2f1>
+ mov    -0xa0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x68(%rbp)
+ mov    -0xa8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x70(%rbp)
+ mov    -0xb0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x78(%rbp)
+ mov    -0xb8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x80(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x8(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     176d <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x290>
+ mov    -0xc0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ lea    0x0(,%rax,4),%rdx
+ mov    -0x20(%rbp),%rax
+ add    %rax,%rdx
+ mov    (%rcx),%rax
+ mov    %rax,(%rdx)
+ mov    -0x68(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x70(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x80(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x10(%rbp),%rax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rax,%rdx
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    %rdx,%rax
+ jae    16ba <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x1dd>
+ jmp    1912 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x435>
+ mov    -0xa0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x81(%rbp)
+ mov    -0xa8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x82(%rbp)
+ mov    -0xb0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x83(%rbp)
+ mov    -0xb8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x84(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x8(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     18ac <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x3cf>
+ mov    -0xc0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ lea    0x0(,%rax,4),%rdx
+ mov    -0x18(%rbp),%rax
+ add    %rax,%rdx
+ movzbl (%rcx),%eax
+ mov    %al,(%rdx)
+ movzbl -0x81(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x82(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x83(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x84(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ addq   $0x1,-0x8(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    %rax,-0x8(%rbp)
+ jb     17f2 <void reorder45<sort_ctx>(sort_ctx*, char*, char*, char*, char*, char*)+0x315>
+ nop
+ leave
+ ret
+long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x30,%rsp
+ mov    %rdi,-0x18(%rbp)
+ mov    %rsi,-0x20(%rbp)
+ mov    %rdx,-0x28(%rbp)
+ mov    -0x18(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ xor    %rdx,%rax
+ mov    %rax,-0x8(%rbp)
+ mov    -0x20(%rbp),%rdx
+ mov    -0x18(%rbp),%rcx
+ mov    -0x28(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   1964 <long cmp1<sort_r_ctx>(char*, char*, sort_r_ctx*)+0x3a>
+    R_X86_64_PLT32 sort_r_ctx::cmp(void const*, void const*)-0x4
+ sar    $0x1f,%eax
+ cltq
+ and    -0x8(%rbp),%rax
+ leave
+ ret
+void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x8,%rsp
+ mov    %rdi,-0x68(%rbp)
+ mov    %rsi,-0x70(%rbp)
+ mov    %rdx,-0x78(%rbp)
+ mov    %rcx,-0x80(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    $0x8,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1a09 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x9a>
+ mov    -0x70(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0x78(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x40(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     19e9 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x7a>
+ mov    -0x30(%rbp),%rax
+ lea    0x10(%rax),%rdx
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,(%rdx)
+ mov    -0x38(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x40(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ jmp    1bfb <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x28c>
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    $0x4,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1a81 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x112>
+ mov    -0x70(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x44(%rbp)
+ mov    -0x78(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x48(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1a65 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0xf6>
+ mov    -0x28(%rbp),%rax
+ lea    0x8(%rax),%rdx
+ mov    -0x80(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,(%rdx)
+ mov    -0x44(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x48(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ jmp    1bfb <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x28c>
+ movq   $0x0,-0x8(%rbp)
+ movq   $0x8,-0x10(%rbp)
+ jmp    1b33 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x1c4>
+ mov    -0x70(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x50(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x58(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1b09 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x19a>
+ mov    -0x80(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ lea    (%rax,%rax,1),%rdx
+ mov    -0x20(%rbp),%rax
+ add    %rax,%rdx
+ mov    (%rcx),%rax
+ mov    %rax,(%rdx)
+ mov    -0x50(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x58(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x10(%rbp),%rax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rax,%rdx
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    %rdx,%rax
+ jae    1a96 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x127>
+ jmp    1be9 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x27a>
+ mov    -0x70(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x59(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x5a(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x10(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x3,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1bc4 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x255>
+ mov    -0x80(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ lea    (%rax,%rax,1),%rdx
+ mov    -0x18(%rbp),%rax
+ add    %rax,%rdx
+ movzbl (%rcx),%eax
+ mov    %al,(%rdx)
+ movzbl -0x59(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x5a(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ addq   $0x1,-0x8(%rbp)
+ mov    -0x68(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    %rax,-0x8(%rbp)
+ jb     1b54 <void reorder23<sort_r_ctx>(sort_r_ctx*, char*, char*, char*)+0x1e5>
+ nop
+ leave
+ ret
+void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x48,%rsp
+ mov    %rdi,-0x98(%rbp)
+ mov    %rsi,-0xa0(%rbp)
+ mov    %rdx,-0xa8(%rbp)
+ mov    %rcx,-0xb0(%rbp)
+ mov    %r8,-0xb8(%rbp)
+ mov    %r9,-0xc0(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    $0x8,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1d04 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x106>
+ mov    -0xa0(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x38(%rbp)
+ mov    -0xa8(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x40(%rbp)
+ mov    -0xb0(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x48(%rbp)
+ mov    -0xb8(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x50(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rax
+ mov    %rax,-0x30(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1cc4 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0xc6>
+ mov    -0x30(%rbp),%rax
+ lea    0x20(%rax),%rdx
+ mov    -0xc0(%rbp),%rax
+ mov    (%rax),%rax
+ mov    %rax,(%rdx)
+ mov    -0x38(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x40(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x48(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ addq   $0x8,-0x30(%rbp)
+ mov    -0x50(%rbp),%rdx
+ mov    -0x30(%rbp),%rax
+ mov    %rdx,(%rax)
+ jmp    2048 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x44a>
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    $0x4,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1dc6 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x1c8>
+ mov    -0xa0(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x54(%rbp)
+ mov    -0xa8(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x58(%rbp)
+ mov    -0xb0(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x5c(%rbp)
+ mov    -0xb8(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,-0x60(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rax
+ mov    %rax,-0x28(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1d8e <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x190>
+ mov    -0x28(%rbp),%rax
+ lea    0x10(%rax),%rdx
+ mov    -0xc0(%rbp),%rax
+ mov    (%rax),%eax
+ mov    %eax,(%rdx)
+ mov    -0x54(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x58(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x5c(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ addq   $0x4,-0x28(%rbp)
+ mov    -0x60(%rbp),%edx
+ mov    -0x28(%rbp),%rax
+ mov    %edx,(%rax)
+ jmp    2048 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x44a>
+ movq   $0x0,-0x8(%rbp)
+ movq   $0x8,-0x10(%rbp)
+ jmp    1eef <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x2f1>
+ mov    -0xa0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x68(%rbp)
+ mov    -0xa8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x70(%rbp)
+ mov    -0xb0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x78(%rbp)
+ mov    -0xb8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    (%rax),%rax
+ mov    %rax,-0x80(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x20(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1e8e <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x290>
+ mov    -0xc0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ lea    0x0(,%rax,4),%rdx
+ mov    -0x20(%rbp),%rax
+ add    %rax,%rdx
+ mov    (%rcx),%rax
+ mov    %rax,(%rdx)
+ mov    -0x68(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x70(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x78(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x20(%rbp)
+ mov    -0x80(%rbp),%rdx
+ mov    -0x20(%rbp),%rax
+ mov    %rdx,(%rax)
+ mov    -0x10(%rbp),%rax
+ add    %rax,-0x8(%rbp)
+ mov    -0x8(%rbp),%rdx
+ mov    -0x10(%rbp),%rax
+ add    %rax,%rdx
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    %rdx,%rax
+ jae    1ddb <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x1dd>
+ jmp    2033 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x435>
+ mov    -0xa0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x81(%rbp)
+ mov    -0xa8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x82(%rbp)
+ mov    -0xb0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x83(%rbp)
+ mov    -0xb8(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ movzbl (%rax),%eax
+ mov    %al,-0x84(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x10(%rax),%rdx
+ mov    -0x8(%rbp),%rax
+ add    %rdx,%rax
+ mov    %rax,-0x18(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x18(%rax),%rax
+ cmp    $0x5,%rax
+ sete   %al
+ movzbl %al,%eax
+ test   %rax,%rax
+ je     1fcd <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x3cf>
+ mov    -0xc0(%rbp),%rdx
+ mov    -0x8(%rbp),%rax
+ lea    (%rdx,%rax,1),%rcx
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ lea    0x0(,%rax,4),%rdx
+ mov    -0x18(%rbp),%rax
+ add    %rax,%rdx
+ movzbl (%rcx),%eax
+ mov    %al,(%rdx)
+ movzbl -0x81(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x82(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x83(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ add    %rax,-0x18(%rbp)
+ movzbl -0x84(%rbp),%edx
+ mov    -0x18(%rbp),%rax
+ mov    %dl,(%rax)
+ addq   $0x1,-0x8(%rbp)
+ mov    -0x98(%rbp),%rax
+ mov    0x20(%rax),%rax
+ cmp    %rax,-0x8(%rbp)
+ jb     1f13 <void reorder45<sort_r_ctx>(sort_r_ctx*, char*, char*, char*, char*, char*)+0x315>
+ nop
+ leave
+ ret
+sort_r_ctx::cmp(void const*, void const*):
+ push   %rbp
+ mov    %rsp,%rbp
+ sub    $0x20,%rsp
+ mov    %rdi,-0x8(%rbp)
+ mov    %rsi,-0x10(%rbp)
+ mov    %rdx,-0x18(%rbp)
+ mov    -0x8(%rbp),%rax
+ mov    0x8(%rax),%r8
+ mov    -0x8(%rbp),%rax
+ mov    (%rax),%rdx
+ mov    -0x18(%rbp),%rcx
+ mov    -0x10(%rbp),%rax
+ mov    %rcx,%rsi
+ mov    %rax,%rdi
+ call   *%r8
+ leave
+ ret
+
