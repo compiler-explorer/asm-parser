@@ -87,7 +87,7 @@ TEST_CASE("gcc12_sort_object_reloc")
     std::string asmpath;
     if (std::filesystem::current_path().string().ends_with("test"))
     {
-        asmpath = "../../../resources/gcc12_sort_object_reloc";
+        asmpath = "../../../resources/gcc12_sort_object_reloc.asm";
     }
     else
     {
