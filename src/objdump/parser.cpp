@@ -21,6 +21,7 @@ void AsmParser::ObjDumpParserState::commonReset()
     this->inSectionName = false;
     this->inSourceRef = false;
     this->skipRestOfTheLine = false;
+    this->inRelocation = false;
 }
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter &filter) : filter(filter)
@@ -349,11 +350,29 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                         continue;
                     }
                 }
+                else if (c == 'R')
+                {
+                    this->state.inRelocation = true;
+                    this->state.inOpcodes = false;
+
+                    this->state.text += "   ";
+                }
                 else if (!is_hex(c))
                 {
                     this->state.inOpcodes = false;
                 }
             }
+            else if (this->state.inRelocation)
+	    {
+		// R_XXXXXX<tab>data for reloc
+		// data can be symbol, symbol + addend, some value alone.
+		// Simply change TAB to single space then take everything until EOL as data.
+		if (c == '\t')
+		{
+		    this->state.text += ' ';
+		    continue;
+		}
+	    }
             else if (this->state.inSectionStart)
             {
                 if (!this->state.inSectionName)

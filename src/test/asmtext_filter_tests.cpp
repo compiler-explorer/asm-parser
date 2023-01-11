@@ -76,6 +76,36 @@ TEST_CASE("gcc12_bin_fmt_O2_flto")
     ApprovalTests::Approvals::verify(ss.str());
 }
 
+TEST_CASE("gcc12_sort_object_reloc")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = false;
+    filter.library_functions = false;
+    filter.unused_labels = false;
+
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/gcc12_sort_object_reloc.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/gcc12_sort_object_reloc.asm";
+    }
+
+    AsmParser::ObjDumpParser parser(filter);
+    std::fstream fs;
+    fs.open(asmpath, std::fstream::in);
+    REQUIRE(fs.is_open() == true);
+
+    parser.fromStream(fs);
+
+    std::stringstream ss;
+    parser.outputText(ss);
+
+    ApprovalTests::Approvals::verify(ss.str());
+}
 TEST_CASE("filter_example_intel")
 {
     AsmParser::Filter filter;
