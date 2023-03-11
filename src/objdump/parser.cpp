@@ -103,7 +103,8 @@ void AsmParser::ObjDumpParser::label()
     if (this->state.ignoreUntilNextLabel)
         return;
 
-    this->state.checkNextFileForLibraryCode = true;
+    if (this->filter.library_functions)
+        this->state.checkNextFileForLibraryCode = true;
 
     this->state.previousLabel = this->state.text;
     this->state.currentLine.label = this->state.text;
