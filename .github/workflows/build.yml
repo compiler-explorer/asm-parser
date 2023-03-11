@@ -20,8 +20,7 @@ jobs:
 
       - name: Configure conan
         run: |
-          conan profile new default --detect
-          conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan profile detect
 
       - name: Build
         run: |
