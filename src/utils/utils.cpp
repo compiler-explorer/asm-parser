@@ -38,7 +38,7 @@ size_t AsmParser::ustrlen(const std::string_view s)
         ulen += 1;
         if (maxlen > (size_t)mbcharlen)
         {
-            maxlen -= mbcharlen;
+            maxlen -= static_cast<size_t>(mbcharlen);
         }
         else
         {
