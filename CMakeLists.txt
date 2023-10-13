@@ -15,7 +15,20 @@ if (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.16.1/conan.cmake"
             "${CMAKE_BINARY_DIR}/conan.cmake"
-            TLS_VERIFY ON)
+            TLS_VERIFY ON
+            EXPECTED_HASH SHA256=396e16d0f5eabdc6a14afddbcfff62a54a7ee75c6da23f32f7a31bc85db23484
+            STATUS conan_download_status_list)
+    list(GET conan_download_status_list 0 conan_download_status)
+    if (conan_download_status)
+        # CMake retains an empty/bad file even if download failed (stackoverflow.com/q/61255773);
+        # if we don't trash it here then we'll be reading a bad conan.cmake when reconfiguring
+        file(REMOVE "${CMAKE_BINARY_DIR}/conan.cmake")
+        list(GET conan_download_status_list 1 conan_download_error_message)
+        message(FATAL_ERROR
+            "Could not download conan.cmake: "
+            "${conan_download_error_message} "
+            "(Error code: ${conan_download_status})")
+    endif ()
 endif ()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
