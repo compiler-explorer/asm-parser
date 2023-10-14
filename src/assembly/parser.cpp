@@ -677,7 +677,7 @@ void AsmParser::AssemblyTextParser::markLabelUsage()
 {
     for (auto &label : this->labels_defined)
     {
-        auto &line = this->lines[label.second - 1];
+        auto &line = this->lines[static_cast<size_t>(label.second - 1)];
         if (this->isUsed(line->label, 1))
         {
             line->is_used = true;
