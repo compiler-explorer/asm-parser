@@ -16,7 +16,9 @@ jobs:
 
       - name: Install Conan
         id: conan
-        uses: turtlebrowser/get-conan@v1.0
+        uses: turtlebrowser/get-conan@main
+        with:
+          version: 1.59.0
 
       - name: Configure conan
         run: |
