@@ -25,3 +25,19 @@ Other parameters:
 Feeding an objdump via stdin into asm-parser:
 
 `objdump --d a.out -l --insn-width=16 | asm-parser -stdin -binary`
+
+### Building locally
+
+You'll need:
+- conan 1.59.0 - install this in your preferred way, e.g. `pip install conan==1.59.0` or equivalent
+- `gcc` 12 or similar (or hack your settings to support your compiler)
+
+Then you can
+```
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=<path/to/compiler/if/needed>
+$ make -j$(nproc)
+$ make test
+```
+
