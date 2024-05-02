@@ -307,6 +307,10 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                     this->state.inAddress = false;
                     this->state.inSourceRef = true;
                 }
+                else if (c == ';')
+                {
+                    continue;
+                }
                 else if (c == ':')
                 {
                     this->address();
