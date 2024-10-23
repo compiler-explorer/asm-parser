@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install Conan
         id: conan
@@ -41,7 +41,7 @@ jobs:
         run: |
           $GITHUB_WORKSPACE/build/bin/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           path: build/bin/asm-parser
 
