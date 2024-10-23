@@ -23,6 +23,7 @@ class ObjDumpParserState
     bool inSectionStart{};
     bool inSectionName{};
     bool inSourceRef{};
+    bool inSourceRefLineNumber{};
     bool inRelocation{};
     bool skipRestOfTheLine{};
     bool stopParsing{};
@@ -57,6 +58,7 @@ class ObjDumpParser : public IParser
     void do_file_check(std::string_view filename);
     void undo_last_line_if_label();
 
+    void updateSourceRefLineNumber();
     bool shouldIgnoreFunction(std::string_view name) const;
     void eol();
     void address();
