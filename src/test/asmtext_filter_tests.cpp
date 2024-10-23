@@ -202,3 +202,37 @@ TEST_CASE("ce-bug-7000")
 
     ApprovalTests::Approvals::verify(ss.str());
 }
+
+TEST_CASE("ce-bug-4848")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = true;
+    filter.library_functions = true;
+    filter.unused_labels = true;
+    filter.code_only = true;
+
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/ce-bug-4848.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/ce-bug-4848.asm";
+    }
+
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    std::fstream fs;
+    fs.open(asmpath, std::fstream::in);
+    REQUIRE(fs.is_open() == true);
+
+    parser.fromStream(fs);
+
+    std::stringstream ss;
+    parser.outputJson(ss);
+
+    ApprovalTests::Approvals::verify(ss.str());
+}

@@ -91,6 +91,29 @@ void AsmParser::ObjDumpParser::eol()
     this->state.commonReset();
 }
 
+void AsmParser::ObjDumpParser::maybe_remove_last_function()
+{
+    if (!this->labels.empty())
+    {
+        auto previousFunc = this->labels.back();
+
+        bool hasUserCode = false;
+
+        for (size_t lineIdx = previousFunc.second - 1; lineIdx < this->lines.size(); lineIdx++) {
+            auto line = this->lines[lineIdx];
+            if (line.source.is_usercode) {
+                hasUserCode = true;
+                break;
+            }
+        }
+
+        if (!hasUserCode) {
+            this->lines.erase(this->lines.begin() + previousFunc.second - 1, this->lines.end());
+            this->labels.pop_back();
+        }
+    }
+}
+
 void AsmParser::ObjDumpParser::label()
 {
     if (this->state.text.empty())
@@ -101,15 +124,17 @@ void AsmParser::ObjDumpParser::label()
 
     auto label = AssemblyTextParserUtils::getLabelFromObjdumpLabel(this->state.text);
     if (label)
-    {
         this->state.text = label.value();
-    }
+
+    if (this->filter.library_functions)
+        this->maybe_remove_last_function();
 
     this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
     if (this->state.ignoreUntilNextLabel)
         return;
 
-    this->state.checkNextFileForLibraryCode = true;
+    if (this->filter.library_functions)
+        this->state.checkNextFileForLibraryCode = true;
 
     this->state.previousLabel = this->state.text;
     this->state.currentLine.label = this->state.text;
@@ -117,7 +142,7 @@ void AsmParser::ObjDumpParser::label()
     this->state.text = this->state.text + ":";
     this->state.currentLine.is_label = true;
 
-    labels.push_back({ this->state.previousLabel, static_cast<int32_t>(lines.size() + 1) });
+    this->labels.push_back({ this->state.previousLabel, static_cast<int32_t>(lines.size() + 1) });
 }
 
 void AsmParser::ObjDumpParser::labelref()
@@ -230,21 +255,7 @@ void AsmParser::ObjDumpParser::undo_last_line_if_label()
 
 void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
 {
-    if (this->state.checkNextFileForLibraryCode)
-    {
-        this->state.checkNextFileForLibraryCode = false;
-
-
-        if (this->lib_detection.file_in_library(filename))
-        {
-            if (this->lines.size() > 0)
-            {
-                undo_last_line_if_label();
-            }
-
-            this->state.ignoreUntilNextLabel = true;
-        }
-    }
+    this->state.currentSourceRef.is_usercode = !this->lib_detection.file_in_library(filename);
 }
 
 void AsmParser::ObjDumpParser::actually_filename()
