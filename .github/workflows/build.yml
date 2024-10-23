@@ -31,7 +31,7 @@ jobs:
           CURDIR=$PWD
           mkdir -p build
           cd build
-          cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=$CURDIR/conan_provider.cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
+          cmake -G Ninja "-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=$CURDIR/conan_provider.cmake" -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
           cmake --build --config Release --parallel $(nproc) .
 
       - name: Unit test
