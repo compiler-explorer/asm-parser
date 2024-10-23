@@ -1,17 +1,3 @@
-_Z8get_dataB5cxx11v.cold:
- mov    BYTE PTR [rdx+rbx*1],0xff
- mov    rax,QWORD PTR ds:0x10
- ud2    
- mov    BYTE PTR [r12+rbx*1+0x10],0xff
- mov    rax,QWORD PTR ds:0x10
- ud2    
- mov    rdi,r12
- call   403710 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv>
- lea    rdi,[rsp+0x10]
- call   403060 <_ZNSt14basic_ifstreamIcSt11char_traitsIcEED1Ev@plt>
- mov    rdi,rbx
- call   403460 <_Unwind_Resume@plt>
- nop    DWORD PTR [rax+rax*1+0x0]
 main:
  push   rbx
  sub    rsp,0x30
@@ -37,61 +23,6 @@ main:
  call   403710 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv>
  mov    rdi,rbx
  call   403460 <_Unwind_Resume@plt>
-_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm:
- sub    rsp,0x8
- mov    rdi,QWORD PTR [rsi]
- test   rdi,rdi
- js     4036e2 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm+0x52>
- cmp    rdx,rdi
- jae    4036b8 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm+0x28>
- add    rdx,rdx
- cmp    rdi,rdx
- jae    4036b8 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm+0x28>
- test   rdx,rdx
- js     4036d0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm+0x40>
- mov    QWORD PTR [rsi],rdx
- mov    rdi,rdx
- nop    DWORD PTR [rax+0x0]
- add    rdi,0x1
- js     4036dd <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm+0x4d>
- add    rsp,0x8
- jmp    403290 <_Znwm@plt>
- nop    WORD PTR [rax+rax*1+0x0]
- movabs rax,0x7fffffffffffffff
- mov    QWORD PTR [rsi],rax
- call   4030c0 <_ZSt17__throw_bad_allocv@plt>
- mov    edi,0x436004
- call   403170 <_ZSt20__throw_length_errorPKc@plt>
- nop    DWORD PTR [rax+0x0]
-_ZNSt15__new_allocatorIcE8allocateEmPKv:
- test   rsi,rsi
- js     403700 <_ZNSt15__new_allocatorIcE8allocateEmPKv+0x10>
- mov    rdi,rsi
- jmp    403290 <_Znwm@plt>
- nop    DWORD PTR [rax]
- sub    rsp,0x8
- call   4030c0 <_ZSt17__throw_bad_allocv@plt>
- nop
- nop    WORD PTR [rax+rax*1+0x0]
-_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv:
- mov    rax,QWORD PTR [rdi]
- lea    rdx,[rdi+0x10]
- cmp    rax,rdx
- je     403730 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_disposeEv+0x20>
- mov    rsi,QWORD PTR [rdi+0x10]
- mov    rdi,rax
- add    rsi,0x1
- jmp    4032a0 <_ZdlPvm@plt>
- nop    DWORD PTR [rax+0x0]
- ret    
- nop
- data16 cs nop WORD PTR [rax+rax*1+0x0]
- nop    DWORD PTR [rax]
-_ZNSt15__new_allocatorIcE10deallocateEPcm:
- mov    rdi,rsi
- mov    rsi,rdx
- jmp    4032a0 <_ZdlPvm@plt>
- nop    DWORD PTR [rax+rax*1+0x0]
 _Z8get_dataB5cxx11v:
  push   r15
  mov    edx,0x8
@@ -4998,5 +4929,74 @@ _ZN3fmt2v76detail9dragonbox10to_decimalIfEENS2_10decimal_fpIT_EES5_:
  test   eax,eax
  sete   al
  mov    BYTE PTR [rbp-0x25],al
+ movzx  eax,BYTE PTR [rbp-0x25]
+ mov    BYTE PTR [rbp-0x26],al
+ mov    eax,DWORD PTR [rbp-0x18]
+ mov    edi,eax
+ call   406c86 <_ZN3fmt2v76detail9dragonbox16floor_log10_pow2Ei>
+ sub    eax,0x1
+ mov    DWORD PTR [rbp-0x2c],eax
+ mov    eax,DWORD PTR [rbp-0x2c]
+ neg    eax
+ mov    edi,eax
+ call   406f15 <_ZN3fmt2v76detail9dragonbox14cache_accessorIfE16get_cached_powerEi>
+ mov    QWORD PTR [rbp-0x98],rax
+ mov    eax,DWORD PTR [rbp-0x2c]
+ neg    eax
+ mov    edi,eax
+ call   406ccc <_ZN3fmt2v76detail9dragonbox16floor_log2_pow10Ei>
+ mov    edx,DWORD PTR [rbp-0x18]
+ add    eax,edx
+ mov    DWORD PTR [rbp-0x30],eax
+ mov    edx,DWORD PTR [rbp-0x30]
+ lea    rax,[rbp-0x98]
+ mov    esi,edx
+ mov    rdi,rax
+ call   406f77 <_ZN3fmt2v76detail9dragonbox14cache_accessorIfE13compute_deltaERKmi>
+ mov    DWORD PTR [rbp-0x34],eax
+ mov    eax,DWORD PTR [rbp-0x14]
+ add    eax,eax
+ mov    DWORD PTR [rbp-0x38],eax
+ mov    eax,DWORD PTR [rbp-0x38]
+ or     eax,0x1
+ mov    DWORD PTR [rbp-0x3c],eax
+ mov    eax,DWORD PTR [rbp-0x30]
+ mov    edx,DWORD PTR [rbp-0x3c]
+ mov    ecx,eax
+ shl    edx,cl
+ lea    rax,[rbp-0x98]
+ mov    rsi,rax
+ mov    edi,edx
+ call   406f52 <_ZN3fmt2v76detail9dragonbox14cache_accessorIfE11compute_mulEjRKm>
+ mov    DWORD PTR [rbp-0x40],eax
+ mov    eax,DWORD PTR [rbp-0x40]
+ mov    edi,eax
+ call   406ece <_ZN3fmt2v76detail9dragonbox28divide_by_10_to_kappa_plus_1Ej>
+ mov    DWORD PTR [rbp-0xa0],eax
+ mov    eax,DWORD PTR [rbp-0xa0]
+ imul   eax,eax,0x64
+ mov    edx,DWORD PTR [rbp-0x40]
+ sub    edx,eax
+ mov    DWORD PTR [rbp-0x1c],edx
+ mov    eax,DWORD PTR [rbp-0x1c]
+ cmp    DWORD PTR [rbp-0x34],eax
+ jb     407de6 <_ZN3fmt2v76detail9dragonbox10to_decimalIfEENS2_10decimal_fpIT_EES5_+0x51c>
+ mov    eax,DWORD PTR [rbp-0x1c]
+ cmp    eax,DWORD PTR [rbp-0x34]
+ jae    407c84 <_ZN3fmt2v76detail9dragonbox10to_decimalIfEENS2_10decimal_fpIT_EES5_+0x3ba>
+ cmp    DWORD PTR [rbp-0x1c],0x0
+ jne    407c60 <_ZN3fmt2v76detail9dragonbox10to_decimalIfEENS2_10decimal_fpIT_EES5_+0x396>
+ movzx  eax,BYTE PTR [rbp-0x26]
+ xor    eax,0x1
+ test   al,al
+ je     407c60 <_ZN3fmt2v76detail9dragonbox10to_decimalIfEENS2_10decimal_fpIT_EES5_+0x396>
+ mov    edx,DWORD PTR [rbp-0x2c]
+ mov    ecx,DWORD PTR [rbp-0x18]
+ mov    eax,DWORD PTR [rbp-0x3c]
+ mov    esi,ecx
+ mov    edi,eax
+ call   40cd73 <_ZN3fmt2v76detail9dragonbox19is_endpoint_integerIfEEbNS2_10float_infoIT_E12carrier_uintEii>
+ test   al,al
+ je     407c60 <_ZN3fmt2v76detail9dragonbox10to_decimalIfEENS2_10decimal_fpIT_EES5_+0x396>
 [truncated; too many lines]
 
