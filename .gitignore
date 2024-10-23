@@ -36,3 +36,6 @@ build/
 # CLion stuff
 cmake-build-*
 .idea
+
+# venv stuff
+.venv
