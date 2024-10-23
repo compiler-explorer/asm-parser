@@ -29,6 +29,15 @@ AsmParser::ObjDumpParser::ObjDumpParser(const Filter &filter) : filter(filter)
     reproducible = false;
 }
 
+void AsmParser::ObjDumpParser::updateSourceRefLineNumber()
+{
+    auto lineNum = atoi(this->state.text.c_str());
+    if (lineNum > 0)
+    {
+        this->state.currentSourceRef.line = lineNum;
+    }
+}
+
 void AsmParser::ObjDumpParser::eol()
 {
     if (this->state.inLabel)
@@ -44,11 +53,7 @@ void AsmParser::ObjDumpParser::eol()
 
     if (this->state.inSourceRef)
     {
-        auto lineNum = atoi(this->state.text.c_str());
-        if (lineNum > 0)
-        {
-            this->state.currentSourceRef.line = lineNum;
-        }
+        this->updateSourceRefLineNumber();
     }
     else if (!this->state.text.empty())
     {
@@ -236,7 +241,6 @@ void AsmParser::ObjDumpParser::do_file_check(std::string_view filename)
                 undo_last_line_if_label();
             }
 
-            this->state.commonReset();
             this->state.ignoreUntilNextLabel = true;
         }
     }
@@ -410,6 +414,12 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                     this->state.text.clear();
                     this->do_file_check(this->state.currentSourceRef.file);
                     continue;
+                }
+                else if (c == ' ')
+                {
+                    this->updateSourceRefLineNumber();
+                    this->state.text.clear();
+                    this->state.skipRestOfTheLine = true;
                 }
             }
             else if (!this->state.inComment)
