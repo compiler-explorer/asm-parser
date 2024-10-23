@@ -1,0 +1,11 @@
+[requires]
+catch2/2.13.10
+approvaltests.cpp/10.12.2
+fmt/11.0.0
+ctre/3.7.1
+
+[layout]
+cmake_layout
+
+[generators]
+CMakeDeps

@@ -14,7 +14,7 @@ int8_t AsmParser::hex2int(const char c)
     }
     else
     {
-        return 10 + (c - 'a');
+        return static_cast<int8_t>(10 + (c - 'a'));
     }
 }
 
