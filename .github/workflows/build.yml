@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v2
@@ -18,19 +18,20 @@ jobs:
         id: conan
         uses: turtlebrowser/get-conan@main
         with:
-          version: 1.59.0
+          version: 2.8.1
 
       - name: Configure conan
         run: |
-          conan profile new default --detect
-          conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan profile detect
+          sed -i 's/compiler\.cppstd=.*/compiler.cppstd=20/g' ~/.conan2/profiles/default
+          conan install --build=fmt/11.0.0 .
 
       - name: Build
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build . --parallel $(nproc)
+          cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=../conan_provider.cmake -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build --config Release --parallel $(nproc) .
 
       - name: Unit test
         run: |

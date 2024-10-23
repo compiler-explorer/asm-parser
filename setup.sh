@@ -1,7 +1,12 @@
 #!/bin/sh
 
-sudo -H apt install -y python3 python3-pip python3-setuptools g++-9 patchelf
-sudo -H pip3 install conan
+python3 -m venv .venv
 
-conan profile new default --detect
-conan profile update settings.compiler.libcxx=libstdc++11 default
+# sudo -H apt install -y python3 python3-pip python3-setuptools patchelf
+.venv/bin/pip3 install conan
+
+.venv/bin/conan profile detect
+
+sed -i 's/compiler\.cppstd=.*/compiler.cppstd=20/g' ~/.conan2/profiles/default
+
+.venv/bin/conan install --build=fmt/11.0.0 .

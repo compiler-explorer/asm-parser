@@ -660,7 +660,7 @@ bool AsmParser::AssemblyTextParserUtils::shouldIgnoreFunction(std::string_view n
     }
     else if (filter.plt)
     {
-        return (name.ends_with("@plt") || name.ends_with("@plt>"));
+        return (name.ends_with("@plt") || name.ends_with("@plt>")) || (Regexes::pltFunction(name));
     }
     else
     {
