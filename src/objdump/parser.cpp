@@ -22,6 +22,7 @@ void AsmParser::ObjDumpParserState::commonReset()
     this->inSourceRef = false;
     this->skipRestOfTheLine = false;
     this->inRelocation = false;
+    this->inSourceRefLineNumber = false;
 }
 
 AsmParser::ObjDumpParser::ObjDumpParser(const Filter &filter) : filter(filter)
@@ -51,7 +52,7 @@ void AsmParser::ObjDumpParser::eol()
         return;
     }
 
-    if (this->state.inSourceRef)
+    if (this->state.inSourceRefLineNumber)
     {
         this->updateSourceRefLineNumber();
     }
@@ -367,16 +368,16 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 }
             }
             else if (this->state.inRelocation)
-	    {
-		// R_XXXXXX<tab>data for reloc
-		// data can be symbol, symbol + addend, some value alone.
-		// Simply change TAB to single space then take everything until EOL as data.
-		if (c == '\t')
-		{
-		    this->state.text += ' ';
-		    continue;
-		}
-	    }
+            {
+                // R_XXXXXX<tab>data for reloc
+                // data can be symbol, symbol + addend, some value alone.
+                // Simply change TAB to single space then take everything until EOL as data.
+                if (c == '\t')
+                {
+                    this->state.text += ' ';
+                    continue;
+                }
+            }
             else if (this->state.inSectionStart)
             {
                 if (!this->state.inSectionName)
@@ -413,13 +414,16 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                     this->state.currentFilename = this->state.currentSourceRef.file;
                     this->state.text.clear();
                     this->do_file_check(this->state.currentSourceRef.file);
+                    this->state.inSourceRef = true;
+                    this->state.inSourceRefLineNumber = true;
                     continue;
                 }
-                else if (c == ' ')
+                else if (this->state.inSourceRefLineNumber && is_whitespace(c))
                 {
                     this->updateSourceRefLineNumber();
                     this->state.text.clear();
                     this->state.skipRestOfTheLine = true;
+                    continue;
                 }
             }
             else if (!this->state.inComment)
@@ -432,7 +436,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 {
                     this->state.inSomethingWithALabel = true;
                     this->state.currentLabelReference.range =
-                    asm_range{ .start_col = static_cast<uint16_t>(ustrlen(this->state.text) + 1), .end_col = static_cast<uint16_t>(0) };
+                    asm_range{ .start_col = static_cast<uint16_t>(ustrlen(this->state.text) + 1),
+                               .end_col = static_cast<uint16_t>(0) };
                 }
                 else if (this->state.inSomethingWithALabel)
                 {

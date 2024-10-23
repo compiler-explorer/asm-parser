@@ -107,7 +107,7 @@ frame_dummy():
 
 0000000000401120 <_Z3fooNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE>:
 _ZSteqIcSt11char_traitsIcESaIcEEbRKNSt7__cxx1112basic_stringIT_T0_T1_EEPKS5_():
-/opt/compiler-explorer/gcc-14.1.0/include/c++/14.1.0/bits/basic_string.h:3776 (discriminator 4)
+/opt/compiler-explorer/gcc-14.1.0/include/c++/14.1.0/bits/dir with spaces/basic_string.h:3776 (discriminator 4)
   401120:	31 c0                                           	xor    eax,eax
 /opt/compiler-explorer/gcc-14.1.0/include/c++/14.1.0/bits/basic_string.h:3776
   401122:	48 83 7f 08 04                                  	cmp    QWORD PTR [rdi+0x8],0x4
