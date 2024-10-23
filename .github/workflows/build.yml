@@ -36,7 +36,7 @@ jobs:
 
       - name: Unit test
         run: |
-          cd build/src && ./asm-parser-test
+          cd build/src/test && ./asm-parser-test
 
       - name: Smoke test
         run: |
