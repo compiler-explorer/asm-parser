@@ -39,3 +39,12 @@ cmake-build-*
 
 # venv stuff
 .venv
+
+# build artifacts
+lib/*
+bin/*
+
+# misc
+pyvenv.cfg
+lib64
+cetest.json
