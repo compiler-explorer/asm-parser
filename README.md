@@ -29,8 +29,8 @@ Feeding an objdump via stdin into asm-parser:
 ### Building locally
 
 You'll need:
-- conan 1.59.0 - install this in your preferred way, e.g. `pip install conan==1.59.0` or equivalent
-- `gcc` 12 or similar (or hack your settings to support your compiler)
+- conan 2 - see `https://github.com/compiler-explorer/asm-parser/blob/main/setup.sh#L1` on how to install and configure
+- `gcc` 12 or similar or later (or hack your settings to support your compiler)
 
 Then you can
 ```
