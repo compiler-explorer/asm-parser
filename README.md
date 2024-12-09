@@ -30,6 +30,7 @@ Feeding an objdump via stdin into asm-parser:
 
 You'll need:
 - conan 2 - see `https://github.com/compiler-explorer/asm-parser/blob/main/setup.sh#L1` on how to install and configure
+- fmt needs to be build explicitly like so https://github.com/compiler-explorer/asm-parser/blob/main/setup.sh#L12 (don't ask why, no idea)
 - `gcc` 12 or similar or later (or hack your settings to support your compiler)
 
 Then you can
