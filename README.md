@@ -42,3 +42,4 @@ $ make -j$(nproc)
 $ make test
 ```
 
+(see https://github.com/compiler-explorer/asm-parser/blob/main/build.sh for an example, you might need to configure PATH first before doing so)
