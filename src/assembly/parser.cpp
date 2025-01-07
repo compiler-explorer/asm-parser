@@ -597,6 +597,17 @@ bool AsmParser::AssemblyTextParser::isUsedThroughAlias(const std::string_view la
 
 bool AsmParser::AssemblyTextParser::isUsed(const std::string_view label, const int depth) const
 {
+    static thread_local std::unordered_set<std::string_view> visited;
+    if (depth == 0) {
+        visited.clear(); 
+    }
+
+    // Try to detect cycles here. Without this code we will have an infinite recursion problem in some cases.
+    if (visited.count(label)) {
+        return false;
+    }
+    visited.insert(label);
+
     if (this->usercode_labels.contains(label))
         return true;
 
@@ -608,7 +619,7 @@ bool AsmParser::AssemblyTextParser::isUsed(const std::string_view label, const i
             if (ref.empty())
                 return true;
 
-            const auto used = this->isUsed(ref, 0);
+            const auto used = this->isUsed(ref, depth + 1);
             if (used)
                 return true;
         }
@@ -639,6 +650,7 @@ bool AsmParser::AssemblyTextParser::isUsed(const std::string_view label, const i
         }
     }
 
+    visited.erase(label);
     return false;
 }
 
