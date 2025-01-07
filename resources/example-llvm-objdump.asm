@@ -106,11 +106,11 @@ Disassembly of section .text:
 
 0000000000001130 <_Z6squarei>:
 ; _Z6squarei():
-; /opt/compiler-explorer/asm-parser-source/resources/example.cpp:1
+; /app/example.cpp:1
     1130: 55                           	push	rbp
     1131: 48 89 e5                     	mov	rbp, rsp
     1134: 89 7d fc                     	mov	dword ptr [rbp - 0x4], edi
-; /opt/compiler-explorer/asm-parser-source/resources/example.cpp:2
+; /app/example.cpp:2
     1137: 8b 45 fc                     	mov	eax, dword ptr [rbp - 0x4]
     113a: 0f af 45 fc                  	imul	eax, dword ptr [rbp - 0x4]
     113e: 5d                           	pop	rbp
@@ -118,10 +118,10 @@ Disassembly of section .text:
 
 0000000000001140 <main>:
 ; main():
-; /opt/compiler-explorer/asm-parser-source/resources/example.cpp:5
+; /app/example.cpp:5
     1140: 55                           	push	rbp
     1141: 48 89 e5                     	mov	rbp, rsp
-; /opt/compiler-explorer/asm-parser-source/resources/example.cpp:6
+; /app/example.cpp:6
     1144: 31 c0                        	xor	eax, eax
     1146: 5d                           	pop	rbp
     1147: c3                           	ret
