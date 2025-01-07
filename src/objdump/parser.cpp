@@ -99,15 +99,18 @@ void AsmParser::ObjDumpParser::maybe_remove_last_function()
 
         bool hasUserCode = false;
 
-        for (size_t lineIdx = previousFunc.second - 1; lineIdx < this->lines.size(); lineIdx++) {
+        for (size_t lineIdx = previousFunc.second - 1; lineIdx < this->lines.size(); lineIdx++)
+        {
             auto line = this->lines[lineIdx];
-            if (line.source.is_usercode) {
+            if (line.source.is_usercode)
+            {
                 hasUserCode = true;
                 break;
             }
         }
 
-        if (!hasUserCode) {
+        if (!hasUserCode)
+        {
             this->lines.erase(this->lines.begin() + previousFunc.second - 1, this->lines.end());
             this->labels.pop_back();
         }
