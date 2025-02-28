@@ -41,6 +41,8 @@ void AsmParser::ObjDumpParser::updateSourceRefLineNumber()
 
 void AsmParser::ObjDumpParser::eol()
 {
+    this->total_lines++;
+
     if (this->state.inLabel)
     {
         this->label();
@@ -304,6 +306,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
 {
     char c;
 
+    this->total_lines = 0;
     this->state.inAddress = true;
     while (!this->state.stopParsing && in.get(c))
     {
@@ -498,7 +501,7 @@ void AsmParser::ObjDumpParser::outputJson(std::ostream &out) const
         labelsv.push_back(asm_labelpair{ std::string_view{ label.first.begin(), label.first.end() }, label.second });
     }
 
-    JsonWriter writer(out, linesv, labelsv, this->filter);
+    JsonWriter writer(out, linesv, labelsv, this->filter, this->total_lines);
     if (this->reproducible)
         writer.setReproducible();
     writer.write();

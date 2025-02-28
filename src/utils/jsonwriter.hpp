@@ -29,6 +29,7 @@ class JsonWriter
 
     bool prettyPrint;
     bool reproducible;
+    const size_t original_line_count;
 
     void writeValue(const std::string_view value, const jsonopt opts);
     void writeValue(const std::string &value, const jsonopt opts);
@@ -46,7 +47,7 @@ class JsonWriter
     void writeOpcodesArray(const asm_line_v *line);
 
     public:
-    JsonWriter(std::ostream &out, const std::vector<std::unique_ptr<asm_line_v>> &lines, std::vector<asm_labelpair> labels, const Filter filter);
+    JsonWriter(std::ostream &out, const std::vector<std::unique_ptr<asm_line_v>> &lines, std::vector<asm_labelpair> labels, const Filter filter, const size_t original_line_count);
 
     virtual void setReproducible();
     virtual void write();
@@ -70,7 +71,8 @@ class DebugJsonWriter : public JsonWriter
                     std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels,
                     std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_weak_labels,
                     std::unordered_map<std::string_view, std::string_view> aliased_labels,
-                    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels);
+                    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels,
+                    const size_t original_line_count);
 
     void write() override;
 };

@@ -52,6 +52,8 @@ class ObjDumpParser : public IParser
 
     bool reproducible;
 
+    size_t total_lines{};
+
     // todo: bad names
     void actually_address();
     void actually_filename();

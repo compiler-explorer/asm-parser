@@ -296,6 +296,7 @@ void AsmParser::AssemblyTextParser::handleLabelDefinition(const std::string_view
 
 void AsmParser::AssemblyTextParser::eol()
 {
+    this->total_lines++;
     this->state.currentLine = std::make_unique<asm_line_v>();
 
     // if (this->lines.size() == 5000)
@@ -807,6 +808,7 @@ void AsmParser::AssemblyTextParser::fromStream(std::istream &in)
 {
     char c;
 
+    this->total_lines = 0;
     this->state.text.reserve(1024);
 
     while (!this->state.stopParsing && in.get(c))
@@ -859,7 +861,7 @@ void AsmParser::AssemblyTextParser::outputDebugJson(std::ostream &out) const
     const std::vector<asm_labelpair> labels = this->redetermineLabels();
 
     DebugJsonWriter writer(out, this->lines, labels, this->filter, this->used_labels, this->weakly_used_labels,
-                           this->aliased_labels, this->data_used_labels);
+                           this->aliased_labels, this->data_used_labels, this->total_lines);
     writer.write();
 }
 
@@ -867,7 +869,7 @@ void AsmParser::AssemblyTextParser::outputJson(std::ostream &out) const
 {
     const std::vector<asm_labelpair> labels = this->redetermineLabels();
 
-    JsonWriter writer(out, this->lines, labels, this->filter);
+    JsonWriter writer(out, this->lines, labels, this->filter, this->total_lines);
     writer.write();
 }
 
