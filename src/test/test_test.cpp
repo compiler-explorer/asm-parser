@@ -234,3 +234,11 @@ TEST_CASE("d2 source directives", "[asm]")
     const auto matchl = AsmParser::AssemblyTextParserUtils::getD2LineInfo(R"(        .d2line         5)");
     REQUIRE(matchl.value().line == 5);
 }
+
+TEST_CASE("data types", "[asm]")
+{
+    REQUIRE(!AsmParser::AssemblyTextParserUtils::isDataDefn("    mov eax, 0x12"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn("    .dword 12h"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn("    .string 'hello, world!'"));
+    REQUIRE(AsmParser::AssemblyTextParserUtils::isDataDefn("    .base64 'abc'"));
+}
