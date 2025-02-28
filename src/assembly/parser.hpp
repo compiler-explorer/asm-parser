@@ -59,6 +59,8 @@ class AssemblyTextParser : public IParser
 
     bool reproducible;
 
+    size_t total_lines{};
+
     bool label_is_defined(const std::string_view s) const;
     std::optional<std::string_view> getLabelFromLine(const std::string_view line);
 

@@ -7,8 +7,9 @@
 AsmParser::JsonWriter::JsonWriter(std::ostream &out,
                                   const std::vector<std::unique_ptr<asm_line_v>> &lines,
                                   std::vector<asm_labelpair> labels,
-                                  const Filter filter)
-: filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false)
+                                  const Filter filter,
+                                  const size_t original_line_count)
+: filter(filter), out(out), lines(lines), labels(labels), prettyPrint(false), original_line_count(original_line_count)
 {
     this->reproducible = false;
 }
@@ -398,6 +399,8 @@ void AsmParser::JsonWriter::JsonWriter::write()
     if (!this->reproducible)
         this->writeKv("parsingTime", global_current_running_time(), jsonopt::prefixwithcomma);
 
+    this->writeKv("filteredCount", static_cast<long>(original_line_count - this->lines.size()), jsonopt::prefixwithcomma);
+
     this->out << "}";
     if (this->prettyPrint)
         this->out << "\n";
@@ -411,8 +414,9 @@ AsmParser::DebugJsonWriter::DebugJsonWriter(std::ostream &out,
                                             std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_labels,
                                             std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_weak_labels,
                                             std::unordered_map<std::string_view, std::string_view> aliased_labels,
-                                            std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels)
-: AsmParser::JsonWriter::JsonWriter(out, lines, labels, filter), used_labels(used_labels),
+                                            std::unordered_map<std::string_view, std::unordered_set<std::string_view>> used_data_labels,
+                                            const size_t original_line_count)
+: AsmParser::JsonWriter::JsonWriter(out, lines, labels, filter, original_line_count), used_labels(used_labels),
   used_weak_labels(used_weak_labels), aliased_labels(aliased_labels), used_data_labels(used_data_labels)
 {
 }
