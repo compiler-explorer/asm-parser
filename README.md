@@ -24,7 +24,7 @@ Other parameters:
 
 Feeding an objdump via stdin into asm-parser:
 
-`objdump --d a.out -l --insn-width=16 | asm-parser -stdin -binary`
+`objdump -d a.out -l --insn-width=16 | asm-parser -stdin -binary`
 
 ### Building locally (debug build)
 
