@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
+
+# Include the Conan provider to automatically handle dependencies
+set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/conan_provider.cmake")
+
 project(asm-parser)
 
 set(CMAKE_CXX_STANDARD 20)
