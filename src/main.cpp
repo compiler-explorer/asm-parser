@@ -78,6 +78,7 @@ int main(int argc, const char **argv)
         std::cerr << "Please make sure that the locale is installed on your system:" << std::endl;
         std::cerr << "$ sudo apt-get install locales" << std::endl;
         std::cerr << "$ locale-gen en_US.UTF-8" << std::endl;
+        return 1;
     }
 
     AsmParser::global_start_timer();
