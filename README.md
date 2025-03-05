@@ -24,22 +24,25 @@ Other parameters:
 
 Feeding an objdump via stdin into asm-parser:
 
-`objdump --d a.out -l --insn-width=16 | asm-parser -stdin -binary`
+`objdump -d a.out -l --insn-width=16 | asm-parser -stdin -binary`
 
-### Building locally
+### Building locally (debug build)
 
-You'll need:
-- conan 2 - see `https://github.com/compiler-explorer/asm-parser/blob/main/setup.sh#L1` on how to install and configure
-- fmt needs to be build explicitly like so https://github.com/compiler-explorer/asm-parser/blob/main/setup.sh#L12 (don't ask why, no idea)
-- `gcc` 12 or similar or later (or hack your settings to support your compiler)
+You'll need `gcc` 12 or later (or hack your settings to support your compiler).
 
-Then you can
+1. `setup.sh` sets up a venv, installs conan2 in it and uses that to install packages (fmt needs to be explicitly built for some reason):
 ```
-$ mkdir build
+$ ./setup.sh
+```
+
+2. Then you can:
+```
 $ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=<path/to/compiler/if/needed>
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug
 $ make -j$(nproc)
 $ make test
 ```
 
 (see https://github.com/compiler-explorer/asm-parser/blob/main/build.sh for an example, you might need to configure PATH first before doing so)
+
+The built executable should be found in the path `./build/src/asm-parser` .

@@ -4,7 +4,7 @@ PATH=/opt/compiler-explorer/cmake/bin:/opt/compiler-explorer/ninja:$PWD/.venv/bi
 
 rm -Rf build
 mkdir build
-cmake -B build -G Ninja -S . -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./conan_provider.cmake -DCMAKE_BUILD_TYPE=Debug
+cmake -B build -G Ninja -S . -DCMAKE_BUILD_TYPE=Debug
 cmake --build build --config Debug
 
 CURDIR=$PWD

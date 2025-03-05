@@ -7,6 +7,7 @@ python3 -m venv .venv
 
 .venv/bin/conan profile detect
 
+# Modify the Conan configuration file to retrieve packages with standard C++20
 sed -i 's/compiler\.cppstd=.*/compiler.cppstd=20/g' ~/.conan2/profiles/default
 
 .venv/bin/conan install --build=fmt/11.0.0 .
