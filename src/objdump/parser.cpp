@@ -307,11 +307,11 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
     this->state.inAddress = true;
     while (!this->state.stopParsing && in.get(c))
     {
-        if (c == 13)
+        if (c == '\r')
         {
             // skip cr (assuming there's going to be an lf)
         }
-        else if (c == 10)
+        else if (c == '\n')
         {
             this->eol();
             continue;

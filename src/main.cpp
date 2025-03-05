@@ -74,10 +74,10 @@ int main(int argc, const char **argv)
         std::locale loc("en_US.UTF-8");
         std::locale::global(loc);
     } catch (const std::runtime_error& e) {
-        std::cerr << "Failed to set locale: " << e.what() << std::endl;
-        std::cerr << "Please make sure that the locale is installed on your system:" << std::endl;
-        std::cerr << "$ sudo apt-get install locales" << std::endl;
-        std::cerr << "$ locale-gen en_US.UTF-8" << std::endl;
+        std::cerr << "Failed to set locale: " << e.what() << '\n';
+        std::cerr << "Please make sure that the locale is installed on your system:\n";
+        std::cerr << "$ sudo apt-get install locales\n";
+        std::cerr << "$ locale-gen en_US.UTF-8\n";
         return 1;
     }
 
