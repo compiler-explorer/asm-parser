@@ -1,3 +1,131 @@
+_ZSt11_Hash_bytesPKvmm@plt:
+ jmp    QWORD PTR [rip+0x5e8a]        # 7ec0 <_ZSt11_Hash_bytesPKvmm@CXXABI_1.3.5>
+ push   0x0
+ jmp    2020 <.plt>
+_ZNSt13basic_fstreamIcSt11char_traitsIcEED1Ev@plt:
+ jmp    QWORD PTR [rip+0x5e82]        # 7ec8 <_ZNSt13basic_fstreamIcSt11char_traitsIcEED1Ev@GLIBCXX_3.4>
+ push   0x1
+ jmp    2020 <.plt>
+_ZSt17__throw_bad_allocv@plt:
+ jmp    QWORD PTR [rip+0x5e7a]        # 7ed0 <_ZSt17__throw_bad_allocv@GLIBCXX_3.4>
+ push   0x2
+ jmp    2020 <.plt>
+__cxa_begin_catch@plt:
+ jmp    QWORD PTR [rip+0x5e72]        # 7ed8 <__cxa_begin_catch@CXXABI_1.3>
+ push   0x3
+ jmp    2020 <.plt>
+memcmp@plt:
+ jmp    QWORD PTR [rip+0x5e6a]        # 7ee0 <memcmp@GLIBC_2.2.5>
+ push   0x4
+ jmp    2020 <.plt>
+__cxa_allocate_exception@plt:
+ jmp    QWORD PTR [rip+0x5e62]        # 7ee8 <__cxa_allocate_exception@CXXABI_1.3>
+ push   0x5
+ jmp    2020 <.plt>
+_ZSt20__throw_length_errorPKc@plt:
+ jmp    QWORD PTR [rip+0x5e5a]        # 7ef0 <_ZSt20__throw_length_errorPKc@GLIBCXX_3.4>
+ push   0x6
+ jmp    2020 <.plt>
+_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_@plt:
+ jmp    QWORD PTR [rip+0x5e52]        # 7ef8 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_assignERKS4_@GLIBCXX_3.4.21>
+ push   0x7
+ jmp    2020 <.plt>
+memset@plt:
+ jmp    QWORD PTR [rip+0x5e4a]        # 7f00 <memset@GLIBC_2.2.5>
+ push   0x8
+ jmp    2020 <.plt>
+_ZSt19__throw_logic_errorPKc@plt:
+ jmp    QWORD PTR [rip+0x5e42]        # 7f08 <_ZSt19__throw_logic_errorPKc@GLIBCXX_3.4>
+ push   0x9
+ jmp    2020 <.plt>
+memcpy@plt:
+ jmp    QWORD PTR [rip+0x5e3a]        # 7f10 <memcpy@GLIBC_2.14>
+ push   0xa
+ jmp    2020 <.plt>
+__cxa_atexit@plt:
+ jmp    QWORD PTR [rip+0x5e32]        # 7f18 <__cxa_atexit@GLIBC_2.2.5>
+ push   0xb
+ jmp    2020 <.plt>
+_ZdlPv@plt:
+ jmp    QWORD PTR [rip+0x5e2a]        # 7f20 <_ZdlPv@GLIBCXX_3.4>
+ push   0xc
+ jmp    2020 <.plt>
+_ZNSo9_M_insertIlEERSoT_@plt:
+ jmp    QWORD PTR [rip+0x5e22]        # 7f28 <_ZNSo9_M_insertIlEERSoT_@GLIBCXX_3.4.9>
+ push   0xd
+ jmp    2020 <.plt>
+_Znwm@plt:
+ jmp    QWORD PTR [rip+0x5e1a]        # 7f30 <_Znwm@GLIBCXX_3.4>
+ push   0xe
+ jmp    2020 <.plt>
+_ZdlPvm@plt:
+ jmp    QWORD PTR [rip+0x5e12]        # 7f38 <_ZdlPvm@CXXABI_1.3.9>
+ push   0xf
+ jmp    2020 <.plt>
+__stack_chk_fail@plt:
+ jmp    QWORD PTR [rip+0x5e0a]        # 7f40 <__stack_chk_fail@GLIBC_2.4>
+ push   0x10
+ jmp    2020 <.plt>
+_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt:
+ jmp    QWORD PTR [rip+0x5e02]        # 7f48 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@GLIBCXX_3.4.9>
+ push   0x11
+ jmp    2020 <.plt>
+_ZNSt13basic_fstreamIcSt11char_traitsIcEEC1Ev@plt:
+ jmp    QWORD PTR [rip+0x5dfa]        # 7f50 <_ZNSt13basic_fstreamIcSt11char_traitsIcEEC1Ev@GLIBCXX_3.4>
+ push   0x12
+ jmp    2020 <.plt>
+_ZNKSt8__detail20_Prime_rehash_policy14_M_need_rehashEmmm@plt:
+ jmp    QWORD PTR [rip+0x5df2]        # 7f58 <_ZNKSt8__detail20_Prime_rehash_policy14_M_need_rehashEmmm@GLIBCXX_3.4.18>
+ push   0x13
+ jmp    2020 <.plt>
+_ZNSt13basic_fstreamIcSt11char_traitsIcEE4openERKNSt7__cxx1112basic_stringIcS1_SaIcEEESt13_Ios_Openmode@plt:
+ jmp    QWORD PTR [rip+0x5dea]        # 7f60 <_ZNSt13basic_fstreamIcSt11char_traitsIcEE4openERKNSt7__cxx1112basic_stringIcS1_SaIcEEESt13_Ios_Openmode@GLIBCXX_3.4.21>
+ push   0x14
+ jmp    2020 <.plt>
+_ZNSi3getERc@plt:
+ jmp    QWORD PTR [rip+0x5de2]        # 7f68 <_ZNSi3getERc@GLIBCXX_3.4>
+ push   0x15
+ jmp    2020 <.plt>
+__cxa_rethrow@plt:
+ jmp    QWORD PTR [rip+0x5dda]        # 7f70 <__cxa_rethrow@CXXABI_1.3>
+ push   0x16
+ jmp    2020 <.plt>
+_ZNSt8ios_base4InitC1Ev@plt:
+ jmp    QWORD PTR [rip+0x5dd2]        # 7f78 <_ZNSt8ios_base4InitC1Ev@GLIBCXX_3.4>
+ push   0x17
+ jmp    2020 <.plt>
+_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEmmPKcm@plt:
+ jmp    QWORD PTR [rip+0x5dca]        # 7f80 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_M_replaceEmmPKcm@GLIBCXX_3.4.21>
+ push   0x18
+ jmp    2020 <.plt>
+__cxa_end_catch@plt:
+ jmp    QWORD PTR [rip+0x5dc2]        # 7f88 <__cxa_end_catch@CXXABI_1.3>
+ push   0x19
+ jmp    2020 <.plt>
+__cxa_throw@plt:
+ jmp    QWORD PTR [rip+0x5dba]        # 7f90 <__cxa_throw@CXXABI_1.3>
+ push   0x1a
+ jmp    2020 <.plt>
+_ZNSolsEi@plt:
+ jmp    QWORD PTR [rip+0x5db2]        # 7f98 <_ZNSolsEi@GLIBCXX_3.4>
+ push   0x1b
+ jmp    2020 <.plt>
+_Unwind_Resume@plt:
+ jmp    QWORD PTR [rip+0x5daa]        # 7fa0 <_Unwind_Resume@GCC_3.0>
+ push   0x1c
+ jmp    2020 <.plt>
+_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm@plt:
+ jmp    QWORD PTR [rip+0x5da2]        # 7fa8 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm@GLIBCXX_3.4.21>
+ push   0x1d
+ jmp    2020 <.plt>
+_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm@plt:
+ jmp    QWORD PTR [rip+0x5d9a]        # 7fb0 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_mutateEmmPKcm@GLIBCXX_3.4.21>
+ push   0x1e
+ jmp    2020 <.plt>
+_ZNSt9exceptionD2Ev@plt:
+ jmp    QWORD PTR [rip+0x5d92]        # 7fb8 <_ZNSt9exceptionD2Ev@GLIBCXX_3.4>
+ push   0x1f
+ jmp    2020 <.plt>
 _ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EED1Ev:
  push   r12
  push   rbp

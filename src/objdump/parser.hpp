@@ -7,6 +7,7 @@
 #include <iosfwd>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace AsmParser
 {
@@ -49,6 +50,7 @@ class ObjDumpParser : public IParser
     LibraryDetection lib_detection;
     std::vector<asm_line> lines;
     std::vector<asm_labelpair_t> labels;
+    std::unordered_set<std::string> referenced_functions;
 
     bool reproducible;
 
@@ -62,6 +64,7 @@ class ObjDumpParser : public IParser
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
     bool shouldIgnoreFunction(std::string_view name) const;
+    void collectReferencedFunctions(std::istream &in);
     void eol();
     void address();
     void opcodes();
