@@ -56,7 +56,6 @@ class ObjDumpParser : public IParser
 
     size_t total_lines{};
 
-    // todo: bad names
     void actually_address();
     void actually_filename();
     void do_file_check(std::string_view filename);
@@ -64,7 +63,6 @@ class ObjDumpParser : public IParser
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
     bool shouldIgnoreFunction(std::string_view name) const;
-    void collectReferencedFunctions(std::istream &in);
     void eol();
     void address();
     void opcodes();

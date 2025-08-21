@@ -159,9 +159,10 @@ void AsmParser::ObjDumpParser::labelref()
         {
             this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
 
-            if (!this->shouldIgnoreFunction(this->state.currentLabelReference.name))
+            if (!AsmParser::AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
             {
                 this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+                this->referenced_functions.insert(this->state.currentLabelReference.name);
             }
         }
         catch (...)
@@ -297,60 +298,6 @@ void AsmParser::ObjDumpParser::address()
     this->state.text.clear();
 }
 
-void AsmParser::ObjDumpParser::collectReferencedFunctions(std::istream &in)
-{
-    std::string line;
-    std::string current_function;
-    bool in_user_function = false;
-    
-    while (std::getline(in, line))
-    {
-        // Check if this is a function label line (e.g., "1234 <func_name>:")
-        if (line.find('<') != std::string::npos && line.find(">:") != std::string::npos)
-        {
-            size_t start = line.find('<') + 1;
-            size_t end = line.find(">:");
-            if (start < end)
-            {
-                current_function = line.substr(start, end - start);
-                // Check if this is a user function (not filtered by the ignore pattern)
-                in_user_function = !AssemblyTextParserUtils::shouldIgnoreFunction(current_function, this->filter);
-            }
-        }
-        // If we're in a user function, look for function calls
-        else if (in_user_function && !line.empty())
-        {
-            // Look for call instructions and extract the target function
-            // Pattern: address:opcodes call address <target_function>
-            if (line.find("call") != std::string::npos || 
-                line.find("bl") != std::string::npos ||
-                line.find("jmp") != std::string::npos)
-            {
-                size_t func_start = line.find('<');
-                if (func_start != std::string::npos)
-                {
-                    size_t func_end = line.find('>', func_start);
-                    if (func_end != std::string::npos)
-                    {
-                        std::string target_function = line.substr(func_start + 1, func_end - func_start - 1);
-                        // Remove any address offset (e.g., "func+0x10")
-                        size_t plus_pos = target_function.find('+');
-                        if (plus_pos != std::string::npos)
-                        {
-                            target_function = target_function.substr(0, plus_pos);
-                        }
-                        this->referenced_functions.insert(target_function);
-                    }
-                }
-            }
-        }
-    }
-    
-    // Reset stream to beginning for actual parsing
-    in.clear();
-    in.seekg(0, std::ios::beg);
-}
-
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(std::string_view name) const
 {
     // Don't filter if the function is referenced by a non-filtered function
@@ -370,9 +317,6 @@ void AsmParser::ObjDumpParser::setReproducible()
 
 void AsmParser::ObjDumpParser::fromStream(std::istream &in)
 {
-    // First pass: collect function references
-    this->collectReferencedFunctions(in);
-    
     char c;
 
     this->total_lines = 0;
