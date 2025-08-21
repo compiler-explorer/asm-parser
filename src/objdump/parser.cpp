@@ -300,6 +300,11 @@ void AsmParser::ObjDumpParser::address()
 
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(std::string_view name) const
 {
+    if (name == "main")
+    {
+        return false;
+    }
+
     // Don't filter if the function is referenced by a non-filtered function
     if (this->referenced_functions.count(std::string(name)) > 0)
     {
