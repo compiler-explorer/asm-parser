@@ -170,10 +170,24 @@ void AsmParser::ObjDumpParser::labelref()
     {
         if (this->state.text[i] == '<')
         {
-            if (i == 0 || is_whitespace(this->state.text[i - 1]))
+            if (i == 0)
             {
                 startBracketPos = i;
                 break;
+            }
+            else if (is_whitespace(this->state.text[i - 1]))
+            {
+                std::size_t j = i - 1;
+                while (j > 0 && is_whitespace(this->state.text[j]))
+                {
+                    j--;
+                }
+
+                if (is_hex(this->state.text[j]))
+                {
+                    startBracketPos = i;
+                    break;
+                }
             }
         }
     }
