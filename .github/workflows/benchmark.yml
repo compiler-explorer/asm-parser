@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Conan
         id: conan
-        uses: turtlebrowser/get-conan@main
+        uses: turtlebrowser/get-conan@v1.2
         with:
           version: 2.8.1
 
@@ -50,7 +50,7 @@ jobs:
       - name: Show summary
         run: cat bench-results/bench-summary.json
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: bench-summary
           path: |
