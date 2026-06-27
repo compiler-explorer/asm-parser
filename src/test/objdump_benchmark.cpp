@@ -59,7 +59,7 @@ TEST_CASE("objdump parser benchmark", "[!benchmark][objdump]")
 
     // The asm files here are pre-captured objdump output of various sizes.
     for (const auto &name : {"example.asm", "example_intel.asm", "gcc12_sort_object_reloc.asm",
-                             "gcc12_bin_fmt_O2_flto.asm", "gcc14_bin_fmt_print_O0.asm"})
+                             "gcc12_bin_fmt_O2_flto.asm"})
     {
         const std::string input = readResource(name);
 

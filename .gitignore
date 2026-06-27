@@ -44,7 +44,3 @@ cmake-build-*
 
 # venv stuff
 .venv
-
-# Large benchmark fixture is committed compressed (.xz) and decompressed at
-# build time; ignore the decompressed copy.
-/resources/gcc14_bin_fmt_print_O0.asm
