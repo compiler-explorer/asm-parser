@@ -27,6 +27,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Large fixtures are committed xz-compressed; the benchmark reads the
+      # decompressed .asm. (--keep leaves the .xz; the .asm is gitignored.)
+      - name: Decompress benchmark fixtures
+        run: xz --decompress --keep --force resources/*.asm.xz
+
       - name: Install Conan
         id: conan
         uses: turtlebrowser/get-conan@v1.2
