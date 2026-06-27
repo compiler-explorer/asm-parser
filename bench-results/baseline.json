@@ -1,0 +1,90 @@
+{
+  "schema": "asm-parser-bench/1",
+  "generated_utc": "2026-06-27T14:08:48.248475+00:00",
+  "commit": "c3440213b27ecae1583337c4b446991da21341a0",
+  "ref": "HEAD",
+  "label": "Linux/X64",
+  "run_count": 5,
+  "benchmarks": [
+    {
+      "name": "parse example.asm",
+      "runs": 5,
+      "samples_per_run": 100,
+      "mean_ns": 155782.8,
+      "mean_ms": 0.1557828,
+      "stddev_across_runs_ns": 1852.4474891343075,
+      "stddev_across_runs_ms": 0.0018524474891343074,
+      "cv_percent": 1.1891219628446192,
+      "min_ms": 0.154184,
+      "max_ms": 0.158972,
+      "mean_within_run_stddev_ms": 0.016918420000000003,
+      "per_run_mean_ms": [
+        0.155571,
+        0.155049,
+        0.154184,
+        0.155138,
+        0.158972
+      ]
+    },
+    {
+      "name": "parse example_intel.asm",
+      "runs": 5,
+      "samples_per_run": 100,
+      "mean_ns": 7681760.0,
+      "mean_ms": 7.68176,
+      "stddev_across_runs_ns": 8631.949374272303,
+      "stddev_across_runs_ms": 0.008631949374272302,
+      "cv_percent": 0.11236942281810812,
+      "min_ms": 7.67117,
+      "max_ms": 7.69446,
+      "mean_within_run_stddev_ms": 0.08032122,
+      "per_run_mean_ms": [
+        7.67117,
+        7.69446,
+        7.67717,
+        7.68252,
+        7.68348
+      ]
+    },
+    {
+      "name": "parse gcc12_sort_object_reloc.asm",
+      "runs": 5,
+      "samples_per_run": 100,
+      "mean_ns": 6399328.0,
+      "mean_ms": 6.399328,
+      "stddev_across_runs_ns": 95071.93550149276,
+      "stddev_across_runs_ms": 0.09507193550149276,
+      "cv_percent": 1.4856549859843526,
+      "min_ms": 6.33027,
+      "max_ms": 6.56389,
+      "mean_within_run_stddev_ms": 0.33537957999999995,
+      "per_run_mean_ms": [
+        6.56389,
+        6.37586,
+        6.38739,
+        6.33027,
+        6.33923
+      ]
+    },
+    {
+      "name": "parse gcc12_bin_fmt_O2_flto.asm",
+      "runs": 5,
+      "samples_per_run": 100,
+      "mean_ns": 117524800.0,
+      "mean_ms": 117.5248,
+      "stddev_across_runs_ns": 272434.76283323317,
+      "stddev_across_runs_ms": 0.27243476283323315,
+      "cv_percent": 0.231810445823548,
+      "min_ms": 117.144,
+      "max_ms": 117.791,
+      "mean_within_run_stddev_ms": 0.9706758000000001,
+      "per_run_mean_ms": [
+        117.604,
+        117.791,
+        117.735,
+        117.35,
+        117.144
+      ]
+    }
+  ]
+}

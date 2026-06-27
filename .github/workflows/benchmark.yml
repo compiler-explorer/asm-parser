@@ -1,0 +1,90 @@
+name: Benchmark
+
+# Runs automatically on every push to any branch and on pull requests, producing
+# a benchmark summary artifact (the main-branch runs can be promoted to a
+# baseline for future comparisons). Also exposes a manual trigger for ad-hoc reruns.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: "Number of benchmark process runs to average"
+        required: false
+        default: "5"
+      update_baseline:
+        description: "Commit this run as the new baseline (skips the regression gate)"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.8.1
+
+      - name: Configure conan
+        run: |
+          conan profile detect
+          sed -i 's/compiler\.cppstd=.*/compiler.cppstd=20/g' ~/.conan2/profiles/default
+          conan install --build=fmt/11.0.0 .
+
+      - name: Build (Release)
+        run: |
+          CURDIR=$PWD
+          mkdir -p build-release
+          cd build-release
+          cmake "-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=$CURDIR/conan_provider.cmake" -DCMAKE_C_COMPILER=/usr/bin/gcc-10 -DCMAKE_CXX_COMPILER=/usr/bin/g++-10 -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build .
+
+      - name: Run benchmarks
+        env:
+          BENCH_RUNS: ${{ github.event.inputs.runs }}
+          BENCH_LABEL: ${{ runner.os }}/${{ runner.arch }}
+        run: |
+          ./scripts/run-benchmarks.sh
+
+      - name: Show summary
+        run: cat bench-results/bench-summary.json
+
+      - name: Compare against baseline
+        if: ${{ github.event.inputs.update_baseline != 'true' }}
+        run: |
+          python3 scripts/compare_bench.py \
+            --baseline bench-results/baseline.json \
+            --current bench-results/bench-summary.json \
+            --threshold "${BENCH_THRESHOLD:-10}"
+        env:
+          BENCH_THRESHOLD: "10"
+
+      - name: Update baseline
+        if: ${{ github.event.inputs.update_baseline == 'true' }}
+        run: |
+          cp bench-results/bench-summary.json bench-results/baseline.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f bench-results/baseline.json
+          if git diff --staged --quiet; then
+            echo "Baseline unchanged; nothing to commit."
+          else
+            git commit -m "Update benchmark baseline [skip ci]"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: bench-summary
+          path: |
+            bench-results/bench-summary.json
+            bench-results/run-*.xml
