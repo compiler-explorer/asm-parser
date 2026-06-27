@@ -12,10 +12,17 @@ on:
         description: "Number of benchmark process runs to average"
         required: false
         default: "5"
+      update_baseline:
+        description: "Commit this run as the new baseline (skips the regression gate)"
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   benchmark:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v7
@@ -51,6 +58,7 @@ jobs:
         run: cat bench-results/bench-summary.json
 
       - name: Compare against baseline
+        if: ${{ github.event.inputs.update_baseline != 'true' }}
         run: |
           python3 scripts/compare_bench.py \
             --baseline bench-results/baseline.json \
@@ -58,6 +66,20 @@ jobs:
             --threshold "${BENCH_THRESHOLD:-10}"
         env:
           BENCH_THRESHOLD: "10"
+
+      - name: Update baseline
+        if: ${{ github.event.inputs.update_baseline == 'true' }}
+        run: |
+          cp bench-results/bench-summary.json bench-results/baseline.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f bench-results/baseline.json
+          if git diff --staged --quiet; then
+            echo "Baseline unchanged; nothing to commit."
+          else
+            git commit -m "Update benchmark baseline [skip ci]"
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
 
       - uses: actions/upload-artifact@v7
         if: always()
