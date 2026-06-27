@@ -1,13 +1,11 @@
 name: Benchmark
 
-# Runs automatically on every push to main and on pull requests, producing a
-# benchmark summary artifact (the main-branch runs can be promoted to a baseline
-# for future comparisons). Also exposes a manual trigger for ad-hoc reruns.
+# Runs automatically on every push to any branch and on pull requests, producing
+# a benchmark summary artifact (the main-branch runs can be promoted to a
+# baseline for future comparisons). Also exposes a manual trigger for ad-hoc reruns.
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       runs:
