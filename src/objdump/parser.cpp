@@ -152,22 +152,85 @@ void AsmParser::ObjDumpParser::label()
 
 void AsmParser::ObjDumpParser::labelref()
 {
-    if (!this->state.ignoreUntilNextLabel)
+    if (this->state.ignoreUntilNextLabel)
     {
-        this->state.currentLabelReference.range.end_col = static_cast<uint16_t>(ustrlen(this->state.text));
-        try
-        {
-            this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
+        this->state.currentLabelReference = {};
+        return;
+    }
 
-            if (!AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
+    std::size_t lastBracketPos = this->state.text.find_last_of('>');
+    if (lastBracketPos == std::string::npos)
+    {
+        this->state.currentLabelReference = {};
+        return;
+    }
+
+    std::size_t startBracketPos = std::string::npos;
+    for (std::size_t i = lastBracketPos; i-- > 0;)
+    {
+        if (this->state.text[i] == '<')
+        {
+            if (i == 0 || is_whitespace(this->state.text[i - 1]))
             {
-                this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+                startBracketPos = i;
             }
         }
-        catch (...)
+    }
+
+    if (startBracketPos != std::string::npos && startBracketPos < lastBracketPos)
+    {
+        std::size_t labelEndPos = lastBracketPos;
+
+        std::size_t lastPlusPos = this->state.text.find_last_of('+', lastBracketPos);
+
+        if (lastPlusPos != std::string::npos && lastPlusPos > startBracketPos)
         {
-            // ignore erroneous nonsense
-            this->state.currentLabelReference.name = "";
+            std::size_t offsetLen = lastBracketPos - lastPlusPos - 1;
+
+            if (offsetLen >= 3 && this->state.text[lastPlusPos + 1] == '0' && this->state.text[lastPlusPos + 2] == 'x')
+            {
+                bool validHex = true;
+                for (std::size_t i = 3; i <= offsetLen; ++i)
+                {
+                    if (!is_hex(this->state.text[lastPlusPos + i]))
+                    {
+                        validHex = false;
+                        break;
+                    }
+                }
+
+                if (validHex)
+                {
+                    labelEndPos = lastPlusPos;
+                }
+            }
+        }
+
+        if (labelEndPos > startBracketPos + 1)
+        {
+            try
+            {
+                std::string_view text_view(this->state.text);
+
+                this->state.currentLabelReference.range.start_col =
+                static_cast<uint16_t>(ustrlen(text_view.substr(0, startBracketPos)) + 1);
+
+                this->state.currentLabelReference.range.end_col =
+                static_cast<uint16_t>(ustrlen(text_view.substr(0, labelEndPos)));
+
+                std::size_t nameLen = labelEndPos - startBracketPos - 1;
+                this->state.currentLabelReference.name = text_view.substr(startBracketPos + 1, nameLen);
+
+                if (!AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
+                {
+                    this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+                }
+            }
+            catch (...)
+            {
+                // ignore erroneous nonsense
+                this->state.currentLabelReference.name = "";
+            }
         }
     }
 
@@ -316,6 +379,10 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
         }
         else if (c == '\n')
         {
+            if (!this->state.inComment && !this->state.inLabel)
+            {
+                this->labelref();
+            }
             this->eol();
             continue;
         }
@@ -451,30 +518,11 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             {
                 if (c == '#')
                 {
-                    this->state.inComment = true;
-                }
-                else if (c == '<')
-                {
-                    this->state.inSomethingWithALabel = true;
-                    this->state.currentLabelReference.range =
-                    asm_range{ .start_col = static_cast<uint16_t>(ustrlen(this->state.text) + 1),
-                               .end_col = static_cast<uint16_t>(0) };
-                }
-                else if (this->state.inSomethingWithALabel)
-                {
-                    if (c == '>')
+                    if (!this->state.inLabel)
                     {
-                        this->state.inSomethingWithALabel = false;
-                        if (this->state.currentLabelReference.name.empty())
-                        {
-                            this->labelref();
-                        }
-                    }
-                    else if (c == '+')
-                    {
-                        this->state.inSomethingWithALabel = false;
                         this->labelref();
                     }
+                    this->state.inComment = true;
                 }
             }
 
