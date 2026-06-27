@@ -32,6 +32,8 @@
 *.app
 
 build/
+build-release/
+bench-results/
 CMakeUserPresets.json
 
 # CLion stuff
