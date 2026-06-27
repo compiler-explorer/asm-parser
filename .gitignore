@@ -33,7 +33,9 @@
 
 build/
 build-release/
-bench-results/
+# ignore generated benchmark output, but keep the committed baseline
+/bench-results/*
+!/bench-results/baseline.json
 CMakeUserPresets.json
 
 # CLion stuff

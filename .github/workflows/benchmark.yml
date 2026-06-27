@@ -50,7 +50,17 @@ jobs:
       - name: Show summary
         run: cat bench-results/bench-summary.json
 
+      - name: Compare against baseline
+        run: |
+          python3 scripts/compare_bench.py \
+            --baseline bench-results/baseline.json \
+            --current bench-results/bench-summary.json \
+            --threshold "${BENCH_THRESHOLD:-10}"
+        env:
+          BENCH_THRESHOLD: "10"
+
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: bench-summary
           path: |
