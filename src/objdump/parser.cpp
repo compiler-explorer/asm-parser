@@ -210,14 +210,16 @@ void AsmParser::ObjDumpParser::labelref()
         {
             try
             {
+                std::string_view text_view(this->state.text);
+
                 this->state.currentLabelReference.range.start_col =
-                static_cast<uint16_t>(ustrlen(this->state.text.substr(0, startBracketPos)) + 1);
+                static_cast<uint16_t>(ustrlen(text_view.substr(0, startBracketPos)) + 1);
 
                 this->state.currentLabelReference.range.end_col =
-                static_cast<uint16_t>(ustrlen(this->state.text.substr(0, labelEndPos)));
+                static_cast<uint16_t>(ustrlen(text_view.substr(0, labelEndPos)));
 
                 std::size_t nameLen = labelEndPos - startBracketPos - 1;
-                this->state.currentLabelReference.name = this->state.text.substr(startBracketPos + 1, nameLen);
+                this->state.currentLabelReference.name = text_view.substr(startBracketPos + 1, nameLen);
 
                 if (!AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
                 {
