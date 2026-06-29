@@ -7,6 +7,7 @@
 #include <iosfwd>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace AsmParser
 {
@@ -49,12 +50,12 @@ class ObjDumpParser : public IParser
     LibraryDetection lib_detection;
     std::vector<asm_line> lines;
     std::vector<asm_labelpair_t> labels;
+    std::unordered_set<std::string> referenced_functions;
 
     bool reproducible;
 
     size_t total_lines{};
 
-    // todo: bad names
     void actually_address();
     void actually_filename();
     void do_file_check(std::string_view filename);

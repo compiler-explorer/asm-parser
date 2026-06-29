@@ -134,7 +134,7 @@ void AsmParser::ObjDumpParser::label()
     if (this->filter.library_functions)
         this->maybe_remove_last_function();
 
-    this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
+    this->state.ignoreUntilNextLabel = this->shouldIgnoreFunction(this->state.text);
     if (this->state.ignoreUntilNextLabel)
         return;
 
@@ -159,9 +159,10 @@ void AsmParser::ObjDumpParser::labelref()
         {
             this->state.currentLabelReference.name = this->state.text.substr(this->state.currentLabelReference.range.start_col);
 
-            if (!AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
+            if (!AsmParser::AssemblyTextParserUtils::shouldIgnoreFunction(this->state.currentLabelReference.name, this->filter))
             {
                 this->state.currentLine.labels.push_back(this->state.currentLabelReference);
+                this->referenced_functions.insert(this->state.currentLabelReference.name);
             }
         }
         catch (...)
@@ -295,6 +296,23 @@ void AsmParser::ObjDumpParser::address()
     }
 
     this->state.text.clear();
+}
+
+bool AsmParser::ObjDumpParser::shouldIgnoreFunction(std::string_view name) const
+{
+    if (name == "main")
+    {
+        return false;
+    }
+
+    // Don't filter if the function is referenced by a non-filtered function
+    if (this->referenced_functions.count(std::string(name)) > 0)
+    {
+        return false;
+    }
+    
+    // Apply the original filtering logic
+    return AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter);
 }
 
 void AsmParser::ObjDumpParser::setReproducible()
