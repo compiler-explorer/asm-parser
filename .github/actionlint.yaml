@@ -1,0 +1,18 @@
+self-hosted-runner:
+  # Labels of Compiler Explorer's self-hosted runners (see the ce-ci repository)
+  labels:
+    - ce
+    - small
+    - medium
+    - admin
+    - lin-builder
+    - win-builder
+
+# Enforce shellcheck errors and warnings in embedded run: scripts, but not
+# info/style — consistent with the org-wide actionlint rollout.
+paths:
+  .github/workflows/**/*.yml:
+    ignore: &shellcheck-info-style
+      - 'shellcheck reported issue in this script: SC\d+:(info|style):'
+  .github/workflows/**/*.yaml:
+    ignore: *shellcheck-info-style
