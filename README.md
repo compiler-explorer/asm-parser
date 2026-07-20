@@ -30,17 +30,9 @@ Feeding an objdump via stdin into asm-parser:
 
 You'll need `gcc` 12 or later (or hack your settings to support your compiler).
 
-1. `setup.sh` sets up a venv, installs conan2 in it and uses that to install packages (fmt needs to be explicitly built for some reason):
 ```
-$ ./setup.sh
-```
-
-2. Then you can:
-```
-$ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Debug
-$ make -j$(nproc)
-$ make test
+$ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+$ cmake --build build -j$(nproc)
 ```
 
 (see https://github.com/compiler-explorer/asm-parser/blob/main/build.sh for an example, you might need to configure PATH first before doing so)
