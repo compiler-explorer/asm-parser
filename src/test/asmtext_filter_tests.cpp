@@ -111,7 +111,7 @@ TEST_CASE("filter_example_intel")
     AsmParser::Filter filter;
     filter.binary = true;
     filter.plt = true;
-    filter.library_functions = true;
+    filter.library_functions = false;
     filter.unused_labels = true;
 
     std::string asmpath;
@@ -275,7 +275,7 @@ TEST_CASE("ce-bug-8809")
     AsmParser::Filter filter;
     filter.binary = true;
     filter.plt = true;
-    filter.library_functions = true;
+    filter.library_functions = false;
     filter.unused_labels = true;
 
     std::string asmpath;
@@ -286,6 +286,39 @@ TEST_CASE("ce-bug-8809")
     else
     {
         asmpath = "../../resources/ce-bug-8809.asm";
+    }
+
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    std::fstream fs;
+    fs.open(asmpath, std::fstream::in);
+    REQUIRE(fs.is_open() == true);
+
+    parser.fromStream(fs);
+
+    std::stringstream ss;
+    parser.outputJson(ss);
+
+    ApprovalTests::Approvals::verify(ss.str());
+}
+
+TEST_CASE("ce-bug-2346")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = true;
+    filter.library_functions = true;
+    filter.unused_labels = true;
+
+    std::string asmpath;
+    if (std::filesystem::current_path().string().ends_with("test"))
+    {
+        asmpath = "../../../resources/ce-bug-2346.asm";
+    }
+    else
+    {
+        asmpath = "../../resources/ce-bug-2346.asm";
     }
 
     AsmParser::ObjDumpParser parser(filter);
