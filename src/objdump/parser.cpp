@@ -8,6 +8,11 @@
 #include <ctre.hpp>
 #include <istream>
 
+namespace
+{
+constexpr std::size_t maxLines = 5000;
+}
+
 void AsmParser::ObjDumpParserState::commonReset()
 {
     this->currentLine = {};
@@ -81,12 +86,20 @@ void AsmParser::ObjDumpParser::eol()
 
         // A function without user code is only removed at the next label, so its lines mustn't use up the limit,
         // otherwise a large statically linked runtime hides the user's functions behind it
-        if (lines.size() < 5000 || this->may_remove_last_function())
+        if (lines.size() < maxLines || this->may_remove_last_function())
         {
             lines.push_back(this->state.currentLine);
         }
         else
         {
+            // A function kept for its user code may have run past the limit while it could still be removed
+            this->lines.resize(maxLines);
+            std::erase_if(this->labels,
+                          [](const auto &label)
+                          {
+                              return static_cast<std::size_t>(label.second) > maxLines;
+                          });
+
             asm_line truncated = {};
             truncated.text = "[truncated; too many lines]";
             lines.push_back(truncated);
