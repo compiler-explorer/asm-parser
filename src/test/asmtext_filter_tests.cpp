@@ -335,3 +335,63 @@ TEST_CASE("ce-bug-2346")
 
     ApprovalTests::Approvals::verify(ss.str());
 }
+
+namespace
+{
+// a function of `nops` instructions that objdump attributes to `file`
+std::string objdumpFunction(const std::string &name, const std::string &file, int nops)
+{
+    std::string dump = "\n0000000000401000 <" + name + ">:\n" + name + "():\n" + file + ":3\n";
+    for (int i = 0; i < nops; i++)
+        dump += "  401000:\t90                   \tnop\n";
+    return dump;
+}
+
+std::vector<std::string> outputLines(const AsmParser::ObjDumpParser &parser)
+{
+    std::stringstream ss;
+    parser.outputText(ss);
+    std::vector<std::string> lines;
+    for (std::string line; std::getline(ss, line);)
+        lines.push_back(line);
+    return lines;
+}
+} // namespace
+
+TEST_CASE("line limit for a function kept for its user code")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.library_functions = true;
+
+    AsmParser::ObjDumpParser parser(filter);
+
+    SECTION("user code that only shows up past the limit")
+    {
+        // code inlined from a header comes before the user's own line
+        std::stringstream in(
+        objdumpFunction("main", "/opt/compiler-explorer/gcc-15.1.0/include/c++/15.1.0/bits/stl_vector.h", 6000) +
+        "/app/example.cpp:4\n  401000:\tc3                   \tret\n");
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.front() == "main:");
+        CHECK(lines.back() == "[truncated; too many lines]");
+    }
+
+    SECTION("a function that starts at the limit")
+    {
+        std::stringstream in(objdumpFunction("first", "/app/example.cpp", 4999) +
+                             objdumpFunction("second", "/app/example.cpp", 1));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.back() == "[truncated; too many lines]");
+
+        std::stringstream json;
+        parser.outputJson(json);
+        CHECK(json.str().find("\"second\"") == std::string::npos);
+    }
+}
