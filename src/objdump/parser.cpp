@@ -76,8 +76,12 @@ void AsmParser::ObjDumpParser::eol()
         }
 
         this->state.currentLine.source = this->state.currentSourceRef;
+        if (this->state.currentLine.source.is_usercode)
+            this->lastFunctionHasUserCode = true;
 
-        if (lines.size() < 5000)
+        // A function without user code is only removed at the next label, so its lines mustn't use up the limit,
+        // otherwise a large statically linked runtime hides the user's functions behind it
+        if (lines.size() < 5000 || this->may_remove_last_function())
         {
             lines.push_back(this->state.currentLine);
         }
@@ -93,29 +97,19 @@ void AsmParser::ObjDumpParser::eol()
     this->state.commonReset();
 }
 
+bool AsmParser::ObjDumpParser::may_remove_last_function() const
+{
+    return this->filter.library_functions && !this->labels.empty() && !this->lastFunctionHasUserCode;
+}
+
 void AsmParser::ObjDumpParser::maybe_remove_last_function()
 {
-    if (!this->labels.empty())
+    if (this->may_remove_last_function())
     {
-        auto previousFunc = this->labels.back();
-
-        bool hasUserCode = false;
-
-        for (size_t lineIdx = previousFunc.second - 1; lineIdx < this->lines.size(); lineIdx++)
-        {
-            auto line = this->lines[lineIdx];
-            if (line.source.is_usercode)
-            {
-                hasUserCode = true;
-                break;
-            }
-        }
-
-        if (!hasUserCode)
-        {
-            this->lines.erase(this->lines.begin() + previousFunc.second - 1, this->lines.end());
-            this->labels.pop_back();
-        }
+        this->lines.erase(this->lines.begin() + this->labels.back().second - 1, this->lines.end());
+        this->labels.pop_back();
+        // every function that is still there was kept for having user code
+        this->lastFunctionHasUserCode = true;
     }
 }
 
@@ -131,8 +125,7 @@ void AsmParser::ObjDumpParser::label()
     if (label)
         this->state.text = label.value();
 
-    if (this->filter.library_functions)
-        this->maybe_remove_last_function();
+    this->maybe_remove_last_function();
 
     this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
     if (this->state.ignoreUntilNextLabel)
@@ -148,6 +141,7 @@ void AsmParser::ObjDumpParser::label()
     this->state.currentLine.is_label = true;
 
     this->labels.push_back({ this->state.previousLabel, static_cast<int32_t>(lines.size() + 1) });
+    this->lastFunctionHasUserCode = false;
 }
 
 void AsmParser::ObjDumpParser::labelref()
@@ -531,6 +525,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             this->state.text += c;
         }
     }
+
+    this->maybe_remove_last_function();
 }
 
 void AsmParser::ObjDumpParser::outputJson(std::ostream &out) const

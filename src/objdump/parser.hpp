@@ -53,12 +53,14 @@ class ObjDumpParser : public IParser
     bool reproducible;
 
     size_t total_lines{};
+    bool lastFunctionHasUserCode{};
 
     // todo: bad names
     void actually_address();
     void actually_filename();
     void do_file_check(std::string_view filename);
     void undo_last_line_if_label();
+    bool may_remove_last_function() const;
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
     bool shouldIgnoreFunction(std::string_view name) const;
