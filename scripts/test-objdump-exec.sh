@@ -27,6 +27,15 @@ to_native() {
     fi
 }
 
+# paths for $PYTHON, which is a native Windows program under Git Bash but a Linux one when testing under Wine
+python_path() {
+    if [[ "$RUN" != wine* ]] && command -v cygpath > /dev/null; then
+        cygpath -w "$1"
+    else
+        echo "$1"
+    fi
+}
+
 native_sep() {
     if [[ "$RUN" == wine* ]] || command -v cygpath > /dev/null; then
         echo '\'
@@ -58,7 +67,7 @@ OBJDUMP_ARGS=("${DISASSEMBLY_FLAGS[@]}" "$PREFIX_ARG" "$FIXTURE")
 failures=0
 
 compare_json() {
-    "$PYTHON" - "$1" "$2" << 'EOF'
+    "$PYTHON" - "$(python_path "$1")" "$(python_path "$2")" << 'EOF'
 import json, sys
 
 def load(path):
