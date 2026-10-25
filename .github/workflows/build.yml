@@ -147,8 +147,7 @@ jobs:
           sources = {(s['file'], s['mainsource']) for line in asm if (s := line.get('source'))}
           print('functions:', labels)
           print('sources:', sorted(sources, key=str))
-          assert 'main:' in labels and 'square(int):' in labels and 'helper(int):' in labels, 'user functions missing'
-          assert 'mainCRTStartup:' not in labels, 'runtime not filtered'
+          assert labels == ['square(int):', 'main:', 'helper(int):'], 'expected only the user functions'
           assert (None, 'true') in sources, 'main source not recognised'
           assert ('src/helper.cpp', 'false') in sources, 'helper source not recognised'
           EOF

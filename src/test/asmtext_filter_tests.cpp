@@ -470,6 +470,7 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
               std::string::npos);
         // the C runtime keeps its own source
         CHECK(output.json.find("crtexe.c") != std::string::npos);
+        CHECK(hasLine(output, "_XcptFilter:"));
         CHECK(hasLine(output, "pre_c_init:"));
     }
 
@@ -484,6 +485,8 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
         CHECK_FALSE(hasLine(output, "mainCRTStartup:"));
         // runtime code without debug info, before any source line; the header of the output isn't a source line
         CHECK_FALSE(hasLine(output, "pre_c_init:"));
+        // and an import thunk without debug info after the user's functions
+        CHECK_FALSE(hasLine(output, "_XcptFilter:"));
     }
 
     SECTION("the main source isn't masked with -dont_mask_filenames")
@@ -493,6 +496,48 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
 
         CHECK(output.json.find(R"("source": {"file": "example.cpp", "mainsource": "true", "line": 6})") !=
               std::string::npos);
+    }
+}
+
+TEST_CASE("the source after a function label", "[asm]")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+
+    SECTION("a label inside a function continues its source")
+    {
+        // objdump only prints a source line when it changes, labels starting with a dot are inside the function
+        const std::string dump =
+        objdumpFunction("main", "/app/example.cpp", 2) + "\n0000000000401010 <.l_start>:\n  401010:\t90                   \tnop\n";
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(output.json.find(R"("address": 4198416, "source": {"file": null, "mainsource": "true", "line": 3})") !=
+              std::string::npos);
+    }
+
+    SECTION("a function without line information doesn't continue the source of the one before it")
+    {
+        // e.g. runtime code without debug info that's linked in after the user's code
+        const std::string dump = objdumpFunction("main", "/app/example.cpp", 2) +
+                                 "\n0000000000402000 <_setargv>:\n  402000:\t31 c0                \txor    eax,eax\n";
+
+        SECTION("it has no source")
+        {
+            const auto output = parseObjdump(dump, filter);
+
+            REQUIRE(hasLine(output, "_setargv:"));
+            CHECK(output.json.find(R"("opcodes": ["31", "c0"], "address": 4202496, "source": null)") !=
+                  std::string::npos);
+        }
+
+        SECTION("it isn't kept as user code")
+        {
+            filter.library_functions = true;
+            const auto output = parseObjdump(dump, filter);
+
+            CHECK(hasLine(output, "main:"));
+            CHECK_FALSE(hasLine(output, "_setargv:"));
+        }
     }
 }
 

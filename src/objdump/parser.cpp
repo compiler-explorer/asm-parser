@@ -140,6 +140,11 @@ void AsmParser::ObjDumpParser::label()
 
     this->maybe_remove_last_function();
 
+    // objdump only prints a source line when it changes, but a new function doesn't continue the source of the one
+    //  before it; labels starting with a dot are inside a function (e.g. .l_start in hand-written assembly)
+    if (!this->state.text.starts_with("."))
+        this->state.currentSourceRef = {};
+
     this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
     if (this->state.ignoreUntilNextLabel)
         return;
