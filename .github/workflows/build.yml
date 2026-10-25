@@ -114,6 +114,16 @@ jobs:
           C:/mingw64/bin/gcc.exe -g -O1 fixture.c -o fixture.exe
           scripts/test-objdump-exec.sh build/src/asm-parser.exe C:/mingw64/bin/objdump.exe fixture.exe
 
+      - name: Test running objdump from asm-parser on a large binary
+        shell: bash
+        env:
+          PYTHON: python
+          MSYS_NO_PATHCONV: 1
+        run: |
+          # big enough for asm-parser to stop at its line limit and terminate objdump early
+          cp build/src/asm-parser.exe large.exe
+          scripts/test-objdump-exec.sh build/src/asm-parser.exe C:/mingw64/bin/objdump.exe large.exe
+
       - uses: actions/upload-artifact@v7
         with:
           name: asm-parser-windows
