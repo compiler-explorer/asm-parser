@@ -53,3 +53,49 @@ jobs:
           GHR_COMPRESS: xz
           GHR_PATH: build/src/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-2022
+
+    steps:
+      # The approval tests compare against resources/*.approved.txt byte for byte
+      - name: Keep LF line endings on checkout
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v7
+
+      - name: Install Conan
+        uses: turtlebrowser/get-conan@v1.2
+        with:
+          version: 2.8.1
+
+      - name: Configure conan
+        run: conan profile detect
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: Unit test
+        working-directory: build/src/test
+        run: ./asm-parser-test.exe
+
+      - name: Smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          exe=build/src/asm-parser.exe
+          "$exe" resources/example_intel.asm > example_intel.json
+          "$exe" -directives -comment_only -unused_labels resources/example.asm > example.json
+          "$exe" -stdin -binary -plt -library_functions < resources/gcc12_bin_fmt_O2_flto.asm > objdump.json
+          for f in example_intel.json example.json objdump.json; do
+            python -c "import json, sys; d = json.load(open(sys.argv[1])); assert len(d['asm']) > 0, 'no asm lines'; print(sys.argv[1], len(d['asm']), 'lines')" "$f"
+          done
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: asm-parser-windows
+          path: build/src/asm-parser.exe

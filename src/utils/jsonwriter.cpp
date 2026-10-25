@@ -117,7 +117,7 @@ void AsmParser::JsonWriter::writeKv(const char *key, const std::string &value, c
     }
 }
 
-void AsmParser::JsonWriter::writeKv(const char *key, const long value, const jsonopt opts)
+void AsmParser::JsonWriter::writeKv(const char *key, const int64_t value, const jsonopt opts)
 {
     if (opts == jsonopt::prefixwithcomma)
         this->out << ", ";
@@ -135,7 +135,7 @@ void AsmParser::JsonWriter::writeKv(const char *key, const long value, const jso
 
 void AsmParser::JsonWriter::writeKv(const char *key, const int value, const jsonopt opts)
 {
-    this->writeKv(key, static_cast<long>(value), opts);
+    this->writeKv(key, static_cast<int64_t>(value), opts);
 }
 
 void AsmParser::JsonWriter::writeKv(const std::string_view key, const int value, const jsonopt opts)
@@ -399,7 +399,7 @@ void AsmParser::JsonWriter::JsonWriter::write()
     if (!this->reproducible)
         this->writeKv("parsingTime", global_current_running_time(), jsonopt::prefixwithcomma);
 
-    this->writeKv("filteredCount", static_cast<long>(original_line_count - this->lines.size()), jsonopt::prefixwithcomma);
+    this->writeKv("filteredCount", static_cast<int64_t>(original_line_count - this->lines.size()), jsonopt::prefixwithcomma);
 
     this->out << "}";
     if (this->prettyPrint)
