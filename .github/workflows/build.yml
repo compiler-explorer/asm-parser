@@ -153,6 +153,15 @@ jobs:
           assert ('src/helper.cpp', 'false') in sources, 'helper source not recognised'
           EOF
 
+      # TEMPORARY: keep the output of the mingw source paths test for inspection
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: mingw-paths-output
+          path: |
+            paths.json
+            ${{ runner.temp }}/compiler-explorer-compilerCI123/output.s.exe
+
       - uses: actions/upload-artifact@v7
         with:
           name: asm-parser-windows
