@@ -6,6 +6,9 @@ add_library(asm-parser-lib STATIC
     objdump/parser.cpp
     assembly/parser.cpp
 )
+if(WIN32)
+    target_sources(asm-parser-lib PRIVATE utils/win32_mblen.cpp)
+endif()
 find_package(ctre CONFIG REQUIRED)
 find_package(Catch2 REQUIRED CONFIG)
 find_package(fmt REQUIRED CONFIG)

@@ -70,6 +70,7 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
 
 int main(int argc, const char **argv)
 {
+#ifndef _WIN32
     try {
         std::locale loc("en_US.UTF-8");
         std::locale::global(loc);
@@ -80,6 +81,7 @@ int main(int argc, const char **argv)
         std::cerr << "$ locale-gen en_US.UTF-8\n";
         return 1;
     }
+#endif
 
     AsmParser::global_start_timer();
 

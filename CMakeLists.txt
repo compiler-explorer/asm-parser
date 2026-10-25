@@ -10,6 +10,11 @@ add_compile_options(-Werror -Wall -Wextra -Wconversion)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=leak -fsanitize=address -fsanitize=undefined -static-libasan")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
+if(MINGW)
+    # Link everything statically so the executable doesn't depend on the MinGW runtime DLLs
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+endif()
+
 include(CheckIPOSupported)
 check_ipo_supported()
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)

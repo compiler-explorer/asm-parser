@@ -1,6 +1,10 @@
 #include "utils.hpp"
 #include <chrono>
 
+#ifdef _WIN32
+#include "win32_mblen.hpp"
+#endif
+
 bool AsmParser::is_hex(const char c)
 {
     return (c >= 'a' && c <= 'f') || (c >= '0' && c <= '9');
