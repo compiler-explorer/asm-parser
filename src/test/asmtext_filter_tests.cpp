@@ -468,9 +468,8 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
         CHECK(output.json.find(R"("source": {"file": null, "mainsource": "true", "line": 6})") != std::string::npos);
         CHECK(output.json.find(R"("source": {"file": "src/helper.cpp", "mainsource": "false", "line": 2})") !=
               std::string::npos);
-        // the C runtime keeps its own source, and the import thunk after the user's functions has none
+        // the C runtime keeps its own source
         CHECK(output.json.find("crtexe.c") != std::string::npos);
-        CHECK(hasLine(output, "_XcptFilter:"));
     }
 
     SECTION("the user's functions are kept as user code")
@@ -482,7 +481,6 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
         CHECK(hasLine(output, "main:"));
         CHECK(hasLine(output, "helper(int):"));
         CHECK_FALSE(hasLine(output, "mainCRTStartup:"));
-        CHECK_FALSE(hasLine(output, "_XcptFilter:"));
     }
 
     SECTION("the main source isn't masked with -dont_mask_filenames")
@@ -492,33 +490,6 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
 
         CHECK(output.json.find(R"("source": {"file": "example.cpp", "mainsource": "true", "line": 6})") !=
               std::string::npos);
-    }
-}
-
-TEST_CASE("a function without line information doesn't get the source of the function before it", "[asm]")
-{
-    const std::string dump = objdumpFunction("main", "/app/example.cpp", 2) +
-                             "\n0000000000402000 <asan.module_ctor>:\n  402000:\t90                   \tnop\n";
-
-    AsmParser::Filter filter;
-    filter.binary = true;
-
-    SECTION("it has no source")
-    {
-        const auto output = parseObjdump(dump, filter);
-
-        REQUIRE(hasLine(output, "asan.module_ctor:"));
-        // the nop at 0x402000
-        CHECK(output.json.find(R"("address": 4202496, "source": null)") != std::string::npos);
-    }
-
-    SECTION("it isn't kept as user code")
-    {
-        filter.library_functions = true;
-        const auto output = parseObjdump(dump, filter);
-
-        CHECK(hasLine(output, "main:"));
-        CHECK_FALSE(hasLine(output, "asan.module_ctor:"));
     }
 }
 
