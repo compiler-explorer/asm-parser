@@ -52,14 +52,6 @@ jobs:
         with:
           path: build/src/asm-parser
 
-      - name: Release
-        uses: fnkr/github-action-ghr@v1.3
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          GHR_COMPRESS: xz
-          GHR_PATH: build/src/
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build-windows:
     runs-on: windows-2022
 
@@ -128,3 +120,52 @@ jobs:
         with:
           name: asm-parser-windows
           path: build/src/asm-parser.exe
+
+  # Packages both executables on every run so the layout is checked, and attaches them to the release for tags.
+  # Infra installs asm-parser.tar.xz (Linux) and asm-parser-windows.zip (Windows) by these exact names,
+  # each with the executable at the root of the archive.
+  release:
+    needs: [build, build-windows]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: artifact
+          path: linux
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: asm-parser-windows
+          path: windows
+
+      - name: Package
+        run: |
+          set -euo pipefail
+          mkdir release
+          # artifacts don't keep the executable bit
+          chmod +x linux/asm-parser
+          tar -cJf release/asm-parser.tar.xz -C linux asm-parser
+          (cd windows && zip -X ../release/asm-parser-windows.zip asm-parser.exe)
+
+      - name: Check package layout
+        run: |
+          set -euo pipefail
+          test "$(tar -tJf release/asm-parser.tar.xz)" = "asm-parser"
+          tar -tvJf release/asm-parser.tar.xz | grep -q '^-rwx'
+          test "$(zipinfo -1 release/asm-parser-windows.zip)" = "asm-parser.exe"
+          ls -la release
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-packages
+          path: release/
+
+      - name: Release
+        uses: fnkr/github-action-ghr@v1.3
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GHR_PATH: release/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
