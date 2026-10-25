@@ -72,11 +72,14 @@ jobs:
       - name: Configure conan
         run: conan profile detect
 
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Install Ninja
+        run: pip install ninja
 
+      # MSVC can't compile the ctre regexes (C1202), so build with the runner's MinGW-w64 GCC
       - name: Build
         run: |
-          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          C:/mingw64/bin/g++.exe --version
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=C:/mingw64/bin/gcc.exe -DCMAKE_CXX_COMPILER=C:/mingw64/bin/g++.exe
           cmake --build build
 
       - name: Unit test
