@@ -521,3 +521,21 @@ TEST_CASE("a function without line information doesn't get the source of the fun
         CHECK_FALSE(hasLine(output, "asan.module_ctor:"));
     }
 }
+
+TEST_CASE("control characters in a symbol name are escaped in the JSON", "[json]")
+{
+    // a broken symbol table can give an import thunk a name of raw bytes
+    const std::string dump = objdumpFunction("main", "/app/example.cpp", 1) +
+                             "  401006:\tff 25 3a 08 00 00    \tjmp    *0x83a(%rip)        # 140002620 <\x17\x08>\n";
+
+    AsmParser::Filter filter;
+    filter.binary = true;
+    const auto output = parseObjdump(dump, filter);
+
+    CHECK(output.json.find("<\\u0017\\u0008>") != std::string::npos);
+    CHECK(std::none_of(output.json.begin(), output.json.end(),
+                       [](const char c)
+                       {
+                           return static_cast<unsigned char>(c) < 0x20 && c != '\n';
+                       }));
+}

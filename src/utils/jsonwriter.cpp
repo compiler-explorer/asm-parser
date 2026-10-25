@@ -37,6 +37,14 @@ std::string escape(const std::string_view in)
         {
             out += "\\\"";
         }
+        else if (static_cast<unsigned char>(c) < 0x20)
+        {
+            // other control characters aren't allowed in a JSON string, e.g. a broken symbol table can put them in names
+            constexpr char hexdigits[] = "0123456789abcdef";
+            out += "\\u00";
+            out += hexdigits[(static_cast<unsigned char>(c) >> 4) & 0xF];
+            out += hexdigits[static_cast<unsigned char>(c) & 0xF];
+        }
         else
         {
             out += c;
