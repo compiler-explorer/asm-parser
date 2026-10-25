@@ -42,6 +42,12 @@ jobs:
         run: |
           $GITHUB_WORKSPACE/build/src/asm-parser $GITHUB_WORKSPACE/resources/example_intel.asm > ./example_intel.json
 
+      - name: Test running objdump from asm-parser
+        run: |
+          printf 'int square(int x) { return x * x; }\nint main(int argc, char **argv) { return square(argc); }\n' > fixture.c
+          gcc -g -O1 fixture.c -o fixture
+          scripts/test-objdump-exec.sh build/src/asm-parser /usr/bin/objdump fixture
+
       - uses: actions/upload-artifact@v7
         with:
           path: build/src/asm-parser
@@ -97,6 +103,16 @@ jobs:
           for f in example_intel.json example.json objdump.json; do
             python -c "import json, sys; d = json.load(open(sys.argv[1])); assert len(d['asm']) > 0, 'no asm lines'; print(sys.argv[1], len(d['asm']), 'lines')" "$f"
           done
+
+      - name: Test running objdump from asm-parser
+        shell: bash
+        env:
+          PYTHON: python
+          MSYS_NO_PATHCONV: 1
+        run: |
+          printf 'int square(int x) { return x * x; }\nint main(int argc, char **argv) { return square(argc); }\n' > fixture.c
+          C:/mingw64/bin/gcc.exe -g -O1 fixture.c -o fixture.exe
+          scripts/test-objdump-exec.sh build/src/asm-parser.exe C:/mingw64/bin/objdump.exe fixture.exe
 
       - uses: actions/upload-artifact@v7
         with:

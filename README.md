@@ -18,6 +18,7 @@ Other parameters:
 * `-nocompat` Leaves some experimental extra information
 * `-stdin` Reads assembly from STDIN instead of from a given file
 * `-outputtext` Instead of writing to JSON, output the filtered assemblys
+* `-objdump <path> -- <objdump arguments>` Runs objdump itself (without a shell) and parses its output as it comes in, implies `-binary`. Everything after `--` is passed to objdump as-is. Exits with a non-zero code when objdump can't be started or fails
 
 
 ### Example usage
@@ -25,6 +26,10 @@ Other parameters:
 Feeding an objdump via stdin into asm-parser:
 
 `objdump -d a.out -l --insn-width=16 | asm-parser -stdin -binary`
+
+Or let asm-parser run objdump, which doesn't need a shell:
+
+`asm-parser -binary -objdump /usr/bin/objdump -- -d a.out -l --insn-width=16`
 
 ### Building locally (debug build)
 

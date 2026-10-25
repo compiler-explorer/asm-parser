@@ -2,11 +2,22 @@
 #include <fstream>
 #include <iostream>
 #include <string_view>
+#include <vector>
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <shellapi.h>
+#endif
 
 #include "assembly/parser.hpp"
 #include "objdump/parser.hpp"
 #include "types/filter.hpp"
 
+#include "utils/subprocess.hpp"
 #include "utils/utils.hpp"
 
 struct AsmParserConfiguration
@@ -17,6 +28,8 @@ struct AsmParserConfiguration
     bool isConfigured{};
     bool doDebugDump{};
     bool outputText{};
+    std::string objdumpPath;
+    std::vector<std::string> objdumpArgs;
 };
 
 bool streq(const std::string_view a, const std::string_view b)
@@ -53,6 +66,17 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
             config.doDebugDump = true;
         else if (streq(argv[i], "-outputtext"))
             config.outputText = true;
+        else if (streq(argv[i], "-objdump") && i + 1 < argc)
+        {
+            config.objdumpPath = argv[++i];
+            config.isConfigured = true;
+        }
+        else if (streq(argv[i], "--"))
+        {
+            // everything after -- is passed to objdump as-is
+            for (i++; i < argc; i++)
+                config.objdumpArgs.emplace_back(argv[i]);
+        }
         else if (streq(argv[i], "-stdin"))
         {
             config.useStdin = true;
@@ -66,6 +90,72 @@ AsmParserConfiguration getConfigurationFromCommandline(const int argc, const cha
     }
 
     return config;
+}
+
+#ifdef _WIN32
+// The narrow argv on Windows is in the ANSI codepage, get the arguments as UTF-8 so non-ASCII paths survive
+std::vector<std::string> getUtf8Arguments()
+{
+    std::vector<std::string> args;
+
+    int argc = 0;
+    const auto wideArgv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    if (wideArgv == nullptr)
+        return args;
+
+    for (int i = 0; i < argc; i++)
+    {
+        const auto len = WideCharToMultiByte(CP_UTF8, 0, wideArgv[i], -1, nullptr, 0, nullptr, nullptr);
+        std::string arg(static_cast<size_t>(len > 0 ? len - 1 : 0), '\0');
+        WideCharToMultiByte(CP_UTF8, 0, wideArgv[i], -1, arg.data(), len, nullptr, nullptr);
+        args.push_back(std::move(arg));
+    }
+
+    LocalFree(wideArgv);
+    return args;
+}
+#endif
+
+// Runs objdump and parses its output as it comes in, so there's no need for a shell to pipe objdump into asm-parser
+int parseFromObjdump(const AsmParserConfiguration &config)
+{
+    AsmParser::Subprocess objdump(config.objdumpPath, config.objdumpArgs);
+    if (!objdump.started())
+    {
+        std::cerr << "asm-parser: " << objdump.getStartError() << '\n';
+        return 1;
+    }
+
+    // objdump output always needs the binary parser
+    auto filter = config.filter;
+    filter.binary = true;
+
+    AsmParser::ObjDumpParser parser(filter);
+    std::istream objdumpOutput(objdump.stdoutBuffer());
+    parser.fromStream(objdumpOutput);
+
+    if (!objdumpOutput.eof())
+    {
+        // the parser stopped early (too many lines), the rest of the output isn't needed
+        objdump.terminate();
+    }
+    else
+    {
+        const auto exitCode = objdump.wait();
+        if (exitCode != 0)
+        {
+            std::cerr << "asm-parser: " << config.objdumpPath << " exited with code " << exitCode << '\n';
+            return 1;
+        }
+    }
+
+    if (config.outputText) {
+        parser.outputText(std::cout);
+    } else {
+        parser.outputJson(std::cout);
+    }
+
+    return 0;
 }
 
 int main(int argc, const char **argv)
@@ -85,12 +175,31 @@ int main(int argc, const char **argv)
 
     AsmParser::global_start_timer();
 
+#ifdef _WIN32
+    auto config = getConfigurationFromCommandline(argc, argv);
+    if (!config.objdumpPath.empty())
+    {
+        // objdump is started with the wide character API, so its path and arguments can be taken as UTF-8
+        const auto utf8Args = getUtf8Arguments();
+        std::vector<const char *> utf8Argv;
+        for (const auto &arg : utf8Args)
+            utf8Argv.push_back(arg.c_str());
+        if (!utf8Argv.empty())
+            config = getConfigurationFromCommandline(static_cast<int>(utf8Argv.size()), utf8Argv.data());
+    }
+#else
     const auto config = getConfigurationFromCommandline(argc, argv);
+#endif
 
     if (!config.isConfigured)
     {
         std::cout << "Commandline arguments expected\n";
         return 1;
+    }
+
+    if (!config.objdumpPath.empty())
+    {
+        return parseFromObjdump(config);
     }
 
     if (!config.useStdin)
