@@ -140,6 +140,11 @@ void AsmParser::ObjDumpParser::label()
 
     this->maybe_remove_last_function();
 
+    // objdump only prints a source line when it changes, but a new function doesn't continue the source of the one
+    //  before it; labels starting with a dot are inside a function (e.g. .l_start in hand-written assembly)
+    if (!this->state.text.starts_with("."))
+        this->state.currentSourceRef = {};
+
     this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
     if (this->state.ignoreUntilNextLabel)
         return;
@@ -409,6 +414,17 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 }
                 else if (c == ':')
                 {
+                    // a source reference on Windows starts with a drive letter, e.g. C:\Windows\TEMP\...\example.cpp:5
+                    const auto next = in.peek();
+                    if (this->state.text.length() == 1 && (next == '\\' || next == '/') &&
+                        is_windows_path(this->state.text + c + static_cast<char>(next)))
+                    {
+                        this->state.inAddress = false;
+                        this->state.inSourceRef = true;
+                        this->state.text += c;
+                        continue;
+                    }
+
                     this->address();
                     continue;
                 }
@@ -505,10 +521,28 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             {
                 if (c == ':')
                 {
+                    // the header of the output looks the same on Windows when objdump got an absolute path, e.g.
+                    //  C:\Windows\TEMP\compiler-explorer-compilerAbC123\output.s.exe:     file format pei-x86-64
+                    //  while a source reference is followed by its line number
+                    const auto next = in.peek();
+                    if (is_windows_path(this->state.text) && !(next >= '0' && next <= '9'))
+                    {
+                        this->state.text.clear();
+                        this->state.inSourceRef = false;
+                        this->state.skipRestOfTheLine = true;
+                        continue;
+                    }
+
                     this->state.currentSourceRef = asm_source{ .file = this->state.text, .line = 0, .column = 0 };
                     this->state.currentFilename = this->state.currentSourceRef.file;
                     this->state.text.clear();
                     this->do_file_check(this->state.currentSourceRef.file);
+
+                    // like /app/ paths, the user's sources in the Compiler Explorer temp directory on Windows
+                    //  are shown relative to it
+                    if (auto relative = windows_program_relative_path(this->state.currentSourceRef.file))
+                        this->state.currentSourceRef.file = std::move(relative.value());
+
                     this->state.inSourceRef = true;
                     this->state.inSourceRefLineNumber = true;
                     continue;

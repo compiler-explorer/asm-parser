@@ -6,8 +6,11 @@ auto directoryDisposer = ApprovalTests::Approvals::useApprovalsSubdirectory("../
 
 #include "../objdump/parser.hpp"
 #include "../types/filter.hpp"
+#include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
 TEST_CASE("HelloApprovals")
 {
@@ -394,4 +397,164 @@ TEST_CASE("line limit for a function kept for its user code")
         parser.outputJson(json);
         CHECK(json.str().find("\"second\"") == std::string::npos);
     }
+}
+
+namespace
+{
+std::string readResource(const std::string &name)
+{
+    std::string path;
+    if (std::filesystem::current_path().string().ends_with("test"))
+        path = "../../../resources/" + name;
+    else
+        path = "../../resources/" + name;
+
+    std::fstream fs;
+    fs.open(path, std::fstream::in);
+    REQUIRE(fs.is_open() == true);
+
+    std::stringstream ss;
+    ss << fs.rdbuf();
+    return ss.str();
+}
+
+struct ParsedOutput
+{
+    std::vector<std::string> lines;
+    std::string json;
+};
+
+ParsedOutput parseObjdump(const std::string &dump, const AsmParser::Filter &filter)
+{
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    std::stringstream in(dump);
+    parser.fromStream(in);
+
+    std::stringstream json;
+    parser.outputJson(json);
+
+    return { outputLines(parser), json.str() };
+}
+
+bool hasLine(const ParsedOutput &output, const std::string &line)
+{
+    return std::find(output.lines.begin(), output.lines.end(), line) != output.lines.end();
+}
+} // namespace
+
+TEST_CASE("Windows source paths from a mingw build", "[windows]")
+{
+    // GNU objdump output of a mingw binary, the user's sources are in Compiler Explorer's temp directory on Windows
+    auto dump = readResource("mingw-windows-paths.asm");
+
+    // depending on how the compiler recorded the path, objdump can also print it with forward slashes
+    const bool forwardSlashes = GENERATE(false, true);
+    if (forwardSlashes)
+    {
+        for (std::size_t pos = 0; (pos = dump.find("C:\\Windows\\TEMP\\", pos)) != std::string::npos;)
+            dump.replace(pos, 16, "C:/Windows/TEMP/");
+    }
+
+    AsmParser::Filter filter;
+    filter.binary = true;
+
+    SECTION("the user's functions get their sources")
+    {
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(output.json.find(R"("source": {"file": null, "mainsource": "true", "line": 3})") != std::string::npos);
+        CHECK(output.json.find(R"("source": {"file": null, "mainsource": "true", "line": 6})") != std::string::npos);
+        CHECK(output.json.find(R"("source": {"file": "src/helper.cpp", "mainsource": "false", "line": 2})") !=
+              std::string::npos);
+        // the C runtime keeps its own source
+        CHECK(output.json.find("crtexe.c") != std::string::npos);
+        CHECK(hasLine(output, "_XcptFilter:"));
+        CHECK(hasLine(output, "pre_c_init:"));
+    }
+
+    SECTION("the user's functions are kept as user code")
+    {
+        filter.library_functions = true;
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(hasLine(output, "square(int):"));
+        CHECK(hasLine(output, "main:"));
+        CHECK(hasLine(output, "helper(int):"));
+        CHECK_FALSE(hasLine(output, "mainCRTStartup:"));
+        // runtime code without debug info, before any source line; the header of the output isn't a source line
+        CHECK_FALSE(hasLine(output, "pre_c_init:"));
+        // and an import thunk without debug info after the user's functions
+        CHECK_FALSE(hasLine(output, "_XcptFilter:"));
+    }
+
+    SECTION("the main source isn't masked with -dont_mask_filenames")
+    {
+        filter.dont_mask_filenames = true;
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(output.json.find(R"("source": {"file": "example.cpp", "mainsource": "true", "line": 6})") !=
+              std::string::npos);
+    }
+}
+
+TEST_CASE("the source after a function label", "[asm]")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+
+    SECTION("a label inside a function continues its source")
+    {
+        // objdump only prints a source line when it changes, labels starting with a dot are inside the function
+        const std::string dump =
+        objdumpFunction("main", "/app/example.cpp", 2) + "\n0000000000401010 <.l_start>:\n  401010:\t90                   \tnop\n";
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(output.json.find(R"("address": 4198416, "source": {"file": null, "mainsource": "true", "line": 3})") !=
+              std::string::npos);
+    }
+
+    SECTION("a function without line information doesn't continue the source of the one before it")
+    {
+        // e.g. runtime code without debug info that's linked in after the user's code
+        const std::string dump = objdumpFunction("main", "/app/example.cpp", 2) +
+                                 "\n0000000000402000 <_setargv>:\n  402000:\t31 c0                \txor    eax,eax\n";
+
+        SECTION("it has no source")
+        {
+            const auto output = parseObjdump(dump, filter);
+
+            REQUIRE(hasLine(output, "_setargv:"));
+            CHECK(output.json.find(R"("opcodes": ["31", "c0"], "address": 4202496, "source": null)") !=
+                  std::string::npos);
+        }
+
+        SECTION("it isn't kept as user code")
+        {
+            filter.library_functions = true;
+            const auto output = parseObjdump(dump, filter);
+
+            CHECK(hasLine(output, "main:"));
+            CHECK_FALSE(hasLine(output, "_setargv:"));
+        }
+    }
+}
+
+TEST_CASE("control characters in a symbol name are escaped in the JSON", "[json]")
+{
+    // a broken symbol table can give an import thunk a name of raw bytes
+    const std::string dump = objdumpFunction("main", "/app/example.cpp", 1) +
+                             "  401006:\tff 25 3a 08 00 00    \tjmp    *0x83a(%rip)        # 140002620 <\x17\x08>\n";
+
+    AsmParser::Filter filter;
+    filter.binary = true;
+    const auto output = parseObjdump(dump, filter);
+
+    CHECK(output.json.find("<\\u0017\\u0008>") != std::string::npos);
+    CHECK(std::none_of(output.json.begin(), output.json.end(),
+                       [](const char c)
+                       {
+                           return static_cast<unsigned char>(c) < 0x20 && c != '\n';
+                       }));
 }
