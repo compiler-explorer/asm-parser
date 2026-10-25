@@ -401,6 +401,23 @@ TEST_CASE("line limit for a function kept for its user code")
 
 namespace
 {
+std::string readResource(const std::string &name)
+{
+    std::string path;
+    if (std::filesystem::current_path().string().ends_with("test"))
+        path = "../../../resources/" + name;
+    else
+        path = "../../resources/" + name;
+
+    std::fstream fs;
+    fs.open(path, std::fstream::in);
+    REQUIRE(fs.is_open() == true);
+
+    std::stringstream ss;
+    ss << fs.rdbuf();
+    return ss.str();
+}
+
 struct ParsedOutput
 {
     std::vector<std::string> lines;
@@ -426,6 +443,57 @@ bool hasLine(const ParsedOutput &output, const std::string &line)
     return std::find(output.lines.begin(), output.lines.end(), line) != output.lines.end();
 }
 } // namespace
+
+TEST_CASE("Windows source paths from a mingw build", "[windows]")
+{
+    // GNU objdump output of a mingw binary, the user's sources are in Compiler Explorer's temp directory on Windows
+    auto dump = readResource("mingw-windows-paths.asm");
+
+    // depending on how the compiler recorded the path, objdump can also print it with forward slashes
+    const bool forwardSlashes = GENERATE(false, true);
+    if (forwardSlashes)
+    {
+        for (std::size_t pos = 0; (pos = dump.find("C:\\Windows\\TEMP\\", pos)) != std::string::npos;)
+            dump.replace(pos, 16, "C:/Windows/TEMP/");
+    }
+
+    AsmParser::Filter filter;
+    filter.binary = true;
+
+    SECTION("the user's functions get their sources")
+    {
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(output.json.find(R"("source": {"file": null, "mainsource": "true", "line": 3})") != std::string::npos);
+        CHECK(output.json.find(R"("source": {"file": null, "mainsource": "true", "line": 6})") != std::string::npos);
+        CHECK(output.json.find(R"("source": {"file": "src/helper.cpp", "mainsource": "false", "line": 2})") !=
+              std::string::npos);
+        // the C runtime keeps its own source, and the import thunk after the user's functions has none
+        CHECK(output.json.find("crtexe.c") != std::string::npos);
+        CHECK(hasLine(output, "_XcptFilter:"));
+    }
+
+    SECTION("the user's functions are kept as user code")
+    {
+        filter.library_functions = true;
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(hasLine(output, "square(int):"));
+        CHECK(hasLine(output, "main:"));
+        CHECK(hasLine(output, "helper(int):"));
+        CHECK_FALSE(hasLine(output, "mainCRTStartup:"));
+        CHECK_FALSE(hasLine(output, "_XcptFilter:"));
+    }
+
+    SECTION("the main source isn't masked with -dont_mask_filenames")
+    {
+        filter.dont_mask_filenames = true;
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(output.json.find(R"("source": {"file": "example.cpp", "mainsource": "true", "line": 6})") !=
+              std::string::npos);
+    }
+}
 
 TEST_CASE("a function without line information doesn't get the source of the function before it", "[asm]")
 {

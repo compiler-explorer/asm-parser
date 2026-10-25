@@ -414,6 +414,17 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                 }
                 else if (c == ':')
                 {
+                    // a source reference on Windows starts with a drive letter, e.g. C:\Windows\TEMP\...\example.cpp:5
+                    const auto next = in.peek();
+                    if (this->state.text.length() == 1 && (next == '\\' || next == '/') &&
+                        is_windows_path(this->state.text + c + static_cast<char>(next)))
+                    {
+                        this->state.inAddress = false;
+                        this->state.inSourceRef = true;
+                        this->state.text += c;
+                        continue;
+                    }
+
                     this->address();
                     continue;
                 }
@@ -514,6 +525,12 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
                     this->state.currentFilename = this->state.currentSourceRef.file;
                     this->state.text.clear();
                     this->do_file_check(this->state.currentSourceRef.file);
+
+                    // like /app/ paths, the user's sources in the Compiler Explorer temp directory on Windows
+                    //  are shown relative to it
+                    if (auto relative = windows_program_relative_path(this->state.currentSourceRef.file))
+                        this->state.currentSourceRef.file = std::move(relative.value());
+
                     this->state.inSourceRef = true;
                     this->state.inSourceRefLineNumber = true;
                     continue;
