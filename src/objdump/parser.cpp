@@ -516,6 +516,18 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &in)
             {
                 if (c == ':')
                 {
+                    // the header of the output looks the same on Windows when objdump got an absolute path, e.g.
+                    //  C:\Windows\TEMP\compiler-explorer-compilerAbC123\output.s.exe:     file format pei-x86-64
+                    //  while a source reference is followed by its line number
+                    const auto next = in.peek();
+                    if (is_windows_path(this->state.text) && !(next >= '0' && next <= '9'))
+                    {
+                        this->state.text.clear();
+                        this->state.inSourceRef = false;
+                        this->state.skipRestOfTheLine = true;
+                        continue;
+                    }
+
                     this->state.currentSourceRef = asm_source{ .file = this->state.text, .line = 0, .column = 0 };
                     this->state.currentFilename = this->state.currentSourceRef.file;
                     this->state.text.clear();

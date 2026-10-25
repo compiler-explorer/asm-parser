@@ -470,6 +470,7 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
               std::string::npos);
         // the C runtime keeps its own source
         CHECK(output.json.find("crtexe.c") != std::string::npos);
+        CHECK(hasLine(output, "pre_c_init:"));
     }
 
     SECTION("the user's functions are kept as user code")
@@ -481,6 +482,8 @@ TEST_CASE("Windows source paths from a mingw build", "[windows]")
         CHECK(hasLine(output, "main:"));
         CHECK(hasLine(output, "helper(int):"));
         CHECK_FALSE(hasLine(output, "mainCRTStartup:"));
+        // runtime code without debug info, before any source line; the header of the output isn't a source line
+        CHECK_FALSE(hasLine(output, "pre_c_init:"));
     }
 
     SECTION("the main source isn't masked with -dont_mask_filenames")
