@@ -140,6 +140,11 @@ void AsmParser::ObjDumpParser::label()
 
     this->maybe_remove_last_function();
 
+    // A function has no source until objdump says where its code comes from, otherwise a function without line
+    //  information (e.g. runtime code without debug info) gets the source of the function before it
+    if (!this->state.text.starts_with(".L"))
+        this->state.currentSourceRef = {};
+
     this->state.ignoreUntilNextLabel = AssemblyTextParserUtils::shouldIgnoreFunction(this->state.text, this->filter);
     if (this->state.ignoreUntilNextLabel)
         return;

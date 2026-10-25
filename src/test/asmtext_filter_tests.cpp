@@ -6,8 +6,11 @@ auto directoryDisposer = ApprovalTests::Approvals::useApprovalsSubdirectory("../
 
 #include "../objdump/parser.hpp"
 #include "../types/filter.hpp"
+#include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
 TEST_CASE("HelloApprovals")
 {
@@ -393,5 +396,60 @@ TEST_CASE("line limit for a function kept for its user code")
         std::stringstream json;
         parser.outputJson(json);
         CHECK(json.str().find("\"second\"") == std::string::npos);
+    }
+}
+
+namespace
+{
+struct ParsedOutput
+{
+    std::vector<std::string> lines;
+    std::string json;
+};
+
+ParsedOutput parseObjdump(const std::string &dump, const AsmParser::Filter &filter)
+{
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    std::stringstream in(dump);
+    parser.fromStream(in);
+
+    std::stringstream json;
+    parser.outputJson(json);
+
+    return { outputLines(parser), json.str() };
+}
+
+bool hasLine(const ParsedOutput &output, const std::string &line)
+{
+    return std::find(output.lines.begin(), output.lines.end(), line) != output.lines.end();
+}
+} // namespace
+
+TEST_CASE("a function without line information doesn't get the source of the function before it", "[asm]")
+{
+    const std::string dump = objdumpFunction("main", "/app/example.cpp", 2) +
+                             "\n0000000000402000 <asan.module_ctor>:\n  402000:\t90                   \tnop\n";
+
+    AsmParser::Filter filter;
+    filter.binary = true;
+
+    SECTION("it has no source")
+    {
+        const auto output = parseObjdump(dump, filter);
+
+        REQUIRE(hasLine(output, "asan.module_ctor:"));
+        // the nop at 0x402000
+        CHECK(output.json.find(R"("address": 4202496, "source": null)") != std::string::npos);
+    }
+
+    SECTION("it isn't kept as user code")
+    {
+        filter.library_functions = true;
+        const auto output = parseObjdump(dump, filter);
+
+        CHECK(hasLine(output, "main:"));
+        CHECK_FALSE(hasLine(output, "asan.module_ctor:"));
     }
 }
