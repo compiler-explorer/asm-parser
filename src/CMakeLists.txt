@@ -3,6 +3,7 @@ add_library(asm-parser-lib STATIC
     utils/jsonwriter.cpp
     utils/regexwrappers.cpp
     utils/library_detection.cpp
+    utils/subprocess.cpp
     objdump/parser.cpp
     assembly/parser.cpp
 )
@@ -19,5 +20,9 @@ target_link_libraries(asm-parser-lib PUBLIC ctre::ctre Catch2::Catch2 fmt::fmt A
 add_executable(asm-parser main.cpp)
 
 target_link_libraries(asm-parser asm-parser-lib)
+if(WIN32)
+    # CommandLineToArgvW
+    target_link_libraries(asm-parser shell32)
+endif()
 
 add_subdirectory(test)
