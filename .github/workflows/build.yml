@@ -140,6 +140,11 @@ jobs:
           build/src/asm-parser.exe -binary -library_functions -objdump C:/mingw64/bin/objdump.exe -- -d "$windir\\output.s.exe" -l --insn-width=16 -C -M intel > paths.json
           # how objdump prints the source paths, for the log
           C:/mingw64/bin/objdump.exe -d "$windir\\output.s.exe" -l | grep -m2 "example.cpp:" || true
+          # TEMPORARY: inspect the runtime's source lines
+          C:/mingw64/bin/objdump.exe -d "$windir\\output.s.exe" -l --insn-width=16 -C -M intel > dump.txt
+          echo "--- head"; head -40 dump.txt
+          echo "--- distinct source lines (without line numbers)"; grep -E '^([A-Za-z]:|/).*:[0-9]+' dump.txt | sed -E 's/:[0-9]+.*$//' | sort | uniq -c | sort -rn | head -30
+          echo "--- function labels followed directly by code"; awk '/^[0-9a-f]+ <.*>:$/ {l=$0; getline; getline; print l " | " $0}' dump.txt | head -30
           python - << 'EOF'
           import json
           asm = json.load(open('paths.json'))['asm']
