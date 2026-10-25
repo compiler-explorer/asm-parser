@@ -124,6 +124,35 @@ jobs:
           cp build/src/asm-parser.exe large.exe
           scripts/test-objdump-exec.sh build/src/asm-parser.exe C:/mingw64/bin/objdump.exe large.exe
 
+      # Compiled like Compiler Explorer does on Windows: in a compiler-explorer-compiler* temp directory
+      - name: Test Windows source paths with a mingw build
+        shell: bash
+        env:
+          MSYS_NO_PATHCONV: 1
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/compiler-explorer-compilerCI123"
+          mkdir -p "$dir/src"
+          printf 'int helper(int value);\nint square(int num) {\n    return num * num;\n}\nint main() {\n    return square(helper(7));\n}\n' > "$dir/example.cpp"
+          printf 'int helper(int value) {\n    return value + 1;\n}\n' > "$dir/src/helper.cpp"
+          (cd "$dir" && C:/mingw64/bin/g++.exe -g -O1 -fno-inline example.cpp src/helper.cpp -o output.s.exe)
+          windir=$(cygpath -w "$dir")
+          build/src/asm-parser.exe -binary -library_functions -objdump C:/mingw64/bin/objdump.exe -- -d "$windir\\output.s.exe" -l --insn-width=16 -C -M intel > paths.json
+          # how objdump prints the source paths, for the log
+          C:/mingw64/bin/objdump.exe -d "$windir\\output.s.exe" -l | grep -m2 "example.cpp:" || true
+          python - << 'EOF'
+          import json
+          asm = json.load(open('paths.json'))['asm']
+          labels = [line['text'] for line in asm if line['text'].endswith(':') and not line['text'].startswith(' ')]
+          sources = {(s['file'], s['mainsource']) for line in asm if (s := line.get('source'))}
+          print('functions:', labels)
+          print('sources:', sorted(sources, key=str))
+          assert 'main:' in labels and 'square(int):' in labels and 'helper(int):' in labels, 'user functions missing'
+          assert 'mainCRTStartup:' not in labels, 'runtime not filtered'
+          assert (None, 'true') in sources, 'main source not recognised'
+          assert ('src/helper.cpp', 'false') in sources, 'helper source not recognised'
+          EOF
+
       - uses: actions/upload-artifact@v7
         with:
           name: asm-parser-windows
