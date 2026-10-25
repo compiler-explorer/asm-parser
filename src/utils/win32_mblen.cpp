@@ -1,7 +1,10 @@
 #include "win32_mblen.hpp"
 
 #define WIN32_LEAN_AND_MEAN
+// libstdc++ on MinGW already defines this
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include <windows.h>
 
 int AsmParser::mblen(const char *s, const size_t n)
