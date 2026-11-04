@@ -5,8 +5,10 @@
 #include "../types/parser.hpp"
 #include "../utils/library_detection.hpp"
 #include <iosfwd>
+#include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace AsmParser
 {
@@ -55,6 +57,11 @@ class ObjDumpParser : public IParser
     size_t total_lines{};
     bool lastFunctionHasUserCode{};
 
+    // Functions that binaryIgnoreFunction would hide but that a function we show calls or jumps to, e.g. libgcc's
+    // __divdc3 in a statically linked binary. Only direct references count: following them transitively would pull in
+    // all of stdio from a call to printf.
+    std::unordered_set<std::string> referencedHiddenFunctions;
+
     // todo: bad names
     void actually_address();
     void actually_filename();
@@ -64,6 +71,8 @@ class ObjDumpParser : public IParser
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
     bool shouldIgnoreFunction(std::string_view name) const;
+    void findReferencedHiddenFunctions(std::string_view objdump);
+    void removeReferencesToRemovedHiddenFunctions();
     void eol();
     void address();
     void opcodes();

@@ -558,3 +558,114 @@ TEST_CASE("control characters in a symbol name are escaped in the JSON", "[json]
                            return static_cast<unsigned char>(c) < 0x20 && c != '\n';
                        }));
 }
+
+namespace
+{
+// Trimmed from gcc 15 `-static -g` output for a function dividing two complex doubles, built in /app. __divdc3 comes
+// from libgcc and has no line information; __libc_unused is never referenced, and __memset_sse2 is only referenced by
+// __divdc3.
+const std::string referencedHiddenDump = "0000000000401845 <f>:\n"
+                                         "f():\n"
+                                         "/app/example.c:2\n"
+                                         "  401845:\tf3 0f 1e fa          \tendbr64\n"
+                                         "  40184d:\te8 1e 00 00 00       \tcall   401870 <__divdc3>\n"
+                                         "  401856:\tc3                   \tret\n"
+                                         "\n"
+                                         "0000000000401870 <__divdc3>:\n"
+                                         "__divdc3():\n"
+                                         "  401870:\tf3 0f 1e fa          \tendbr64\n"
+                                         "  40189b:\t0f 86 b7 00 00 00    \tjbe    401958 <__divdc3+0xe8>\n"
+                                         "  4018a0:\te8 00 00 00 00       \tcall   402000 <__memset_sse2>\n"
+                                         "  4018a5:\tc3                   \tret\n"
+                                         "\n"
+                                         "0000000000402000 <__memset_sse2>:\n"
+                                         "__memset_sse2():\n"
+                                         "  402000:\tc3                   \tret\n"
+                                         "\n"
+                                         "0000000000402010 <__libc_unused>:\n"
+                                         "__libc_unused():\n"
+                                         "  402010:\tc3                   \tret\n";
+
+std::vector<std::string> labelLines(const ParsedOutput &output)
+{
+    std::vector<std::string> labels;
+    for (const auto &line : output.lines)
+    {
+        if (line.ends_with(':'))
+            labels.push_back(line);
+    }
+    return labels;
+}
+} // namespace
+
+TEST_CASE("hidden functions referenced from shown functions", "[binary]")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = true;
+
+    SECTION("a hidden function that a shown function calls is shown")
+    {
+        const auto output = parseObjdump(referencedHiddenDump, filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "f:", "__divdc3:" });
+        CHECK(output.json.find("\"__divdc3\": 5") != std::string::npos);
+        CHECK(output.json.find("\"name\": \"__divdc3\"") != std::string::npos);
+    }
+
+    SECTION("references are not followed from a function that was hidden")
+    {
+        const auto output = parseObjdump(referencedHiddenDump, filter);
+        CHECK_FALSE(hasLine(output, "__memset_sse2:"));
+    }
+
+    SECTION("a hidden function that nothing shown refers to stays hidden")
+    {
+        const auto output = parseObjdump(referencedHiddenDump, filter);
+        CHECK_FALSE(hasLine(output, "__libc_unused:"));
+
+        const auto hiddenOnly =
+        parseObjdump(referencedHiddenDump.substr(referencedHiddenDump.find("\n0000000000401870")), filter);
+        CHECK(hiddenOnly.lines.empty());
+    }
+
+    SECTION("a hidden function is shown when it is defined before the call")
+    {
+        const auto output = parseObjdump("0000000000401000 <__helper>:\n"
+                                         "  401000:\tc3                   \tret\n"
+                                         "\n"
+                                         "0000000000401010 <main>:\n"
+                                         "  401010:\te8 eb ff ff ff       \tcall   401000 <__helper>\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "__helper:", "main:" });
+    }
+
+    SECTION("a plt stub is still hidden")
+    {
+        const auto output = parseObjdump("0000000000401000 <puts@plt>:\n"
+                                         "  401000:\tff 25 12 2f 00 00    \tjmp    *0x2f12(%rip)\n"
+                                         "\n"
+                                         "0000000000401010 <main>:\n"
+                                         "  401010:\te8 eb ff ff ff       \tcall   401000 <puts@plt>\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:" });
+    }
+
+    SECTION("with library functions filtered the function is removed again, without a dangling reference")
+    {
+        filter.library_functions = true;
+        const auto output = parseObjdump(referencedHiddenDump, filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "f:" });
+        CHECK(output.json.find("\"name\": \"__divdc3\"") == std::string::npos);
+        CHECK(output.json.find("\"__divdc3\": ") == std::string::npos);
+        CHECK(hasLine(output, " call   401870 <__divdc3>"));
+    }
+
+    SECTION("with library functions filtered the function is kept when it has the program's line information")
+    {
+        filter.library_functions = true;
+        std::string dump = referencedHiddenDump;
+        dump.replace(dump.find("__divdc3():\n") + 12, 0, "/app/divdc3.c:7\n");
+        const auto output = parseObjdump(dump, filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "f:", "__divdc3:" });
+    }
+}

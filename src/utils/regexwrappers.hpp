@@ -75,7 +75,9 @@ class AssemblyTextParserUtils
     static bool isDirective(std::string_view line);
     static bool isInstOpcode(std::string_view line);
 
-    static bool shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter);
+    // A function that is called from a function we show isn't hidden by binaryIgnoreFunction, but is still hidden as a
+    // plt stub
+    static bool shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter, bool referencedFromShownFunction = false);
 };
 
 } // namespace AsmParser
