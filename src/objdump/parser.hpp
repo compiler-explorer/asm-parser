@@ -72,9 +72,9 @@ class ObjDumpParser : public IParser
 
     // A function that binaryIgnoreFunction hides unless a function we show calls or jumps to it. Whether that happens
     // isn't known until the whole of the output has been read, as the caller can come after the callee, so the lines
-    // are parsed anyway and the functions nothing shown referred to are removed at the end. Shown code has priority:
-    // the lines of these functions don't count towards the limit while parsing, and at the end the last of the
-    // referenced ones are removed until the output fits, before any shown code is truncated.
+    // are parsed anyway and the functions nothing shown referred to are removed at the end. Their lines don't count
+    // towards the limit while parsing; at the end, one is kept only if it fits before the cut and a line referring to
+    // it survives the cut (see chooseHiddenFunctionsToKeep).
     struct HiddenFunction
     {
         std::string name;
