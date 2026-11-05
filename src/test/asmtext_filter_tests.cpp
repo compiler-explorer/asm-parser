@@ -745,6 +745,62 @@ TEST_CASE("hidden functions referenced from shown functions", "[binary]")
         const auto output = parseObjdump(dump, filter);
         CHECK(labelLines(output) == std::vector<std::string>{ "f:", "__divdc3:" });
     }
+
+    SECTION("a hidden function is kept whole when a local label inside it is followed by library code")
+    {
+        filter.library_functions = true;
+        const auto output = parseObjdump("0000000000401000 <main>:\n"
+                                         "/app/a.c:1\n"
+                                         "  401000:\te8 00 00 00 00       \tcall   402000 <__h1>\n"
+                                         "  401005:\t90                   \tnop\n"
+                                         "0000000000402000 <__h1>:\n"
+                                         "/app/a.c:2\n"
+                                         "  402000:\t90                   \tnop\n"
+                                         "/usr/l.c:3\n"
+                                         "  402001:\t90                   \tnop\n"
+                                         "0000000000402009 <.Lpcrel_hi2>:\n"
+                                         "/usr/l.c:4\n"
+                                         "  402009:\t90                   \tnop\n"
+                                         "  40200a:\t90                   \tnop\n"
+                                         "0000000000403000 <s1>:\n"
+                                         "/app/a.c:5\n"
+                                         "  403000:\t90                   \tnop\n",
+                                         filter);
+        CHECK(output.lines == std::vector<std::string>{ "main:", " call   402000 <__h1>", " nop", "__h1:", " nop",
+                                                        " nop", ".Lpcrel_hi2:", " nop", " nop", "s1:", " nop" });
+    }
+
+    SECTION("a branch whose address follows a register operand is a reference")
+    {
+        const auto output = parseObjdump("0000000000010000 <main>:\n"
+                                         "/app/a.c:1\n"
+                                         "   10000:\t00000097          \tauipc\tra,0x0\n"
+                                         "   10004:\t0040006f          \tjal\tra,10100 <__h>\n"
+                                         "   10008:\tfe051ce3          \tbnez\ta0,10200 <__g+0x4>\n"
+                                         "\n"
+                                         "0000000000010100 <__h>:\n"
+                                         "/usr/l.c:2\n"
+                                         "   10100:\t8082              \tret\n"
+                                         "\n"
+                                         "0000000000010200 <__g>:\n"
+                                         "/usr/l.c:2\n"
+                                         "   10200:\t8082              \tret\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:", "__h:", "__g:" });
+        CHECK(hasLine(output, " jal\tra,10100 <__h>"));
+    }
+
+    SECTION("a PLT stub doesn't use up the cap on hidden functions")
+    {
+        const auto output = parseObjdump("0000000000401000 <main>:\n"
+                                         "  401000:\t90                   \tnop\n"
+                                         "  401001:\te8 00 00 00 00       \tcall   410000 <__h>\n"
+                                         "0000000000402000 <.plt>:\n" +
+                                         nopLines(5100) + "0000000000410000 <__h>:\n" + nopLines(3),
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:", "__h:" });
+        CHECK(output.lines.size() == 7);
+    }
 }
 
 TEST_CASE("hidden functions and the line limit", "[binary]")
@@ -1112,10 +1168,9 @@ TEST_CASE("hidden library functions are removed whole", "[binary]")
         CHECK(lines.size() == 2 + 3);
     }
 
-    SECTION("a hidden function whose last local label is in library code is removed from its start")
+    SECTION("a hidden function with the program's lines is kept whole when library code follows a local label")
     {
-        // the function starts with the program's lines, so it is only removable at the next function, and the last
-        // label then found is the local one
+        // whether a function is library code is decided for the function, not for the part after a local label
         const std::string library = "\n0000000000402000 <__lib>:\n"
                                     "__lib():\n"
                                     "/app/example.cpp:3\n"
@@ -1130,9 +1185,8 @@ TEST_CASE("hidden library functions are removed whole", "[binary]")
         parser.fromStream(in);
 
         const auto lines = outputLines(parser);
-        CHECK(labelLines({ lines, "" }) == std::vector<std::string>{ "f:", "g:" });
-        CHECK(lines.size() == 2 + 3);
-        CHECK_FALSE(hasLine(lines, " call   402100 <__other>"));
+        CHECK(labelLines({ lines, "" }) == std::vector<std::string>{ "f:", "__lib:", ".L1:", "g:" });
+        CHECK(hasLine(lines, " call   402100 <__other>"));
     }
 }
 

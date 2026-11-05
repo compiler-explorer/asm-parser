@@ -123,21 +123,23 @@ void AsmParser::ObjDumpParser::maybe_remove_last_function()
 {
     if (this->may_remove_last_function())
     {
-        // labels.back() can be a .L label inside the function, so a hidden function is removed from its own start
-        // instead: a prefix left behind would still be there to be promoted by a later caller
-        std::size_t first = this->labels.back().second - 1;
+        // .L labels are inside a function, so the function starts at the last label that isn't one. A hidden function
+        // is removed whole: a prefix left behind would still be there to be promoted by a later caller
+        auto start = std::find_if(this->labels.rbegin(), this->labels.rend(),
+                                  [](const auto &label)
+                                  {
+                                      return !label.first.starts_with(".L");
+                                  });
+        if (start == this->labels.rend())
+            start = this->labels.rbegin();
+        const std::size_t first = start->second - 1;
         if (this->inHiddenFunction())
         {
-            first = this->hiddenFunctions.back().start;
             this->hiddenLines -= this->lines.size() - first;
             this->hiddenFunctions.pop_back();
-            while (!this->labels.empty() && static_cast<std::size_t>(this->labels.back().second) > first)
-                this->labels.pop_back();
         }
-        else
-        {
+        while (!this->labels.empty() && static_cast<std::size_t>(this->labels.back().second) > first)
             this->labels.pop_back();
-        }
         this->lines.erase(this->lines.begin() + first, this->lines.end());
         // every function that is still there was kept for having user code
         this->lastFunctionHasUserCode = true;
@@ -156,22 +158,16 @@ void AsmParser::ObjDumpParser::label()
     if (label)
         this->state.text = label.value();
 
-    const bool wasInHiddenFunction = this->inHiddenFunction();
-    this->maybe_remove_last_function();
     // labels starting with .L are inside a function
     const bool startsFunction = !this->state.text.starts_with(".L");
-    if (wasInHiddenFunction && !this->inHiddenFunction())
-    {
-        this->state.currentLine.address.reset();
-        if (!startsFunction)
-        {
-            // the rest of the function that was just removed
-            this->state.ignoreUntilNextLabel = true;
-            return;
-        }
-    }
     if (startsFunction)
+    {
+        const bool wasInHiddenFunction = this->inHiddenFunction();
+        this->maybe_remove_last_function();
+        if (wasInHiddenFunction && !this->inHiddenFunction())
+            this->state.currentLine.address.reset();
         this->endHiddenFunction();
+    }
 
     // objdump only prints a source line when it changes, but a new function doesn't continue the source of the one
     //  before it; labels starting with a dot are inside a function (e.g. .l_start in hand-written assembly)
@@ -204,7 +200,8 @@ void AsmParser::ObjDumpParser::label()
     this->state.currentLine.is_label = true;
 
     this->labels.push_back({ this->state.previousLabel, static_cast<int32_t>(lines.size() + 1) });
-    this->lastFunctionHasUserCode = false;
+    if (startsFunction)
+        this->lastFunctionHasUserCode = false;
 }
 
 void AsmParser::ObjDumpParser::labelref()
