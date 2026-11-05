@@ -21,6 +21,7 @@ void AsmParser::ObjDumpParserState::commonReset()
     this->text.clear();
     this->hasPrefixingWhitespace = false;
     this->inComment = false;
+    this->afterSpacedHash = false;
     this->inAddress = true;
     this->inOpcodes = false;
     this->inLabel = false;
@@ -650,7 +651,9 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &stream)
             }
             else if (!this->state.inComment)
             {
-                if (c == '#')
+                // An x86 comment is ` # `; elsewhere `#` is an immediate prefix (`tbz w0, #0, 4005a8 <foo>`), which is
+                //  never followed by whitespace
+                if (this->state.afterSpacedHash && is_whitespace(c))
                 {
                     if (!this->state.inLabel)
                     {
@@ -658,6 +661,7 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &stream)
                     }
                     this->state.inComment = true;
                 }
+                this->state.afterSpacedHash = c == '#' && !this->state.text.empty() && is_whitespace(this->state.text.back());
             }
 
             if (is_whitespace(c) && this->state.text.empty())

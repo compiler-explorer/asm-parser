@@ -27,6 +27,7 @@ class ObjDumpParserState
 {
     public:
     bool inComment{};
+    bool afterSpacedHash{};
     bool inSomethingWithALabel{};
     bool hasPrefixingWhitespace{};
     bool inAddress{};

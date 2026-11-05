@@ -733,3 +733,36 @@ TEST_CASE("hidden functions referenced from shown functions", "[binary]")
         CHECK(labelLines(output) == std::vector<std::string>{ "f:", "__divdc3:" });
     }
 }
+
+TEST_CASE("label references after an immediate", "[objdump]")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+
+    // aarch64-linux-gnu-objdump style: `#` is the immediate prefix there, not a comment
+    SECTION("an aarch64 branch target after an immediate is a label reference")
+    {
+        const auto output = parseObjdump("00000000004005a0 <main>:\n"
+                                         "  4005a0:\t36000040 \ttbz\tw0, #0, 4005a8 <foo>\n"
+                                         "  4005a4:\tb7f80041 \ttbnz\tx1, #63, 4005a8 <foo>\n"
+                                         "\n"
+                                         "00000000004005a8 <foo>:\n"
+                                         "  4005a8:\td65f03c0 \tret\n",
+                                         filter);
+        CHECK(output.json.find(R"("labels": [{"name": "foo", "range": {"startCol": 22, "endCol": 25}}])") != std::string::npos);
+        CHECK(output.json.find(R"("labels": [{"name": "foo", "range": {"startCol": 24, "endCol": 27}}])") != std::string::npos);
+    }
+
+    SECTION("a symbol in an x86 comment about data is not a label reference")
+    {
+        const auto output =
+        parseObjdump("0000000000401000 <main>:\n"
+                     "  401000:\t48 8b 05 21 30 00 00 \tmov    0x3021(%rip),%rax        # 404028 <data>\n"
+                     "  401007:\tc3                   \tret\n"
+                     "\n"
+                     "0000000000404028 <data>:\n"
+                     "  404028:\tc3                   \tret\n",
+                     filter);
+        CHECK(output.json.find(R"("name": "data")") == std::string::npos);
+    }
+}
