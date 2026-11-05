@@ -87,22 +87,25 @@ void AsmParser::ObjDumpParser::eol()
             this->lastFunctionHasUserCode = true;
 
         // A function without user code is only removed at the next label, so its lines mustn't use up the limit,
-        // otherwise a large statically linked runtime hides the user's functions behind it. The same goes for a hidden
-        // function that nothing has referred to yet, which only counts once it is kept.
-        const bool provisional = this->inProvisionalFunction();
-        const std::size_t counted = this->lines.size() - this->provisionalLines;
-        const bool full = provisional ? counted > maxLines : counted >= maxLines;
-        if (!full || this->may_remove_last_function())
+        // otherwise a large statically linked runtime hides the user's functions behind it. The same goes for the
+        // lines of hidden functions, which only get in once it is known that they fit alongside the shown code.
+        const bool hidden = this->inHiddenFunction();
+        const std::size_t counted = this->lines.size() - this->hiddenLines;
+        if (counted >= maxLines && !this->may_remove_last_function())
         {
-            lines.push_back(this->state.currentLine);
-            if (provisional)
-                this->provisionalLines++;
+            // the lines are cut to the limit, and the marker added, once the hidden functions are gone
+            this->truncated = true;
+            this->state.stopParsing = true;
+        }
+        else if (hidden && this->hiddenLines >= maxLines)
+        {
+            this->abandonHiddenFunction();
         }
         else
         {
-            // the lines are cut to the limit, and the marker added, once the provisional functions are gone
-            this->truncated = true;
-            this->state.stopParsing = true;
+            lines.push_back(this->state.currentLine);
+            if (hidden)
+                this->hiddenLines++;
         }
     }
 
@@ -119,12 +122,12 @@ void AsmParser::ObjDumpParser::maybe_remove_last_function()
     if (this->may_remove_last_function())
     {
         const std::size_t first = this->labels.back().second - 1;
-        if (this->inProvisionalFunction())
+        if (this->inHiddenFunction())
         {
-            const auto start = this->provisionalFunctions.back().start;
-            this->provisionalLines -= this->lines.size() - std::max(first, start);
+            const auto start = this->hiddenFunctions.back().start;
+            this->hiddenLines -= this->lines.size() - std::max(first, start);
             if (start >= first)
-                this->dropProvisionalFunction();
+                this->hiddenFunctions.pop_back();
         }
         this->lines.erase(this->lines.begin() + first, this->lines.end());
         this->labels.pop_back();
@@ -145,15 +148,15 @@ void AsmParser::ObjDumpParser::label()
     if (label)
         this->state.text = label.value();
 
-    const bool wasInProvisionalFunction = this->inProvisionalFunction();
+    const bool wasInHiddenFunction = this->inHiddenFunction();
     this->maybe_remove_last_function();
-    if (wasInProvisionalFunction && !this->inProvisionalFunction())
+    if (wasInHiddenFunction && !this->inHiddenFunction())
         this->state.currentLine.address.reset();
 
     // labels starting with .L are inside a function
     const bool startsFunction = !this->state.text.starts_with(".L");
     if (startsFunction)
-        this->endProvisionalFunction();
+        this->endHiddenFunction();
 
     // objdump only prints a source line when it changes, but a new function doesn't continue the source of the one
     //  before it; labels starting with a dot are inside a function (e.g. .l_start in hand-written assembly)
@@ -161,15 +164,15 @@ void AsmParser::ObjDumpParser::label()
         this->state.currentSourceRef = {};
 
     const auto visibility = AssemblyTextParserUtils::getFunctionVisibility(this->state.text, this->filter);
-    if (startsFunction)
-        this->currentFunctionIsShown = visibility == AssemblyTextParserUtils::FunctionVisibility::Shown;
+    const bool startsHiddenFunction = startsFunction && visibility == AssemblyTextParserUtils::FunctionVisibility::HiddenUnlessReferenced;
 
-    this->state.ignoreUntilNextLabel = visibility == AssemblyTextParserUtils::FunctionVisibility::Hidden;
+    this->state.ignoreUntilNextLabel = visibility == AssemblyTextParserUtils::FunctionVisibility::Hidden ||
+                                       (startsHiddenFunction && this->hiddenLines >= maxLines);
     if (this->state.ignoreUntilNextLabel)
         return;
 
-    if (startsFunction && !this->currentFunctionIsShown && !this->referencedHiddenFunctions.contains(this->state.text))
-        this->startProvisionalFunction(this->state.text);
+    if (startsHiddenFunction)
+        this->startHiddenFunction(this->state.text);
 
     if (this->filter.library_functions)
         this->state.checkNextFileForLibraryCode = true;
@@ -260,8 +263,9 @@ void AsmParser::ObjDumpParser::labelref()
                 if (visibility != AssemblyTextParserUtils::FunctionVisibility::Hidden)
                 {
                     this->state.currentLine.labels.push_back(this->state.currentLabelReference);
-                    if (visibility == AssemblyTextParserUtils::FunctionVisibility::HiddenUnlessReferenced)
-                        this->noteHiddenReference(this->state.currentLabelReference.name);
+                    if (visibility == AssemblyTextParserUtils::FunctionVisibility::HiddenUnlessReferenced &&
+                        !this->hiddenReferenceTargets.contains(this->state.currentLabelReference.name))
+                        this->hiddenReferenceTargets.emplace(this->state.currentLabelReference.name);
                 }
             }
             catch (...)
@@ -403,58 +407,40 @@ void AsmParser::ObjDumpParser::setReproducible()
     this->reproducible = true;
 }
 
-bool AsmParser::ObjDumpParser::inProvisionalFunction() const
+bool AsmParser::ObjDumpParser::inHiddenFunction() const
 {
-    return !this->provisionalFunctions.empty() && this->provisionalFunctions.back().end == std::string::npos;
+    return !this->hiddenFunctions.empty() && this->hiddenFunctions.back().end == std::string::npos;
 }
 
-void AsmParser::ObjDumpParser::startProvisionalFunction(const std::string &name)
+void AsmParser::ObjDumpParser::startHiddenFunction(const std::string &name)
 {
-    this->provisionalByName.emplace(name, this->provisionalFunctions.size());
-    this->provisionalFunctions.push_back({ this->lines.size(), std::string::npos, false });
+    this->hiddenFunctions.push_back({ name, this->lines.size(), std::string::npos, this->lastFunctionHasUserCode });
 }
 
-void AsmParser::ObjDumpParser::endProvisionalFunction()
+void AsmParser::ObjDumpParser::endHiddenFunction()
 {
-    if (this->inProvisionalFunction())
-        this->provisionalFunctions.back().end = this->lines.size();
+    if (this->inHiddenFunction())
+        this->hiddenFunctions.back().end = this->lines.size();
 }
 
-void AsmParser::ObjDumpParser::dropProvisionalFunction()
+void AsmParser::ObjDumpParser::abandonHiddenFunction()
 {
-    const auto index = this->provisionalFunctions.size() - 1;
-    std::erase_if(this->provisionalByName,
-                  [index](const auto &entry)
-                  {
-                      return entry.second == index;
-                  });
-    this->provisionalFunctions.pop_back();
-}
-
-void AsmParser::ObjDumpParser::noteHiddenReference(std::string_view name)
-{
-    if (!this->hiddenReferenceTargets.contains(name))
-        this->hiddenReferenceTargets.emplace(name);
-
-    if (!this->currentFunctionIsShown || this->referencedHiddenFunctions.contains(name))
-        return;
-    this->referencedHiddenFunctions.emplace(name);
-
-    const auto [first, last] = this->provisionalByName.equal_range(name);
-    for (auto it = first; it != last; ++it)
-    {
-        auto &function = this->provisionalFunctions[it->second];
-        function.kept = true;
-        this->provisionalLines -= function.end - function.start;
-    }
-    this->provisionalByName.erase(first, last);
+    const auto &function = this->hiddenFunctions.back();
+    this->hiddenLines -= this->lines.size() - function.start;
+    this->lines.erase(this->lines.begin() + function.start, this->lines.end());
+    while (!this->labels.empty() && static_cast<std::size_t>(this->labels.back().second) > function.start)
+        this->labels.pop_back();
+    // as if the function had been hidden outright: the next label looks at the function before it
+    this->lastFunctionHasUserCode = function.hadUserCode;
+    this->hiddenFunctions.pop_back();
+    this->state.ignoreUntilNextLabel = true;
 }
 
 void AsmParser::ObjDumpParser::finishParsing()
 {
     this->maybe_remove_last_function();
-    this->endProvisionalFunction();
-    this->removeUnreferencedHiddenFunctions();
+    this->endHiddenFunction();
+    this->removeHiddenFunctions(this->chooseHiddenFunctionsToKeep());
 
     if (this->truncated || this->lines.size() > maxLines)
     {
@@ -473,14 +459,61 @@ void AsmParser::ObjDumpParser::finishParsing()
     this->removeReferencesToRemovedHiddenFunctions();
 }
 
-void AsmParser::ObjDumpParser::removeUnreferencedHiddenFunctions()
+std::vector<bool> AsmParser::ObjDumpParser::chooseHiddenFunctionsToKeep() const
 {
-    std::vector<ProvisionalFunction> removed;
-    std::copy_if(this->provisionalFunctions.begin(), this->provisionalFunctions.end(), std::back_inserter(removed),
-                 [](const auto &function)
-                 {
-                     return !function.kept;
-                 });
+    std::vector<bool> keep(this->hiddenFunctions.size(), false);
+    const std::size_t shownLines = this->lines.size() - this->hiddenLines;
+    // Shown code has priority, so a hidden function is only worth showing if the shown code isn't truncated
+    if (this->hiddenFunctions.empty() || this->truncated || shownLines > maxLines)
+        return keep;
+
+    // only a reference from a line of shown code counts, wherever the hidden function is defined
+    NameSet referenced;
+    std::size_t next = 0;
+    for (std::size_t i = 0; i < this->lines.size();)
+    {
+        if (next < this->hiddenFunctions.size() && this->hiddenFunctions[next].start == i)
+        {
+            i = this->hiddenFunctions[next++].end;
+            continue;
+        }
+        for (const auto &label : this->lines[i].labels)
+        {
+            if (this->hiddenReferenceTargets.contains(label.name))
+                referenced.emplace(label.name);
+        }
+        i++;
+    }
+
+    std::size_t total = shownLines;
+    for (std::size_t i = 0; i < this->hiddenFunctions.size(); i++)
+    {
+        const auto &function = this->hiddenFunctions[i];
+        if (referenced.contains(function.name))
+        {
+            keep[i] = true;
+            total += function.end - function.start;
+        }
+    }
+    for (std::size_t i = this->hiddenFunctions.size(); i-- > 0 && total > maxLines;)
+    {
+        if (keep[i])
+        {
+            keep[i] = false;
+            total -= this->hiddenFunctions[i].end - this->hiddenFunctions[i].start;
+        }
+    }
+    return keep;
+}
+
+void AsmParser::ObjDumpParser::removeHiddenFunctions(const std::vector<bool> &keep)
+{
+    std::vector<HiddenFunction> removed;
+    for (std::size_t i = 0; i < this->hiddenFunctions.size(); i++)
+    {
+        if (!keep[i])
+            removed.push_back(this->hiddenFunctions[i]);
+    }
     if (removed.empty())
         return;
 

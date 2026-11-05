@@ -773,16 +773,16 @@ TEST_CASE("hidden functions and the line limit", "[binary]")
         CHECK(lines.back() != "[truncated; too many lines]");
     }
 
-    SECTION("a hidden function that is kept uses up the limit")
+    SECTION("a hidden function that is kept fits alongside the shown code")
     {
         std::stringstream in(
         objdumpFunction("main", "/app/example.cpp", 4000) + "  401800:\te8 00 00 00 00       \tcall   402000 <__big>\n" +
-        objdumpFunction("__unused", "/app/example.cpp", 3000) + objdumpFunction("__big", "/app/example.cpp", 2000));
+        objdumpFunction("__unused", "/app/example.cpp", 3000) + objdumpFunction("__big", "/app/example.cpp", 500));
         parser.fromStream(in);
 
         const auto lines = outputLines(parser);
-        REQUIRE(lines.size() == 5001);
-        CHECK(lines.back() == "[truncated; too many lines]");
+        REQUIRE(lines.size() == 4503);
+        CHECK(lines.back() != "[truncated; too many lines]");
         CHECK(hasLine(lines, "__big:"));
         CHECK_FALSE(hasLine(lines, "__unused:"));
 
@@ -790,6 +790,157 @@ TEST_CASE("hidden functions and the line limit", "[binary]")
         std::stringstream json;
         parser.outputJson(json);
         CHECK(json.str().find("\"__big\": 4003") != std::string::npos);
+    }
+
+    SECTION("a hidden function that doesn't fit is not shown, and doesn't truncate the shown code")
+    {
+        std::stringstream in(objdumpFunction("main", "/app/example.cpp", 4000) + "  401800:\te8 00 00 00 00       \tcall   402000 <__big>\n" +
+                             objdumpFunction("__big", "/app/example.cpp", 2000));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 4002);
+        CHECK(lines.back() == " call   402000 <__big>");
+        CHECK_FALSE(hasLine(lines, "__big:"));
+    }
+
+    SECTION("a hidden function defined before its caller doesn't push the call out of the output")
+    {
+        std::stringstream in(
+        objdumpFunction("__big", "/app/example.cpp", 99) + objdumpFunction("main", "/app/example.cpp", 4985) +
+        "  401800:\te8 00 00 00 00       \tcall   402000 <__big>\n" + objdumpFunction("after", "/app/example.cpp", 2));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 4990);
+        CHECK(lines.front() == "main:");
+        CHECK(lines.back() == " nop");
+        CHECK(hasLine(lines, " call   402000 <__big>"));
+        CHECK(hasLine(lines, "after:"));
+        CHECK_FALSE(hasLine(lines, "__big:"));
+    }
+
+    SECTION("a hidden function defined before its caller is shown when it fits")
+    {
+        std::stringstream in(
+        objdumpFunction("__small", "/app/example.cpp", 9) + objdumpFunction("main", "/app/example.cpp", 4985) +
+        "  401800:\te8 00 00 00 00       \tcall   402000 <__small>\n" + objdumpFunction("after", "/app/example.cpp", 2));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5000);
+        CHECK(lines.front() == "__small:");
+        CHECK(lines.back() == " nop");
+        std::stringstream json;
+        parser.outputJson(json);
+        CHECK(json.str().find("\"__small\": 1") != std::string::npos);
+        CHECK(json.str().find("\"main\": 11") != std::string::npos);
+    }
+
+    SECTION("a call that the limit refused doesn't keep its target")
+    {
+        std::stringstream in(
+        objdumpFunction("__h", "/app/example.cpp", 10) + objdumpFunction("main", "/app/example.cpp", 4999) +
+        "  401800:\te8 00 00 00 00       \tcall   402000 <__h>\n" + objdumpFunction("after", "/app/example.cpp", 2));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.front() == "main:");
+        CHECK(lines.back() == "[truncated; too many lines]");
+        CHECK_FALSE(hasLine(lines, "__h:"));
+    }
+
+    SECTION("a hidden function whose caller was truncated away is not shown")
+    {
+        std::stringstream in(objdumpFunction("__h", "/app/example.cpp", 10) + objdumpFunction("f", "/app/example.cpp", 6000) +
+                             objdumpFunction("main", "/app/example.cpp", 1) + "  401800:\te8 00 00 00 00       \tcall   402000 <__h>\n");
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.front() == "f:");
+        CHECK(lines.back() == "[truncated; too many lines]");
+        CHECK_FALSE(hasLine(lines, "__h:"));
+    }
+
+    SECTION("the last hidden functions are removed first when they don't all fit")
+    {
+        std::stringstream in(objdumpFunction("__a", "/app/example.cpp", 500) + objdumpFunction("__b", "/app/example.cpp", 3000) +
+                             objdumpFunction("__c", "/app/example.cpp", 500) + objdumpFunction("main", "/app/example.cpp", 2000) +
+                             "  401800:\te8 00 00 00 00       \tcall   402000 <__a>\n"
+                             "  401805:\te8 00 00 00 00       \tcall   402000 <__b>\n"
+                             "  40180a:\te8 00 00 00 00       \tcall   402000 <__c>\n");
+        parser.fromStream(in);
+
+        // 2004 shown lines, then 501 + 3001 + 501. Without __c there is still no room for __b, and __c would have
+        // fitted by itself, but the last ones go first
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 2004 + 501);
+        CHECK(hasLine(lines, "__a:"));
+        CHECK_FALSE(hasLine(lines, "__b:"));
+        CHECK_FALSE(hasLine(lines, "__c:"));
+        CHECK(lines.back() != "[truncated; too many lines]");
+    }
+
+    SECTION("shown code is only truncated when it alone is over the limit")
+    {
+        std::stringstream in(objdumpFunction("__a", "/app/example.cpp", 10) + objdumpFunction("main", "/app/example.cpp", 5000) +
+                             "  401800:\te8 00 00 00 00       \tcall   402000 <__a>\n");
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.front() == "main:");
+        CHECK(lines.back() == "[truncated; too many lines]");
+    }
+
+    SECTION("parsing stops at the limit when only hidden functions are left")
+    {
+        std::stringstream in(objdumpFunction("main", "/app/example.cpp", 4999) + objdumpFunction("__a", "/app/example.cpp", 10) +
+                             objdumpFunction("__b", "/app/example.cpp", 20000));
+        parser.fromStream(in);
+
+        CHECK_FALSE(in.eof());
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.back() == "[truncated; too many lines]");
+    }
+
+    SECTION("the hidden functions that are held are bounded, however many there are")
+    {
+        // each is 1001 lines with its label: only the first four fit under the cap, and the fifth is dropped part way
+        std::string dump;
+        for (int i = 0; i < 300; i++)
+            dump += objdumpFunction("__h" + std::to_string(i), "/app/example.cpp", 1000);
+        dump += objdumpFunction("main", "/app/example.cpp", 4997);
+        dump += "  401800:\te8 00 00 00 00       \tcall   402000 <__h0>\n"
+                "  401805:\te8 00 00 00 00       \tcall   402000 <__h299>\n";
+        std::stringstream in(dump);
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        CHECK(lines.size() == 5000);
+        CHECK(lines.back() == " call   402000 <__h299>");
+        CHECK_FALSE(hasLine(lines, "__h0:"));
+        CHECK_FALSE(hasLine(lines, "__h299:"));
+    }
+
+    SECTION("hidden functions held under the cap are still shown when referenced")
+    {
+        std::string dump;
+        for (int i = 0; i < 8; i++)
+            dump += objdumpFunction("__h" + std::to_string(i), "/app/example.cpp", 1000);
+        dump += objdumpFunction("main", "/app/example.cpp", 1);
+        dump += "  401800:\te8 00 00 00 00       \tcall   402000 <__h0>\n"
+                "  401805:\te8 00 00 00 00       \tcall   402000 <__h7>\n";
+        std::stringstream in(dump);
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        CHECK(hasLine(lines, "__h0:"));
+        CHECK_FALSE(hasLine(lines, "__h7:"));
+        CHECK(lines.size() == 4 + 1001);
     }
 
     SECTION("labels after a hidden function that was removed point at the right lines")

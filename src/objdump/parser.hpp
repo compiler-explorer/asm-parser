@@ -72,24 +72,26 @@ class ObjDumpParser : public IParser
 
     // A function that binaryIgnoreFunction hides unless a function we show calls or jumps to it. Whether that happens
     // isn't known until the whole of the output has been read, as the caller can come after the callee, so the lines
-    // are parsed anyway and removed at the end if nothing referred to them. Their lines don't count towards the limit.
-    struct ProvisionalFunction
+    // are parsed anyway and the functions nothing shown referred to are removed at the end. Shown code has priority:
+    // the lines of these functions don't count towards the limit while parsing, and at the end the last of the
+    // referenced ones are removed until the output fits, before any shown code is truncated.
+    struct HiddenFunction
     {
+        std::string name;
         std::size_t start; // index in lines of the label
         std::size_t end; // one past the last line, or npos while it is still being parsed
-        bool kept;
+        bool hadUserCode; // lastFunctionHasUserCode as it was before the function started
     };
 
-    // Only direct references from shown functions count: following them transitively would pull in all of stdio from a
-    // call to printf.
-    NameSet referencedHiddenFunctions;
-    // every hidden function something referred to, whether or not that counted
+    // Only direct references from shown lines that end up in the output count: following them transitively would pull
+    // in all of stdio from a call to printf.
     NameSet hiddenReferenceTargets;
-    std::vector<ProvisionalFunction> provisionalFunctions;
-    std::unordered_multimap<std::string, std::size_t, TransparentStringHash, std::equal_to<>> provisionalByName;
-    std::size_t provisionalLines{};
-    // false for a function that is only here because something referred to it
-    bool currentFunctionIsShown{ true };
+    std::vector<HiddenFunction> hiddenFunctions;
+    // The lines held for hiddenFunctions, referenced or not, are capped at maxLines so that the output of a binary with
+    // a lot of hidden code can't use unbounded memory. Once the cap is reached a hidden function that is still being
+    // parsed is dropped and later ones aren't stored at all, the same as when nothing refers to them. At most maxLines
+    // of them could be shown anyway, and the later ones are the first to go.
+    std::size_t hiddenLines{};
     bool truncated{};
 
     // todo: bad names
@@ -100,13 +102,13 @@ class ObjDumpParser : public IParser
     bool may_remove_last_function() const;
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
-    bool inProvisionalFunction() const;
-    void startProvisionalFunction(const std::string &name);
-    void endProvisionalFunction();
-    void dropProvisionalFunction();
-    void noteHiddenReference(std::string_view name);
+    bool inHiddenFunction() const;
+    void startHiddenFunction(const std::string &name);
+    void endHiddenFunction();
+    void abandonHiddenFunction();
     void finishParsing();
-    void removeUnreferencedHiddenFunctions();
+    std::vector<bool> chooseHiddenFunctionsToKeep() const;
+    void removeHiddenFunctions(const std::vector<bool> &keep);
     void removeReferencesToRemovedHiddenFunctions();
     void eol();
     void address();
