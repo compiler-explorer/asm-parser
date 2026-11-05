@@ -382,7 +382,7 @@ void AsmParser::ObjDumpParser::setReproducible()
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(std::string_view name) const
 {
     const bool referenced =
-    !this->referencedHiddenFunctions.empty() && this->referencedHiddenFunctions.contains(std::string(name));
+    !this->referencedHiddenFunctions.empty() && this->referencedHiddenFunctions.contains(name);
     return AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter, referenced);
 }
 
