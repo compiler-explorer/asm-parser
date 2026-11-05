@@ -9,6 +9,7 @@
 #include <istream>
 #include <iterator>
 #include <sstream>
+#include <unordered_set>
 
 namespace
 {
@@ -381,8 +382,8 @@ void AsmParser::ObjDumpParser::setReproducible()
 
 bool AsmParser::ObjDumpParser::shouldIgnoreFunction(std::string_view name) const
 {
-    const bool referenced =
-    !this->referencedHiddenFunctions.empty() && this->referencedHiddenFunctions.contains(name);
+    const bool referenced = !this->referencedHiddenFunctions.empty() &&
+                            this->referencedHiddenFunctions.find(name) != this->referencedHiddenFunctions.end();
     return AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter, referenced);
 }
 
@@ -686,7 +687,7 @@ void AsmParser::ObjDumpParser::removeReferencesToRemovedHiddenFunctions()
         std::erase_if(line.labels,
                       [&](const auto &label)
                       {
-                          return this->referencedHiddenFunctions.contains(label.name) &&
+                          return this->referencedHiddenFunctions.find(label.name) != this->referencedHiddenFunctions.end() &&
                                  !defined.contains(label.name);
                       });
     }
