@@ -4,6 +4,7 @@
 #include "../types/line.hpp"
 #include "../types/parser.hpp"
 #include "../utils/library_detection.hpp"
+#include <functional>
 #include <iosfwd>
 #include <string>
 #include <string_view>
@@ -12,6 +13,15 @@
 
 namespace AsmParser
 {
+
+struct TransparentStringHash
+{
+    using is_transparent = void;
+    std::size_t operator()(std::string_view sv) const noexcept
+    {
+        return std::hash<std::string_view>{}(sv);
+    }
+};
 
 class ObjDumpParserState
 {
@@ -60,7 +70,7 @@ class ObjDumpParser : public IParser
     // Functions that binaryIgnoreFunction would hide but that a function we show calls or jumps to, e.g. libgcc's
     // __divdc3 in a statically linked binary. Only direct references count: following them transitively would pull in
     // all of stdio from a call to printf.
-    std::unordered_set<std::string> referencedHiddenFunctions;
+    std::unordered_set<std::string, TransparentStringHash, std::equal_to<>> referencedHiddenFunctions;
 
     // todo: bad names
     void actually_address();

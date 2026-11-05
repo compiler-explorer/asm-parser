@@ -445,6 +445,8 @@ void AsmParser::ObjDumpParser::fromStream(std::istream &stream)
     std::string objdump{ std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>() };
     this->findReferencedHiddenFunctions(objdump);
     std::istringstream in(std::move(objdump));
+    // the stream has been read to the end, which callers rely on to tell it from a parser that stopped early
+    stream.setstate(std::ios::eofbit);
 
     char c;
 
@@ -660,7 +662,7 @@ void AsmParser::ObjDumpParser::removeReferencesToRemovedHiddenFunctions()
         std::erase_if(line.labels,
                       [&](const auto &label)
                       {
-                          return this->referencedHiddenFunctions.contains(std::string(label.name)) &&
+                          return this->referencedHiddenFunctions.contains(label.name) &&
                                  !defined.contains(label.name);
                       });
     }
