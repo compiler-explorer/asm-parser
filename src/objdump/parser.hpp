@@ -68,10 +68,29 @@ class ObjDumpParser : public IParser
     size_t total_lines{};
     bool lastFunctionHasUserCode{};
 
-    // Functions that binaryIgnoreFunction would hide but that a function we show calls or jumps to, e.g. libgcc's
-    // __divdc3 in a statically linked binary. Only direct references count: following them transitively would pull in
-    // all of stdio from a call to printf.
-    std::unordered_set<std::string, TransparentStringHash, std::equal_to<>> referencedHiddenFunctions;
+    using NameSet = std::unordered_set<std::string, TransparentStringHash, std::equal_to<>>;
+
+    // A function that binaryIgnoreFunction hides unless a function we show calls or jumps to it. Whether that happens
+    // isn't known until the whole of the output has been read, as the caller can come after the callee, so the lines
+    // are parsed anyway and removed at the end if nothing referred to them. Their lines don't count towards the limit.
+    struct ProvisionalFunction
+    {
+        std::size_t start; // index in lines of the label
+        std::size_t end; // one past the last line, or npos while it is still being parsed
+        bool kept;
+    };
+
+    // Only direct references from shown functions count: following them transitively would pull in all of stdio from a
+    // call to printf.
+    NameSet referencedHiddenFunctions;
+    // every hidden function something referred to, whether or not that counted
+    NameSet hiddenReferenceTargets;
+    std::vector<ProvisionalFunction> provisionalFunctions;
+    std::unordered_multimap<std::string, std::size_t, TransparentStringHash, std::equal_to<>> provisionalByName;
+    std::size_t provisionalLines{};
+    // false for a function that is only here because something referred to it
+    bool currentFunctionIsShown{ true };
+    bool truncated{};
 
     // todo: bad names
     void actually_address();
@@ -81,8 +100,13 @@ class ObjDumpParser : public IParser
     bool may_remove_last_function() const;
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
-    bool shouldIgnoreFunction(std::string_view name) const;
-    void findReferencedHiddenFunctions(std::string_view objdump);
+    bool inProvisionalFunction() const;
+    void startProvisionalFunction(const std::string &name);
+    void endProvisionalFunction();
+    void dropProvisionalFunction();
+    void noteHiddenReference(std::string_view name);
+    void finishParsing();
+    void removeUnreferencedHiddenFunctions();
     void removeReferencesToRemovedHiddenFunctions();
     void eol();
     void address();

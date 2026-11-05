@@ -438,9 +438,14 @@ ParsedOutput parseObjdump(const std::string &dump, const AsmParser::Filter &filt
     return { outputLines(parser), json.str() };
 }
 
+bool hasLine(const std::vector<std::string> &lines, const std::string &line)
+{
+    return std::find(lines.begin(), lines.end(), line) != lines.end();
+}
+
 bool hasLine(const ParsedOutput &output, const std::string &line)
 {
-    return std::find(output.lines.begin(), output.lines.end(), line) != output.lines.end();
+    return hasLine(output.lines, line);
 }
 } // namespace
 
@@ -731,6 +736,86 @@ TEST_CASE("hidden functions referenced from shown functions", "[binary]")
         dump.replace(dump.find("__divdc3():\n") + 12, 0, "/app/divdc3.c:7\n");
         const auto output = parseObjdump(dump, filter);
         CHECK(labelLines(output) == std::vector<std::string>{ "f:", "__divdc3:" });
+    }
+}
+
+TEST_CASE("hidden functions and the line limit", "[binary]")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = true;
+
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    SECTION("parsing stops at the limit without reading the rest of the stream")
+    {
+        std::stringstream in(objdumpFunction("__hidden", "/app/example.cpp", 10) + objdumpFunction("main", "/app/example.cpp", 6000) +
+                             objdumpFunction("later", "/app/example.cpp", 20000));
+        parser.fromStream(in);
+
+        // the caller terminates objdump when the stream wasn't read to the end
+        CHECK_FALSE(in.eof());
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.back() == "[truncated; too many lines]");
+    }
+
+    SECTION("the lines of a hidden function that nothing refers to don't use up the limit")
+    {
+        std::stringstream in(objdumpFunction("__hidden", "/app/example.cpp", 6000) +
+                             objdumpFunction("main", "/app/example.cpp", 100));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 101);
+        CHECK(lines.front() == "main:");
+        CHECK(lines.back() != "[truncated; too many lines]");
+    }
+
+    SECTION("a hidden function that is kept uses up the limit")
+    {
+        std::stringstream in(
+        objdumpFunction("main", "/app/example.cpp", 4000) + "  401800:\te8 00 00 00 00       \tcall   402000 <__big>\n" +
+        objdumpFunction("__unused", "/app/example.cpp", 3000) + objdumpFunction("__big", "/app/example.cpp", 2000));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 5001);
+        CHECK(lines.back() == "[truncated; too many lines]");
+        CHECK(hasLine(lines, "__big:"));
+        CHECK_FALSE(hasLine(lines, "__unused:"));
+
+        // __unused is in the way when the file is parsed, but not in the output
+        std::stringstream json;
+        parser.outputJson(json);
+        CHECK(json.str().find("\"__big\": 4003") != std::string::npos);
+    }
+
+    SECTION("labels after a hidden function that was removed point at the right lines")
+    {
+        std::stringstream in(objdumpFunction("f", "/app/example.cpp", 2) + objdumpFunction("__hidden", "/app/example.cpp", 3) +
+                             objdumpFunction("g", "/app/example.cpp", 1) + objdumpFunction("__also", "/app/example.cpp", 5) +
+                             objdumpFunction("h", "/app/example.cpp", 1));
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        REQUIRE(lines.size() == 7);
+        std::stringstream json;
+        parser.outputJson(json);
+        CHECK(json.str().find("\"f\": 1") != std::string::npos);
+        CHECK(json.str().find("\"g\": 4") != std::string::npos);
+        CHECK(json.str().find("\"h\": 6") != std::string::npos);
+    }
+
+    SECTION("a hidden function with the program's line information is removed with library functions filtered")
+    {
+        filter.library_functions = true;
+        AsmParser::ObjDumpParser libraryParser(filter);
+        std::stringstream in(objdumpFunction("f", "/app/example.cpp", 1) + objdumpFunction("__hidden", "/app/example.cpp", 3) +
+                             objdumpFunction("g", "/app/example.cpp", 1));
+        libraryParser.fromStream(in);
+        CHECK(labelLines({ outputLines(libraryParser), "" }) == std::vector<std::string>{ "f:", "g:" });
     }
 }
 

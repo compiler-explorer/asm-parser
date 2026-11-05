@@ -75,9 +75,17 @@ class AssemblyTextParserUtils
     static bool isDirective(std::string_view line);
     static bool isInstOpcode(std::string_view line);
 
-    // A function that is called from a function we show isn't hidden by binaryIgnoreFunction, but is still hidden as a
-    // plt stub
-    static bool shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter, bool referencedFromShownFunction = false);
+    enum class FunctionVisibility
+    {
+        Shown,
+        Hidden,
+        // binaryIgnoreFunction hides these, but a function that we show calling one of them brings it back, e.g.
+        // libgcc's __divdc3 in a statically linked binary. Plt stubs and sections are never brought back.
+        HiddenUnlessReferenced
+    };
+
+    static FunctionVisibility getFunctionVisibility(std::string_view name, const AsmParser::Filter &filter);
+    static bool shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter);
 };
 
 } // namespace AsmParser
