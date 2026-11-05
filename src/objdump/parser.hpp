@@ -4,17 +4,30 @@
 #include "../types/line.hpp"
 #include "../types/parser.hpp"
 #include "../utils/library_detection.hpp"
+#include <functional>
 #include <iosfwd>
+#include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace AsmParser
 {
+
+struct TransparentStringHash
+{
+    using is_transparent = void;
+    std::size_t operator()(std::string_view sv) const noexcept
+    {
+        return std::hash<std::string_view>{}(sv);
+    }
+};
 
 class ObjDumpParserState
 {
     public:
     bool inComment{};
+    bool afterSpacedHash{};
     bool inSomethingWithALabel{};
     bool hasPrefixingWhitespace{};
     bool inAddress{};
@@ -55,6 +68,34 @@ class ObjDumpParser : public IParser
     size_t total_lines{};
     bool lastFunctionHasUserCode{};
 
+    using NameSet = std::unordered_set<std::string, TransparentStringHash, std::equal_to<>>;
+
+    // A function that binaryIgnoreFunction hides unless a function we show calls or jumps to it. Whether that happens
+    // isn't known until the whole of the output has been read, as the caller can come after the callee, so the lines
+    // are parsed anyway and the functions nothing shown referred to are removed at the end. Their lines don't count
+    // towards the limit while parsing; at the end, one is kept only if it fits before the cut and a line referring to
+    // it survives the cut (see chooseHiddenFunctionsToKeep).
+    struct HiddenFunction
+    {
+        std::string name;
+        std::size_t start; // index in lines of the label
+        std::size_t end; // one past the last line, or npos while it is still being parsed
+        bool hadUserCode; // lastFunctionHasUserCode as it was before the function started
+    };
+
+    // Only direct references from shown lines that end up in the output count: following them transitively would pull
+    // in all of stdio from a call to printf.
+    NameSet hiddenReferenceTargets;
+    std::vector<HiddenFunction> hiddenFunctions;
+    // The lines held for hiddenFunctions, referenced or not, are capped at maxLines so that the output of a binary with
+    // a lot of hidden code can't use unbounded memory. Once the cap is reached a hidden function that is still being
+    // parsed is dropped and later ones aren't stored at all, the same as when nothing refers to them. At most maxLines
+    // of them could be shown anyway, and the later ones are the first to go. Reaching the cap is permanent, as dropping
+    // a function gives its lines back and a later, smaller one would otherwise be held in its place.
+    std::size_t hiddenLines{};
+    bool hiddenCapReached{};
+    bool truncated{};
+
     // todo: bad names
     void actually_address();
     void actually_filename();
@@ -63,7 +104,14 @@ class ObjDumpParser : public IParser
     bool may_remove_last_function() const;
     void maybe_remove_last_function();
     void updateSourceRefLineNumber();
-    bool shouldIgnoreFunction(std::string_view name) const;
+    bool inHiddenFunction() const;
+    void startHiddenFunction(const std::string &name);
+    void endHiddenFunction();
+    void abandonHiddenFunction();
+    void finishParsing();
+    std::vector<bool> chooseHiddenFunctionsToKeep() const;
+    void removeHiddenFunctions(const std::vector<bool> &keep);
+    void removeReferencesToRemovedHiddenFunctions();
     void eol();
     void address();
     void opcodes();

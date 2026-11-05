@@ -652,18 +652,22 @@ std::string AsmParser::AssemblyTextParserUtils::squashHorizontalWhitespaceWithQu
     return squashHorizontalWhitespace(line);
 }
 
+AsmParser::AssemblyTextParserUtils::FunctionVisibility
+AsmParser::AssemblyTextParserUtils::getFunctionVisibility(std::string_view name, const AsmParser::Filter &filter)
+{
+    if (filter.plt && (name.ends_with("@plt") || name.ends_with("@plt>") || Regexes::pltFunction(name)))
+        return FunctionVisibility::Hidden;
+
+    if (Regexes::binaryIgnoreFunction(name))
+    {
+        const bool isPlt = name.starts_with(".plt") || name.find("@plt") != std::string_view::npos;
+        return isPlt ? FunctionVisibility::Hidden : FunctionVisibility::HiddenUnlessReferenced;
+    }
+
+    return FunctionVisibility::Shown;
+}
+
 bool AsmParser::AssemblyTextParserUtils::shouldIgnoreFunction(std::string_view name, const AsmParser::Filter &filter)
 {
-    if (auto match = Regexes::binaryIgnoreFunction(name))
-    {
-        return true;
-    }
-    else if (filter.plt)
-    {
-        return (name.ends_with("@plt") || name.ends_with("@plt>")) || (Regexes::pltFunction(name));
-    }
-    else
-    {
-        return false;
-    }
+    return getFunctionVisibility(name, filter) != FunctionVisibility::Shown;
 }
