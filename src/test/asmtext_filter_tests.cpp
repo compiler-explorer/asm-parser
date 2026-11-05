@@ -1001,6 +1001,61 @@ TEST_CASE("hidden functions and the line limit", "[binary]")
         CHECK(lines.size() == 4 + 1001);
     }
 
+    SECTION("once the cap has been reached, later hidden functions are skipped however small")
+    {
+        // __a is held, __b is dropped for taking the pool past the cap, and __c would fit in what __b gave back
+        std::string dump = objdumpFunction("__a", "/app/example.cpp", 3000) + objdumpFunction("__b", "/app/example.cpp", 3000) +
+                           objdumpFunction("__c", "/app/example.cpp", 10) + objdumpFunction("main", "/app/example.cpp", 1);
+        dump += "  401800:\te8 00 00 00 00       \tcall   402000 <__a>\n"
+                "  401805:\te8 00 00 00 00       \tcall   402000 <__b>\n"
+                "  40180a:\te8 00 00 00 00       \tcall   402000 <__c>\n";
+        std::stringstream in(dump);
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        CHECK(hasLine(lines, "__a:"));
+        CHECK_FALSE(hasLine(lines, "__b:"));
+        CHECK_FALSE(hasLine(lines, "__c:"));
+    }
+
+    SECTION("hidden functions that are never referenced count towards the cap too")
+    {
+        std::string dump = objdumpFunction("__a", "/app/example.cpp", 3000) + objdumpFunction("__b", "/app/example.cpp", 3000) +
+                           objdumpFunction("__c", "/app/example.cpp", 10) + objdumpFunction("main", "/app/example.cpp", 1);
+        dump += "  401800:\te8 00 00 00 00       \tcall   402000 <__a>\n"
+                "  401805:\te8 00 00 00 00       \tcall   402000 <__c>\n";
+        std::stringstream in(dump);
+        parser.fromStream(in);
+
+        CHECK(labelLines({ outputLines(parser), "" }) == std::vector<std::string>{ "__a:", "main:" });
+    }
+
+    SECTION("hidden functions that stay under the cap are held, referenced or not")
+    {
+        std::string dump = objdumpFunction("__a", "/app/example.cpp", 1000) + objdumpFunction("__b", "/app/example.cpp", 1000) +
+                           objdumpFunction("__c", "/app/example.cpp", 10) + objdumpFunction("main", "/app/example.cpp", 1);
+        dump += "  401800:\te8 00 00 00 00       \tcall   402000 <__a>\n"
+                "  401805:\te8 00 00 00 00       \tcall   402000 <__c>\n";
+        std::stringstream in(dump);
+        parser.fromStream(in);
+
+        CHECK(labelLines({ outputLines(parser), "" }) == std::vector<std::string>{ "__a:", "__c:", "main:" });
+    }
+
+    SECTION("a label inside a hidden function that was dropped for the cap doesn't bring its code back")
+    {
+        std::string dump = objdumpFunction("__a", "/app/example.cpp", 3000) + objdumpFunction("__b", "/app/example.cpp", 2500) +
+                           "\n0000000000401800 <.L1>:\n" + nopLines(10) + objdumpFunction("main", "/app/example.cpp", 1);
+        dump += "  401800:\te8 00 00 00 00       \tcall   402000 <__b>\n";
+        std::stringstream in(dump);
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        CHECK_FALSE(hasLine(lines, "__b:"));
+        CHECK_FALSE(hasLine(lines, ".L1:"));
+        CHECK(lines.size() == 3);
+    }
+
     SECTION("labels after a hidden function that was removed point at the right lines")
     {
         std::stringstream in(objdumpFunction("f", "/app/example.cpp", 2) + objdumpFunction("__hidden", "/app/example.cpp", 3) +
@@ -1025,6 +1080,59 @@ TEST_CASE("hidden functions and the line limit", "[binary]")
                              objdumpFunction("g", "/app/example.cpp", 1));
         libraryParser.fromStream(in);
         CHECK(labelLines({ outputLines(libraryParser), "" }) == std::vector<std::string>{ "f:", "g:" });
+    }
+}
+
+TEST_CASE("hidden library functions are removed whole", "[binary]")
+{
+    AsmParser::Filter filter;
+    filter.binary = true;
+    filter.plt = true;
+    filter.library_functions = true;
+    AsmParser::ObjDumpParser parser(filter);
+    parser.setReproducible();
+
+    const std::string callsLib = "  401800:\te8 00 00 00 00       \tcall   402000 <__lib>\n";
+
+    SECTION("a caller doesn't bring back a hidden function without user code that has a local label")
+    {
+        const std::string library = "\n0000000000402000 <__lib>:\n"
+                                    "  402000:\t90                   \tnop\n"
+                                    "  402001:\te8 00 00 00 00       \tcall   402100 <__other>\n"
+                                    "\n0000000000402010 <.L1>:\n"
+                                    "  402010:\t90                   \tnop\n"
+                                    "\n0000000000402020 <.L2>:\n"
+                                    "  402020:\t90                   \tnop\n";
+        std::stringstream in(objdumpFunction("f", "/app/example.cpp", 1) + library +
+                             objdumpFunction("g", "/app/example.cpp", 1) + callsLib);
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        CHECK(labelLines({ lines, "" }) == std::vector<std::string>{ "f:", "g:" });
+        CHECK(lines.size() == 2 + 3);
+    }
+
+    SECTION("a hidden function whose last local label is in library code is removed from its start")
+    {
+        // the function starts with the program's lines, so it is only removable at the next function, and the last
+        // label then found is the local one
+        const std::string library = "\n0000000000402000 <__lib>:\n"
+                                    "__lib():\n"
+                                    "/app/example.cpp:3\n"
+                                    "  402000:\t90                   \tnop\n"
+                                    "  402001:\te8 00 00 00 00       \tcall   402100 <__other>\n"
+                                    "/usr/include/lib.h:7\n"
+                                    "\n0000000000402010 <.L1>:\n"
+                                    "  402010:\t90                   \tnop\n"
+                                    "  402011:\t90                   \tnop\n";
+        std::stringstream in(objdumpFunction("f", "/app/example.cpp", 1) + library +
+                             objdumpFunction("g", "/app/example.cpp", 1) + callsLib);
+        parser.fromStream(in);
+
+        const auto lines = outputLines(parser);
+        CHECK(labelLines({ lines, "" }) == std::vector<std::string>{ "f:", "g:" });
+        CHECK(lines.size() == 2 + 3);
+        CHECK_FALSE(hasLine(lines, " call   402100 <__other>"));
     }
 }
 

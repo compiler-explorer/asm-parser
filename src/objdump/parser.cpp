@@ -123,16 +123,22 @@ void AsmParser::ObjDumpParser::maybe_remove_last_function()
 {
     if (this->may_remove_last_function())
     {
-        const std::size_t first = this->labels.back().second - 1;
+        // labels.back() can be a .L label inside the function, so a hidden function is removed from its own start
+        // instead: a prefix left behind would still be there to be promoted by a later caller
+        std::size_t first = this->labels.back().second - 1;
         if (this->inHiddenFunction())
         {
-            const auto start = this->hiddenFunctions.back().start;
-            this->hiddenLines -= this->lines.size() - std::max(first, start);
-            if (start >= first)
-                this->hiddenFunctions.pop_back();
+            first = this->hiddenFunctions.back().start;
+            this->hiddenLines -= this->lines.size() - first;
+            this->hiddenFunctions.pop_back();
+            while (!this->labels.empty() && static_cast<std::size_t>(this->labels.back().second) > first)
+                this->labels.pop_back();
+        }
+        else
+        {
+            this->labels.pop_back();
         }
         this->lines.erase(this->lines.begin() + first, this->lines.end());
-        this->labels.pop_back();
         // every function that is still there was kept for having user code
         this->lastFunctionHasUserCode = true;
     }
@@ -152,11 +158,18 @@ void AsmParser::ObjDumpParser::label()
 
     const bool wasInHiddenFunction = this->inHiddenFunction();
     this->maybe_remove_last_function();
-    if (wasInHiddenFunction && !this->inHiddenFunction())
-        this->state.currentLine.address.reset();
-
     // labels starting with .L are inside a function
     const bool startsFunction = !this->state.text.starts_with(".L");
+    if (wasInHiddenFunction && !this->inHiddenFunction())
+    {
+        this->state.currentLine.address.reset();
+        if (!startsFunction)
+        {
+            // the rest of the function that was just removed
+            this->state.ignoreUntilNextLabel = true;
+            return;
+        }
+    }
     if (startsFunction)
         this->endHiddenFunction();
 
@@ -168,8 +181,13 @@ void AsmParser::ObjDumpParser::label()
     const auto visibility = AssemblyTextParserUtils::getFunctionVisibility(this->state.text, this->filter);
     const bool startsHiddenFunction = startsFunction && visibility == AssemblyTextParserUtils::FunctionVisibility::HiddenUnlessReferenced;
 
-    this->state.ignoreUntilNextLabel = visibility == AssemblyTextParserUtils::FunctionVisibility::Hidden ||
-                                       (startsHiddenFunction && this->hiddenLines >= maxLines);
+    if (startsHiddenFunction && this->hiddenLines >= maxLines)
+        this->hiddenCapReached = true;
+
+    // a label inside a function that is being skipped doesn't start showing it
+    this->state.ignoreUntilNextLabel = (!startsFunction && this->state.ignoreUntilNextLabel) ||
+                                       visibility == AssemblyTextParserUtils::FunctionVisibility::Hidden ||
+                                       (startsHiddenFunction && this->hiddenCapReached);
     if (this->state.ignoreUntilNextLabel)
         return;
 
@@ -435,6 +453,7 @@ void AsmParser::ObjDumpParser::abandonHiddenFunction()
     // as if the function had been hidden outright: the next label looks at the function before it
     this->lastFunctionHasUserCode = function.hadUserCode;
     this->hiddenFunctions.pop_back();
+    this->hiddenCapReached = true;
     this->state.ignoreUntilNextLabel = true;
 }
 

@@ -90,8 +90,10 @@ class ObjDumpParser : public IParser
     // The lines held for hiddenFunctions, referenced or not, are capped at maxLines so that the output of a binary with
     // a lot of hidden code can't use unbounded memory. Once the cap is reached a hidden function that is still being
     // parsed is dropped and later ones aren't stored at all, the same as when nothing refers to them. At most maxLines
-    // of them could be shown anyway, and the later ones are the first to go.
+    // of them could be shown anyway, and the later ones are the first to go. Reaching the cap is permanent, as dropping
+    // a function gives its lines back and a later, smaller one would otherwise be held in its place.
     std::size_t hiddenLines{};
+    bool hiddenCapReached{};
     bool truncated{};
 
     // todo: bad names
