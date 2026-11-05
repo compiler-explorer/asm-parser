@@ -8,6 +8,8 @@
 #include <ctre.hpp>
 #include <istream>
 #include <iterator>
+#include <string_view>
+#include <unordered_map>
 
 namespace
 {
@@ -462,47 +464,74 @@ void AsmParser::ObjDumpParser::finishParsing()
 std::vector<bool> AsmParser::ObjDumpParser::chooseHiddenFunctionsToKeep() const
 {
     std::vector<bool> keep(this->hiddenFunctions.size(), false);
-    const std::size_t shownLines = this->lines.size() - this->hiddenLines;
-    // Shown code has priority, so a hidden function is only worth showing if the shown code isn't truncated
-    if (this->hiddenFunctions.empty() || this->truncated || shownLines > maxLines)
+    if (this->hiddenFunctions.empty())
         return keep;
 
-    // only a reference from a line of shown code counts, wherever the hidden function is defined
-    NameSet referenced;
+    // The output is the shown lines and the kept hidden functions merged in file order and cut at maxLines, so a kept
+    // function has to end before the cut and be referenced from a line before it. Only references from lines of shown
+    // code count, wherever the hidden function is defined.
+    std::unordered_map<std::string_view, std::size_t> firstReference;
+    std::vector<std::size_t> shownBefore(this->hiddenFunctions.size());
+    std::size_t shown = 0;
     std::size_t next = 0;
     for (std::size_t i = 0; i < this->lines.size();)
     {
         if (next < this->hiddenFunctions.size() && this->hiddenFunctions[next].start == i)
         {
+            shownBefore[next] = shown;
             i = this->hiddenFunctions[next++].end;
             continue;
         }
         for (const auto &label : this->lines[i].labels)
         {
             if (this->hiddenReferenceTargets.contains(label.name))
-                referenced.emplace(label.name);
+                firstReference.emplace(label.name, shown);
         }
+        shown++;
         i++;
     }
 
-    std::size_t total = shownLines;
+    std::vector<std::size_t> kept;
     for (std::size_t i = 0; i < this->hiddenFunctions.size(); i++)
     {
-        const auto &function = this->hiddenFunctions[i];
-        if (referenced.contains(function.name))
-        {
-            keep[i] = true;
-            total += function.end - function.start;
-        }
+        if (firstReference.contains(this->hiddenFunctions[i].name))
+            kept.push_back(i);
     }
-    for (std::size_t i = this->hiddenFunctions.size(); i-- > 0 && total > maxLines;)
+
+    // Start with everything that a shown line refers to and drop what doesn't qualify. Only the last failing function
+    // goes each time: dropping one pulls what follows it back into the output, which can rescue the others.
+    std::vector<std::size_t> heldBefore;
+    for (;;)
     {
-        if (keep[i])
+        heldBefore.assign(1, 0);
+        for (const auto i : kept)
+            heldBefore.push_back(heldBefore.back() + this->hiddenFunctions[i].end - this->hiddenFunctions[i].start);
+
+        const auto positionOfShownLine = [&](std::size_t index)
         {
-            keep[i] = false;
-            total -= this->hiddenFunctions[i].end - this->hiddenFunctions[i].start;
+            const auto firstAfter = std::partition_point(kept.begin(), kept.end(),
+                                                         [&](std::size_t i)
+                                                         {
+                                                             return shownBefore[i] <= index;
+                                                         });
+            return index + heldBefore[static_cast<std::size_t>(firstAfter - kept.begin())];
+        };
+
+        std::size_t failing = kept.size();
+        for (std::size_t k = kept.size(); k-- > 0 && failing == kept.size();)
+        {
+            const auto &function = this->hiddenFunctions[kept[k]];
+            const bool fits = shownBefore[kept[k]] + heldBefore[k] + function.end - function.start <= maxLines;
+            if (!fits || positionOfShownLine(firstReference.at(function.name)) >= maxLines)
+                failing = k;
         }
+        if (failing == kept.size())
+            break;
+        kept.erase(kept.begin() + static_cast<std::ptrdiff_t>(failing));
     }
+
+    for (const auto i : kept)
+        keep[i] = true;
     return keep;
 }
 
