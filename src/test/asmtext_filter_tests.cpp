@@ -677,6 +677,32 @@ TEST_CASE("hidden functions referenced from shown functions", "[binary]")
         CHECK(labelLines(output) == std::vector<std::string>{ "main:" });
     }
 
+    // aarch64-linux-gnu-objdump style: `#` is the immediate prefix there, not a comment
+    SECTION("an aarch64 tbz target is found, where # is an immediate and not a comment")
+    {
+        const auto output = parseObjdump("00000000004005a0 <main>:\n"
+                                         "  4005a0:\t36000040 \ttbz\tw0, #0, 4005a8 <__hidden>\n"
+                                         "  4005a4:\td65f03c0 \tret\n"
+                                         "\n"
+                                         "00000000004005a8 <__hidden>:\n"
+                                         "  4005a8:\td65f03c0 \tret\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:", "__hidden:" });
+    }
+
+    SECTION("targets after aarch64 immediates are found, with a cmp before them")
+    {
+        const auto output = parseObjdump("00000000004005a0 <main>:\n"
+                                         "  4005a0:\t71000c1f \tcmp\tw0, #3\n"
+                                         "  4005a4:\tb7f80041 \ttbnz\tx1, #63, 4005ac <__other>\n"
+                                         "  4005a8:\td65f03c0 \tret\n"
+                                         "\n"
+                                         "00000000004005ac <__other>:\n"
+                                         "  4005ac:\td65f03c0 \tret\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:", "__other:" });
+    }
+
     SECTION("a plt stub is still hidden")
     {
         const auto output = parseObjdump("0000000000401000 <puts@plt>:\n"

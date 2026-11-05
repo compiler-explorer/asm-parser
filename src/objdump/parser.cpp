@@ -426,9 +426,16 @@ void AsmParser::ObjDumpParser::findReferencedHiddenFunctions(std::string_view ob
             }
         }
 
-        // like labelref(), references in a trailing comment (e.g. to data) don't count
-        if (const auto comment = line.find('#'); comment != std::string_view::npos)
-            line = line.substr(0, comment);
+        // An x86 comment about data (`# 404028 <sym>`) doesn't count. Elsewhere `#` is an immediate prefix
+        //  (`tbz w0, #0, 4005a8 <target>`), which is never followed by whitespace.
+        for (std::size_t i = 1; i + 1 < line.size(); ++i)
+        {
+            if (line[i] == '#' && is_whitespace(line[i - 1]) && is_whitespace(line[i + 1]))
+            {
+                line = line.substr(0, i);
+                break;
+            }
+        }
         while (!line.empty() && is_whitespace(line.back()))
             line.remove_suffix(1);
 
