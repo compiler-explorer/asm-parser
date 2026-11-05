@@ -639,6 +639,44 @@ TEST_CASE("hidden functions referenced from shown functions", "[binary]")
         CHECK(labelLines(output) == std::vector<std::string>{ "__helper:", "main:" });
     }
 
+    SECTION("a hidden .plt section does not make its callees referenced")
+    {
+        filter.plt = false;
+        const auto output = parseObjdump("0000000000401000 <main>:\n"
+                                         "  401000:\tc3                   \tret\n"
+                                         "\n"
+                                         "0000000000401020 <.plt>:\n"
+                                         "  401020:\te8 00 00 00 00       \tcall   402000 <__memset_sse2>\n"
+                                         "\n"
+                                         "0000000000402000 <__memset_sse2>:\n"
+                                         "  402000:\tc3                   \tret\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:" });
+    }
+
+    SECTION("a reference separated by a tab is found")
+    {
+        const auto output = parseObjdump("0000000000401000 <main>:\n"
+                                         "  401000:\te8 eb ff ff ff       \tcall\t401800 <__helper>\n"
+                                         "\n"
+                                         "0000000000401800 <__helper>:\n"
+                                         "  401800:\tc3                   \tret\n",
+                                         filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:", "__helper:" });
+    }
+
+    SECTION("a data reference in a comment does not count")
+    {
+        const auto output =
+        parseObjdump("0000000000401000 <main>:\n"
+                     "  401000:\t48 8b 05 d9 2f 00 00 \tmov    0x2fd9(%rip),%rax        # 404fe0 <__gmon_start__>\n"
+                     "\n"
+                     "0000000000404fe0 <__gmon_start__>:\n"
+                     "  404fe0:\tc3                   \tret\n",
+                     filter);
+        CHECK(labelLines(output) == std::vector<std::string>{ "main:" });
+    }
+
     SECTION("a plt stub is still hidden")
     {
         const auto output = parseObjdump("0000000000401000 <puts@plt>:\n"

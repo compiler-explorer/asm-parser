@@ -386,6 +386,20 @@ bool AsmParser::ObjDumpParser::shouldIgnoreFunction(std::string_view name) const
     return AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter, referenced);
 }
 
+namespace
+{
+// like labelref(): the first '<' that starts a word
+std::size_t findOpenBracket(std::string_view line)
+{
+    for (std::size_t i = 0; i < line.size(); ++i)
+    {
+        if (line[i] == '<' && (i == 0 || AsmParser::is_whitespace(line[i - 1])))
+            return i;
+    }
+    return std::string_view::npos;
+}
+} // namespace
+
 void AsmParser::ObjDumpParser::findReferencedHiddenFunctions(std::string_view objdump)
 {
     bool inShownFunction = false;
@@ -399,13 +413,14 @@ void AsmParser::ObjDumpParser::findReferencedHiddenFunctions(std::string_view ob
             line.remove_suffix(1);
 
         // a label looks like "0000000000401870 <__divdc3>:"
-        if (line.ends_with(">:") && !line.starts_with(' ') && !line.starts_with('\t'))
+        if (line.ends_with(">:") && !is_whitespace(line.front()))
         {
-            const auto open = line.find(" <");
+            const auto open = findOpenBracket(line);
             if (open != std::string_view::npos)
             {
-                const auto name = line.substr(open + 2, line.size() - open - 4);
-                if (!name.starts_with("."))
+                const auto name = line.substr(open + 1, line.size() - open - 3);
+                // `.L` labels are inside a function; other dot names, e.g. .plt, are hidden sections of their own
+                if (!name.starts_with(".L"))
                     inShownFunction = !AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter);
                 continue;
             }
@@ -420,10 +435,10 @@ void AsmParser::ObjDumpParser::findReferencedHiddenFunctions(std::string_view ob
         if (!inShownFunction || !line.ends_with('>'))
             continue;
 
-        const auto open = line.rfind(" <");
+        const auto open = findOpenBracket(line);
         if (open == std::string_view::npos)
             continue;
-        auto name = line.substr(open + 2, line.size() - open - 3);
+        auto name = line.substr(open + 1, line.size() - open - 2);
         if (const auto plus = name.rfind("+0x"); plus != std::string_view::npos)
         {
             const auto offset = name.substr(plus + 3);
@@ -434,7 +449,9 @@ void AsmParser::ObjDumpParser::findReferencedHiddenFunctions(std::string_view ob
                                                }))
                 name = name.substr(0, plus);
         }
-        if (!name.empty() && AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter))
+        // plt stubs stay hidden, as does the .plt section they jump to
+        const bool isPlt = name.starts_with(".plt") || name.find("@plt") != std::string_view::npos;
+        if (!name.empty() && !isPlt && AssemblyTextParserUtils::shouldIgnoreFunction(name, this->filter))
             this->referencedHiddenFunctions.emplace(name);
     }
 }
